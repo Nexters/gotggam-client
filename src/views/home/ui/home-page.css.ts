@@ -1,6 +1,7 @@
 import { style } from "@vanilla-extract/css";
 
 import { vars } from "@/shared/styles/theme.css";
+import { textStyle } from "@/shared/styles/typography";
 
 export const main = style({
   display: "flex",
@@ -8,30 +9,30 @@ export const main = style({
   alignItems: "center",
   justifyContent: "center",
   minHeight: "100dvh",
-  gap: vars.space.md,
-  padding: vars.space.xl,
+  gap: vars.spacing["16"],
+  padding: vars.spacing["32"],
 });
 
 export const title = style({
-  fontSize: "clamp(32px, 6vw, 48px)",
-  fontWeight: 700,
-  letterSpacing: "-0.02em",
+  ...textStyle("departureMono", "32"),
+  color: vars.color.accent1["12"],
+  fontWeight: vars.fontWeight.bold,
 });
 
 export const description = style({
-  color: vars.color.textMuted,
-  fontSize: "16px",
+  ...textStyle("spoqa", "16"),
+  color: vars.color.gray["11"],
 });
 
 export const status = style({
+  ...textStyle("spoqa", "14"),
   display: "flex",
   alignItems: "center",
-  gap: vars.space.sm,
-  marginTop: vars.space.md,
-  padding: `${vars.space.sm} ${vars.space.md}`,
-  borderRadius: vars.radius.md,
-  border: `1px solid ${vars.color.border}`,
-  backgroundColor: vars.color.surface,
-  color: vars.color.textMuted,
-  fontSize: "14px",
+  gap: vars.spacing["8"],
+  marginTop: vars.spacing["16"],
+  padding: `${vars.spacing["8"]} ${vars.spacing["16"]}`,
+  borderRadius: "10px",
+  border: `1px solid ${vars.color.gray["6"]}`,
+  backgroundColor: vars.color.gray["2"],
+  color: vars.color.gray["11"],
 });

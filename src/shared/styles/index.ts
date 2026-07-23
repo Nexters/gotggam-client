@@ -1,1 +1,2 @@
-export { vars } from "./theme.css";
+export { semantic, vars } from "./theme.css";
+export { textStyle } from "./typography";

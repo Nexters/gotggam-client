@@ -65,19 +65,54 @@ src/
 
 스타일은 `*.css.ts` 파일에 작성하며, 빌드 타임에 정적 CSS로 추출됩니다(제로 런타임).
 
-- 디자인 토큰: `src/shared/styles/theme.css.ts`의 `vars`
+- 디자인 토큰: `src/shared/styles/theme.css.ts` (`vars` 원시 토큰, `semantic` 시맨틱 토큰)
+- 타이포 헬퍼: `src/shared/styles/typography.ts` (`textStyle`)
 - 전역 스타일: `src/shared/styles/global.css.ts` (루트 레이아웃에서 import)
 
 ```ts
 // example.css.ts
 import { style } from "@vanilla-extract/css";
-import { vars } from "@/shared/styles/theme.css";
+import { semantic, vars } from "@/shared/styles/theme.css";
+import { textStyle } from "@/shared/styles/typography";
 
 export const box = style({
-  padding: vars.space.md,
-  backgroundColor: vars.color.surface,
+  ...textStyle("spoqa", "16"),
+  padding: vars.spacing["16"],
+  backgroundColor: semantic.color.bgSurface,
+  color: vars.color.gray["12"],
 });
 ```
+
+### 디자인 토큰 (Figma `디자인 작업장 › Design System` 기준)
+
+**컬러 — 12단계 스케일**: `vars.color.accent1~5`, `vars.color.gray` (다크 테마)
+
+| 단계 | 용도 (Figma 문서 표기) |
+| --- | --- |
+| 1–2 | 배경 (Backgrounds) |
+| 3–5 | 인터랙티브 컴포넌트 (Interactive components) |
+| 6–8 | 보더·구분선 (Borders and separators) |
+| 9–10 | 솔리드 컬러 (Solid colors) |
+| 11–12 | 텍스트 (Accessible text) |
+
+단일 값: `white` `black` `background(#121212)` `opacityWhite150` `opacityBlack100` `opacityBlack500`
+
+**시맨틱 롤**: `semantic.color.bgCanvas` `bgSurface` `accent1~5`(각 스케일 9단계 참조) `black` `white`
+
+**타이포그래피**: 사이즈 12~32(짝수 램프) × line-height 150% × letter-spacing 0px
+
+| 패밀리 토큰 | 폰트 | 용도 |
+| --- | --- | --- |
+| `departureMono` | Departure Mono | 컨셉과 맞출 필요가 있는 곳 (영문) |
+| `galmuri14` / `galmuri11` | Galmuri | 한글 본문 |
+| `spoqa` | Spoqa Han Sans Neo | 상세 설명 등 가독성이 필요한 곳 (기본 본문) |
+
+> 웹폰트 파일은 아직 번들에 포함하지 않았습니다. 도입 시 `next/font/local` 등으로 추가하고,
+> 토큰의 폴백 스택은 유지하세요.
+
+**스페이싱**: `vars.spacing` — 2 4 6 8 10 12 14 16 18 20 22 24 26 28 30 32 36 48 (px)
+
+**레이아웃**: `vars.layout` — 기준 화면 360×780(dp), 8dp 그리드, 4컬럼 / 거터 16 / 마진 16
 
 ## 서버 상태 (TanStack Query)
 

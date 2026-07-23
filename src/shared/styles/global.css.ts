@@ -1,6 +1,6 @@
 import { globalStyle } from "@vanilla-extract/css";
 
-import { vars } from "./theme.css";
+import { semantic, vars } from "./theme.css";
 
 globalStyle("*, *::before, *::after", {
   boxSizing: "border-box",
@@ -13,9 +13,12 @@ globalStyle("html, body", {
 });
 
 globalStyle("body", {
-  backgroundColor: vars.color.background,
-  color: vars.color.text,
-  fontFamily: vars.font.body,
+  backgroundColor: semantic.color.bgCanvas,
+  color: vars.color.gray["12"],
+  fontFamily: vars.font.spoqa,
+  fontWeight: vars.fontWeight.regular,
+  lineHeight: vars.lineHeight.normal,
+  letterSpacing: vars.letterSpacing.normal,
   WebkitFontSmoothing: "antialiased",
 });
 

@@ -1,0 +1,20 @@
+branch=$(git rev-parse --abbrev-ref HEAD)
+
+# 타입 추가 시 commitlint.config.mjs와 함께 수정
+case "$branch" in
+  main | develop | production | trunk/* | HEAD) ;;
+  *)
+    if ! echo "$branch" | grep -Eq '^(feat|fix|refactor|docs|design|style|misc|chore|deps|test|hotfix)/[A-Za-z0-9._/-]+$'; then
+      echo "오류: 브랜치명이 네이밍 규칙에 맞지 않습니다: $branch"
+      echo
+      echo "형식: <type>/<subject>  (예: feat/landing-page, fix/header-overflow)"
+      echo "type: feat | fix | refactor | docs | design | style | misc | chore | deps | test | hotfix"
+      echo "(feature/ → feat/, doc/ → docs/ 주의)"
+      echo
+      echo "브랜치명 변경: git branch -m <type>/<subject>"
+      exit 1
+    fi
+    ;;
+esac
+
+pnpm lint

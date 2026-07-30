@@ -1,0 +1,57 @@
+name: Auto Assign
+
+on:
+  pull_request:
+    types: [opened, ready_for_review, converted_to_draft]
+  issues:
+    types: [opened]
+
+jobs:
+  assign:
+    runs-on: ubuntu-latest
+    permissions:
+      issues: write
+      pull-requests: write
+    steps:
+      - name: Auto assign
+        uses: hkusu/review-assign-action@v1
+        with:
+          assignees: ${{ github.actor }}
+
+  label:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    permissions:
+      issues: write
+      pull-requests: write
+    steps:
+      - name: Label by branch type
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_REPO: ${{ github.repository }}
+          BRANCH: ${{ github.head_ref }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+        run: |
+          # 타입 추가 시 commitlint.config.mjs·.husky/pre-push와 함께 수정
+          type=$(echo "${BRANCH%%/*}" | tr '[:upper:]' '[:lower:]')
+
+          case "$type" in
+            feat)     color=0e8a16; desc="새로운 기능" ;;
+            fix)      color=d73a4a; desc="버그 수정" ;;
+            refactor) color=1d76db; desc="동작 변경 없는 구조 개선" ;;
+            docs)     color=0075ca; desc="문서" ;;
+            design)   color=f9d0c4; desc="UI/스타일 마크업" ;;
+            style)    color=fbca04; desc="코드 포맷팅" ;;
+            misc)     color=cfd3d7; desc="기타" ;;
+            chore)    color=fef2c0; desc="빌드·설정 등 잡무" ;;
+            deps)     color=5319e7; desc="의존성" ;;
+            test)     color=bfd4f2; desc="테스트" ;;
+            hotfix)   color=b60205; desc="긴급 수정" ;;
+            *)
+              echo "::notice::규칙에 없는 브랜치 타입이라 라벨을 생략합니다: $BRANCH"
+              exit 0
+              ;;
+          esac
+
+          gh label create "$type" --color "$color" --description "$desc" 2>/dev/null || true
+          gh pr edit "$PR_NUMBER" --add-label "$type"

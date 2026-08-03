@@ -155,6 +155,7 @@ export const vars = createGlobalTheme(":root", {
   layout: {
     screenWidth: "360px",
     screenHeight: "780px",
+    screenMaxWidth: "480px",
     grid: "8px",
     columns: "4",
     gutter: "16px",

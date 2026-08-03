@@ -8,7 +8,7 @@ export const main = style({
   flexDirection: "column",
   alignItems: "center",
   justifyContent: "center",
-  minHeight: "100dvh",
+  minHeight: "100%",
   gap: vars.spacing["16"],
   padding: vars.spacing["32"],
 });

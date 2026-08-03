@@ -1,8 +1,8 @@
 "use client";
 
 import {
-  isServer,
-  type QueryClient,
+  environmentManager,
+  QueryClient,
   QueryClientProvider,
 } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
@@ -15,7 +15,8 @@ import { BgmPlayer } from "./bgm-player";
 let browserQueryClient: QueryClient | undefined;
 
 function getQueryClient() {
-  if (isServer) {
+  if (environmentManager.isServer()) {
+    // 서버에서는 요청 간 캐시가 섞이지 않도록 항상 새 클라이언트를 만든다.
     return makeQueryClient();
   }
 

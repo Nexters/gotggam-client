@@ -31,12 +31,12 @@ export async function orvalMutator<T>(
   try {
     return JSON.parse(text) as T;
   } catch (cause) {
-    throw new ApiError(
-      "INVALID_RESPONSE",
-      response.status,
-      "서버 응답을 해석할 수 없어요.",
-      text,
-      { cause },
-    );
+    throw new ApiError({
+      code: "INVALID_RESPONSE",
+      status: response.status,
+      message: "서버 응답을 해석할 수 없어요.",
+      data: text,
+      options: { cause },
+    });
   }
 }

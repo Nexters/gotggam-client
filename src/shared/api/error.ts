@@ -14,22 +14,73 @@ export type ApiErrorCode =
   | "UNSUPPORTED_ENVIRONMENT"
   | "UNKNOWN";
 
-export class ApiError extends Error {
-  override readonly name = "ApiError";
-
-  constructor(
-    readonly code: ApiErrorCode,
-    readonly status: number | null,
-    message: string,
-    readonly data?: unknown,
-    options?: ErrorOptions,
-  ) {
-    super(message, options);
-  }
+interface ApiErrorInit {
+  code: ApiErrorCode;
+  status: number | null;
+  message: string;
+  data?: unknown;
+  options?: ErrorOptions;
 }
 
-export function isApiError(error: unknown): error is ApiError {
-  return error instanceof ApiError;
+export class ApiError extends Error {
+  override readonly name = "ApiError";
+  readonly code: ApiErrorCode;
+  readonly status: number | null;
+  readonly data?: unknown;
+
+  constructor({ code, status, message, data, options }: ApiErrorInit) {
+    super(message, options);
+    this.code = code;
+    this.status = status;
+    this.data = data;
+  }
+
+  static isApiError(error: unknown): error is ApiError {
+    return error instanceof ApiError;
+  }
+  static toApiError(error: Error): ApiError {
+    if (ApiError.isApiError(error)) {
+      return error;
+    }
+
+    if (isHTTPError(error)) {
+      const { status } = error.response;
+
+      return new ApiError({
+        code: toErrorCode(status),
+        status,
+        message:
+          extractMessage(error.data) ?? `요청에 실패했어요. (HTTP ${status})`,
+        data: error.data,
+        options: { cause: error },
+      });
+    }
+
+    if (isTimeoutError(error)) {
+      return new ApiError({
+        code: "TIMEOUT",
+        status: null,
+        message: "요청 시간이 초과됐어요. 잠시 후 다시 시도해 주세요.",
+        options: { cause: error },
+      });
+    }
+
+    if (isNetworkError(error)) {
+      return new ApiError({
+        code: "NETWORK_ERROR",
+        status: null,
+        message: "네트워크에 연결할 수 없어요. 연결 상태를 확인해 주세요.",
+        options: { cause: error },
+      });
+    }
+
+    return new ApiError({
+      code: "UNKNOWN",
+      status: null,
+      message: error.message || "알 수 없는 오류가 발생했어요.",
+      options: { cause: error },
+    });
+  }
 }
 
 const STATUS_TO_ERROR_CODE: Record<number, ApiErrorCode> = {
@@ -69,50 +120,4 @@ function extractMessage(data: unknown): string | undefined {
   }
 
   return undefined;
-}
-
-export function toApiError(error: Error): ApiError {
-  if (isApiError(error)) {
-    return error;
-  }
-
-  if (isHTTPError(error)) {
-    const { status } = error.response;
-
-    return new ApiError(
-      toErrorCode(status),
-      status,
-      extractMessage(error.data) ?? `요청에 실패했어요. (HTTP ${status})`,
-      error.data,
-      { cause: error },
-    );
-  }
-
-  if (isTimeoutError(error)) {
-    return new ApiError(
-      "TIMEOUT",
-      null,
-      "요청 시간이 초과됐어요. 잠시 후 다시 시도해 주세요.",
-      undefined,
-      { cause: error },
-    );
-  }
-
-  if (isNetworkError(error)) {
-    return new ApiError(
-      "NETWORK_ERROR",
-      null,
-      "네트워크에 연결할 수 없어요. 연결 상태를 확인해 주세요.",
-      undefined,
-      { cause: error },
-    );
-  }
-
-  return new ApiError(
-    "UNKNOWN",
-    null,
-    error.message || "알 수 없는 오류가 발생했어요.",
-    undefined,
-    { cause: error },
-  );
 }

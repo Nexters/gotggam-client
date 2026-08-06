@@ -6,14 +6,18 @@ This version has breaking changes — APIs, conventions, and file structure may 
 
 # API 연결
 
-ky + TanStack Query 를 씁니다. **API 함수·쿼리·에러 처리 코드를 쓰기 전에
+ky + TanStack Query + Suspensive 를 씁니다. **API 함수·쿼리·에러 처리 코드를 쓰기 전에
 `.claude/skills/api-connection/SKILL.md` 를 읽으세요.**
 
 요약:
 
 - 네트워크 레이어는 `src/shared/api/` 에만 둔다. 컴포넌트에서 `fetch` 를 직접 호출하지 않는다.
 - ky 2.x 는 v1 과 다르다 — `prefixUrl` 은 제거됐고(`prefix`/`baseUrl`), 훅은 `({ request, options, retryCount })` 단일 객체를 받는다.
-- 쿼리는 커스텀 훅으로 감싸지 않고 `queryOptions` 객체로 정의한다.
+- 쿼리는 커스텀 훅으로 감싸지 않고 `queryOptions` 객체로 정의한다. 조회는 `useSuspenseQuery` 로 한다.
+- 로딩·에러 분기는 컴포넌트가 아니라 섹션 바운더리(`@suspensive/react` 의
+  `ErrorBoundary` + `Suspense` + `Delay`)가 맡는다. v3 에 `AsyncBoundary` 는 없다.
+- 어떤 에러를 어디서 잡을지는 `ErrorBoundary` 의 `shouldCatch` 로만 정한다.
+  `useSuspenseQuery` 는 `throwOnError` 를 하드코딩해서 `QueryClient` 설정이 먹지 않는다.
 - HTTP·네트워크·타임아웃 에러와 JSON 파싱 실패는 `ApiError` 로 정규화된다.
   예외는 본문이 빈 응답에 `.json()` 을 붙인 경우뿐이니, 그럴 땐 붙이지 말 것.
 - 조회 함수는 `signal` 을 받아 ky 로 넘긴다. 안 넘기면 요청 취소가 아예 동작하지 않는다.

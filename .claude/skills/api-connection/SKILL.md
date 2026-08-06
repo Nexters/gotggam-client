@@ -8,7 +8,8 @@ description: ky + TanStack Query 기반 API 연결 패턴. API 함수·쿼리 �
 ## 기술 스택
 
 - **HTTP 클라이언트**: ky 2.x (`src/shared/api/http-client.ts`)
-- **데이터 페칭**: TanStack Query v5
+- **데이터 페칭**: TanStack Query v5 (조회는 `useSuspenseQuery`)
+- **바운더리**: `@suspensive/react` v3 (`ErrorBoundary` / `Suspense` / `Delay`)
 - **코드 생성**: Orval (OpenAPI 스펙 → 타입 + API 함수)
 - **Provider**: `src/app/providers/index.tsx`
 
@@ -171,15 +172,18 @@ const { data } = useQuery(quizQueries.result(resultId));
 
 ## 3. 컴포넌트에서 사용
 
-구조분해 시 변수명을 구체적으로 리네이밍한다.
+조회는 `useSuspenseQuery` 로 한다. 로딩·에러 분기는 컴포넌트에 두지 않고 바깥
+바운더리(5번)가 맡는다. 구조분해 시 변수명을 구체적으로 리네이밍한다.
 
 ```tsx
 "use client";
 
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import {
+  useMutation,
+  useQueryClient,
+  useSuspenseQuery,
+} from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
-
-import { isApiError } from "@/shared/api";
 
 import type { SubmitAnswersRequest } from "../model/quiz.types";
 import { submitAnswers } from "../api/quiz-api";
@@ -188,11 +192,7 @@ import { quizQueries } from "../api/quiz-queries";
 export function QuizPlayer({ quizId }: { quizId: number }) {
   const router = useRouter();
   const queryClient = useQueryClient();
-  const {
-    data: quiz,
-    isPending: isQuizPending,
-    error: quizError,
-  } = useQuery(quizQueries.detail(quizId));
+  const { data: quiz } = useSuspenseQuery(quizQueries.detail(quizId));
 
   const { mutate: submitQuiz, isPending: isSubmitPending } = useMutation({
     mutationFn: (body: SubmitAnswersRequest) => submitAnswers(quizId, body),
@@ -202,11 +202,6 @@ export function QuizPlayer({ quizId }: { quizId: number }) {
       router.push(`/results/${result.id}`);
     },
   });
-
-  if (isQuizPending) return <Skeleton />;
-  if (quizError) {
-    return <p>{isApiError(quizError) ? quizError.message : "오류"}</p>;
-  }
 
   return (
     <QuestionForm
@@ -239,7 +234,7 @@ const { mutate: removeResult, isPending: isRemovePending } = useMutation({
 
 - 캐시 갱신은 `invalidateQueries` 가 기본. 응답에 갱신된 리소스가 그대로 담겨 오면
   `setQueryData` 로 재요청을 생략한다 (3번 예시).
-- 뮤테이션은 `retry: 0` 이다 (`app/providers`). 비멱등 요청을 자동 재시도하면 중복
+- 뮤테이션은 `retry: 0` 이다 (`shared/api/query-client.ts`). 비멱등 요청을 자동 재시도하면 중복
   제출이 생긴다.
 - 콜백 3번째 인자는 `onMutate` 의 반환값이다. 예전 이름이 `context` 였고 지금은
   4번째에 별개의 `context` 가 붙었으니, 구버전 예제를 그대로 옮기지 말 것.
@@ -262,12 +257,58 @@ class ApiError {
 
 | 상황 | 처리 위치 |
 | --- | --- |
-| 5xx **첫 로드** | `app/error.tsx` (ErrorBoundary) — `throwOnError` 가 올려보냄 |
-| 4xx | 컴포넌트에서 `error` 분기 |
-| 네트워크·타임아웃 | 컴포넌트에서 인라인 재시도 UI |
-| 데이터를 이미 들고 있을 때 | 무조건 컴포넌트. 화면을 날리지 않는다 |
+| 첫 로드 pending | 섹션의 `<Suspense>` + `<Delay ms={200}>` |
+| 4xx·네트워크·타임아웃 | 섹션의 `<ErrorBoundary>` fallback — 인라인 재시도 |
+| 5xx·그 외 렌더 에러 | `shouldCatch` 를 통과해 `app/error.tsx` 로 올라감 |
+| 데이터를 이미 들고 있을 때 | 아무 일도 안 일어난다. 화면을 날리지 않는다 |
 
-재시도 정책은 **`app/providers` 의 QueryClient 한 곳에만** 둔다. ky 는 `retry: 0` 이다. 두 계층에서
+### 섹션 바운더리
+
+`@suspensive/react` 의 `ErrorBoundary` + `Suspense` + `Delay` 를 합성한다. v3 에는
+`AsyncBoundary` 가 없다(v2 에서 제거). Suspensive 컴포넌트는 전부 `'use client'` 라
+서버 컴포넌트 안에서 직접 못 쓴다 — 섹션 컴포넌트를 하나 두고 그 안에서 합성한다.
+
+```tsx
+// src/views/home/ui/health-section.tsx
+"use client";
+
+import { Delay, ErrorBoundary, Suspense } from "@suspensive/react";
+import { useQueryErrorResetBoundary } from "@tanstack/react-query";
+
+import { ApiError } from "@/shared/api";
+
+function isInlineRecoverable(error: Error): error is ApiError {
+  return (
+    ApiError.isApiError(error) && (error.status === null || error.status < 500)
+  );
+}
+
+export function HealthSection() {
+  const { reset: resetQueryErrors } = useQueryErrorResetBoundary();
+
+  return (
+    <ErrorBoundary
+      shouldCatch={isInlineRecoverable}
+      onReset={resetQueryErrors}
+      fallback={({ error, reset }) => (
+        <div>
+          {error.message}
+          <Button onClick={reset}>다시 시도</Button>
+        </div>
+      )}
+    >
+      <Suspense clientOnly fallback={<Delay ms={200}>로딩 중...</Delay>}>
+        <HealthStatus />
+      </Suspense>
+    </ErrorBoundary>
+  );
+}
+```
+
+`shouldCatch` 에 타입 가드를 넘기면 `fallback` 의 `error` 타입이 좁혀진다. 여기서
+안 잡은 에러는 다시 던져져 상위 바운더리로 올라간다.
+
+재시도 정책은 **`shared/api/query-client.ts` 한 곳에만** 둔다. ky 는 `retry: 0` 이다. 두 계층에서
 재시도하면 실제 요청 수가 곱해진다.
 
 모든 실패는 `query-client.ts` 의 `QueryCache` / `MutationCache` `onError` 를 거친다.
@@ -275,11 +316,15 @@ class ApiError {
 
 ### 건드리면 깨지는 것들
 
-- `throwOnError` 는 `query.state.data === undefined` 를 반드시 함께 본다. 이 가드를
-  빼면 백그라운드 리페치 한 번 실패에 멀쩡한 화면이 에러 페이지로 교체된다.
-- `app/error.tsx` 의 재시도는 `useQueryErrorResetBoundary().reset()` 을 먼저 부른다.
-  `throwOnError` 가 켜져 있으면 TanStack Query 가 `retryOnMount` 를 꺼두기 때문에,
-  reset 없이 재시도하면 리페치가 일어나지 않고 같은 에러로 되돌아온다.
+- `useSuspenseQuery` 는 `throwOnError` 를 내부에서 하드코딩한다. `QueryClient` 의
+  `defaultOptions` 로 못 바꾼다. **에러를 어디서 잡을지는 `shouldCatch` 로만 정한다.**
+- 재시도는 `useQueryErrorResetBoundary().reset()` 을 먼저 부른다. suspense 쿼리는
+  `retryOnMount` 가 꺼져 있어 reset 없이 재시도하면 리페치가 일어나지 않고 같은
+  에러로 되돌아온다. 섹션 바운더리는 `onReset`, `app/error.tsx` 는 재시도 핸들러에서 부른다.
+- 서버에서 못 도는 쿼리(`internalHttpClient` 사용)는 반드시 `<Suspense clientOnly/>`
+  안에 둔다. `useSuspenseQuery` 는 `useQuery` 와 달리 프리렌더 중 서버에서 `queryFn` 을
+  실행하므로, 빼먹으면 **런타임이 아니라 빌드가 깨진다.**
+- suspense 쿼리는 `staleTime` 하한이 1000ms 다. 그보다 작게 줘도 1000ms 로 올라간다.
 - `app/error.tsx` 와 `app/providers` 는 `@/shared/api` barrel 이 아니라
   `@/shared/api/error` 에서 직접 import 한다. barrel 을 타면 `http-client → env` 가
   딸려와, 환경 변수가 없을 때 에러 페이지조차 렌더되지 않는다.

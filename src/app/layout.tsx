@@ -27,7 +27,7 @@ export default function RootLayout({
     <html lang="ko">
       <body>
         <div className={styles.shell}>
-          <div id="root" className={styles.screen}>
+          <div className={styles.screen}>
             <Providers>{children}</Providers>
           </div>
         </div>

@@ -1,5 +1,7 @@
 import { globalStyle } from "@vanilla-extract/css";
 
+import "./font-face.css";
+
 import { semantic, vars } from "./theme.css";
 
 globalStyle("*, *::before, *::after", {

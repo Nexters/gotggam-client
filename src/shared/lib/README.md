@@ -82,22 +82,48 @@ function BgmToggleButton() {
 }
 ```
 
-## useAudio
+## useAudio / setAudioPlaying
 
-오디오 리소스를 재생/일시정지하는 훅. `isPlaying`이 처음 `true`가 되는
+오디오를 상태에 따라 재생/일시정지하는 훅. `isPlaying`이 처음 `true`가 되는
 시점에 `Audio` 인스턴스를 지연 생성해서, 꺼져 있는 동안에는 리소스를 아예
-요청하지 않습니다. 이후에는 같은 인스턴스를 재사용해 `play`/`pause`만 하므로
-다시 켜도 리소스를 다시 불러오지 않습니다.
+요청하지 않습니다. 인스턴스는 `src`별로 모듈 레벨에 캐시되므로 다시 켜도
+리소스를 새로 불러오지 않고, 여러 곳에서 같은 오디오를 조작할 수 있습니다.
 
 ```tsx
 "use client";
 
 import { useAudio } from "@/shared/lib";
 
-useAudio("/audio/bgm.mp3", isPlaying, { loop: true });
+useAudio({ src: "/audio/bgm.mp3", isPlaying, loop: true });
 ```
 
-자동재생 정책으로 `play()`가 거부될 수 있어 내부에서 조용히 무시합니다.
 전역에서 한 번만 재생해야 하는 배경음악 등은 라우트별 컴포넌트가 아니라
 `app/providers`처럼 앱 전체에 마운트되는 위치에서 이 훅을 호출하세요
 (예: `BgmPlayer`).
+
+### 자동재생 정책 대응
+
+브라우저는 사용자 제스처(클릭 등) **이벤트 핸들러 안에서 동기적으로** 호출된
+`play()`만 허용합니다. `useEffect` 안의 호출은 리렌더를 거쳐 비동기로 실행되어
+제스처로 인정받지 못하므로, **첫 진입 시 `isPlaying: true`로 시작하는 재생은
+거의 항상 거부됩니다.**
+
+그래서 `setAudioPlaying`은 `play()`가 거부되면 그냥 무시하지 않고, **페이지의
+첫 사용자 제스처를 기다렸다가 자동으로 재생을 재시도**합니다. 덕분에 켜진 상태로
+진입해도 사용자가 화면을 처음 터치/클릭하는 순간 음악이 시작됩니다.
+
+버튼으로 직접 켜는 경우에는 effect를 거치지 않도록 클릭 핸들러 안에서
+`setAudioPlaying`을 동기적으로 호출하세요:
+
+```tsx
+onClick={() => {
+  const next = !isOn;
+  setAudioPlaying(BGM_SRC, next, { loop: true });
+  setIsOn(next);
+}}
+```
+
+> 제스처 감지는 `pointerdown`이 아니라 `click`/`keydown`으로 합니다.
+> React 핸들러가 document 리스너보다 먼저 실행되므로, 유저가 토글 버튼을 눌러
+> **끄는** 경우 재시도 예약이 먼저 취소됩니다. `pointerdown`이면 `click`보다
+> 먼저 발생해서, 껐는데도 소리가 잠깐 새어 나옵니다.

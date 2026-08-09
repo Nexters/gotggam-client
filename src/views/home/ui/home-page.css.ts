@@ -1,38 +1,60 @@
 import { style } from "@vanilla-extract/css";
 
 import { vars } from "@/shared/styles/theme.css";
-import { textStyle } from "@/shared/styles/typography";
 
-export const main = style({
+export const page = style({
+  position: "relative",
   display: "flex",
+  flexDirection: "column",
+  minHeight: "100%",
+  overflow: "hidden",
+  color: vars.color.white,
+});
+
+export const backgroundLayer = style({
+  position: "absolute",
+  inset: 0,
+});
+
+export const backgroundImage = style({
+  objectFit: "cover",
+});
+
+export const backgroundOverlay = style({
+  position: "absolute",
+  inset: 0,
+  backgroundColor: "rgba(18, 18, 18, 0.4)",
+});
+
+export const topBar = style({
+  display: "flex",
+  justifyContent: "flex-end",
+  padding: vars.spacing["16"],
+  opacity: 0.8,
+});
+
+export const content = style({
+  position: "relative",
+  display: "flex",
+  flex: 1,
   flexDirection: "column",
   alignItems: "center",
   justifyContent: "center",
-  minHeight: "100%",
-  gap: vars.spacing["16"],
-  padding: vars.spacing["32"],
 });
 
-export const title = style({
-  ...textStyle("departureMono", "32"),
-  color: vars.color.accent1["12"],
-  fontWeight: vars.fontWeight.bold,
+export const logo = style({
+  width: "60%",
+  height: "auto",
 });
 
-export const description = style({
-  ...textStyle("spoqa", "16"),
-  color: vars.color.gray["11"],
+export const character = style({
+  width: "115%",
+  aspectRatio: "1 / 1",
+  marginTop: vars.spacing["30"],
 });
 
-export const status = style({
-  ...textStyle("spoqa", "14"),
+export const footer = style({
   display: "flex",
-  alignItems: "center",
-  gap: vars.spacing["8"],
-  marginTop: vars.spacing["16"],
-  padding: `${vars.spacing["8"]} ${vars.spacing["16"]}`,
-  borderRadius: "10px",
-  border: `1px solid ${vars.color.gray["6"]}`,
-  backgroundColor: vars.color.gray["2"],
-  color: vars.color.gray["11"],
+  justifyContent: "center",
+  padding: `0 ${vars.spacing["20"]} ${vars.spacing["36"]}`,
 });

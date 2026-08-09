@@ -1,13 +1,19 @@
 "use client";
 
-import { DotLottieReact } from "@lottiefiles/dotlottie-react";
+import { Lottie } from "@/shared/ui";
 
 type HomeLottieProps = {
   className?: string;
+  onReady?: () => void;
 };
 
-export function HomeLottie({ className }: HomeLottieProps) {
+export function HomeLottie({ className, onReady }: HomeLottieProps) {
   return (
-    <DotLottieReact autoplay src="/lottie/home.lottie" className={className} />
+    <Lottie
+      autoplay
+      src="/lottie/home.lottie"
+      className={className}
+      onReady={onReady}
+    />
   );
 }

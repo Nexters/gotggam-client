@@ -1,10 +1,11 @@
 "use client";
 
+import { BGM_STORAGE_KEY } from "@/shared/config";
 import { useHasMounted, useLocalStorage } from "@/shared/lib";
 import { IconButton, IconSpeaker } from "@/shared/ui";
 
 export function BgmToggleButton() {
-  const [isOn, setIsOn] = useLocalStorage("bgm-enabled", true);
+  const [isOn, setIsOn] = useLocalStorage(BGM_STORAGE_KEY, true);
   const mounted = useHasMounted();
 
   return (

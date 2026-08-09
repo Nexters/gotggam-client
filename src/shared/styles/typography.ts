@@ -1,14 +1,34 @@
+import { cn } from "@/shared/lib";
+
+import * as styles from "./typography.css";
 import { vars } from "./theme.css";
 
-type FontFamilyToken = keyof typeof vars.font;
-type FontSizeToken = keyof typeof vars.fontSize;
+export type FontFamilyToken = keyof typeof vars.font;
+export type FontSizeToken = keyof typeof vars.fontSize;
+export type FontWeightToken = keyof typeof vars.fontWeight;
+export type ColorToken = keyof typeof styles.color;
 
-// 모든 타이포 토큰은 line-height 150%, letter-spacing 0px를 공유한다 (Figma Typography 문서).
-export function textStyle(family: FontFamilyToken, size: FontSizeToken) {
-  return {
-    fontFamily: vars.font[family],
-    fontSize: vars.fontSize[size],
-    lineHeight: vars.lineHeight.normal,
-    letterSpacing: vars.letterSpacing.normal,
-  } as const;
+export type TypographyClassNameOptions = {
+  family: FontFamilyToken;
+  size: FontSizeToken;
+  weight?: FontWeightToken;
+  color?: ColorToken;
+  className?: string;
+};
+
+export function getTypographyClassName({
+  family,
+  size,
+  weight = "regular",
+  color,
+  className,
+}: TypographyClassNameOptions) {
+  return cn(
+    styles.base,
+    styles.family[family],
+    styles.size[size],
+    styles.weight[weight],
+    color && styles.color[color],
+    className,
+  );
 }

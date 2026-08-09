@@ -1,2 +1,9 @@
 export { semantic, vars } from "./theme.css";
-export { textStyle } from "./typography";
+export {
+  getTypographyClassName,
+  type ColorToken,
+  type FontFamilyToken,
+  type FontSizeToken,
+  type FontWeightToken,
+  type TypographyClassNameOptions,
+} from "./typography";

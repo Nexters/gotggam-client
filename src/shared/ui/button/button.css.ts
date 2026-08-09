@@ -14,10 +14,10 @@ export const button = style({
   color: semantic.color.white,
   lineHeight: 1,
   cursor: "pointer",
-  transition: "filter 0.15s ease",
+  transition: "background-color 0.15s ease",
   selectors: {
     "&:hover:not(:disabled)": {
-      filter: "brightness(1.08)",
+      backgroundColor: vars.color.accent1["10"],
     },
     "&:disabled": {
       opacity: 0.5,

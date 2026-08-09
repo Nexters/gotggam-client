@@ -66,21 +66,32 @@ src/
 스타일은 `*.css.ts` 파일에 작성하며, 빌드 타임에 정적 CSS로 추출됩니다(제로 런타임).
 
 - 디자인 토큰: `src/shared/styles/theme.css.ts` (`vars` 원시 토큰, `semantic` 시맨틱 토큰)
-- 타이포 헬퍼: `src/shared/styles/typography.ts` (`textStyle`)
+- 타이포 헬퍼: `src/shared/styles/typography.ts` (`getTypographyClassName`) — 컴포넌트에서는
+  이걸 감싼 `Typography`(`@/shared/ui`)를 씁니다. 자세한 내용은
+  [`src/shared/ui/README.md`](src/shared/ui/README.md) 참고
 - 전역 스타일: `src/shared/styles/global.css.ts` (루트 레이아웃에서 import)
+- 폰트: `src/shared/styles/font-face.css.ts`의 `@font-face` 선언 + `public/fonts/`
 
 ```ts
 // example.css.ts
 import { style } from "@vanilla-extract/css";
 import { semantic, vars } from "@/shared/styles/theme.css";
-import { textStyle } from "@/shared/styles/typography";
 
 export const box = style({
-  ...textStyle("spoqa", "16"),
   padding: vars.spacing["16"],
   backgroundColor: semantic.color.bgSurface,
-  color: vars.color.gray["12"],
 });
+```
+
+```tsx
+// example.tsx — 텍스트는 css.ts에서 직접 스타일링하지 않고 Typography로 렌더링
+import { Typography } from "@/shared/ui";
+
+<div className={styles.box}>
+  <Typography family="spoqa" size="16" color="gray-12">
+    안내 문구
+  </Typography>
+</div>
 ```
 
 ### 디자인 토큰 (Figma `디자인 작업장 › Design System` 기준)
@@ -107,12 +118,25 @@ export const box = style({
 | `galmuri14` / `galmuri11` | Galmuri | 한글 본문 |
 | `spoqa` | Spoqa Han Sans Neo | 상세 설명 등 가독성이 필요한 곳 (기본 본문) |
 
-> 웹폰트 파일은 아직 번들에 포함하지 않았습니다. 도입 시 `next/font/local` 등으로 추가하고,
-> 토큰의 폴백 스택은 유지하세요.
-
 **스페이싱**: `vars.spacing` — 2 4 6 8 10 12 14 16 18 20 22 24 26 28 30 32 36 48 (px)
 
 **레이아웃**: `vars.layout` — 기준 화면 360×780(dp), 8dp 그리드, 4컬럼 / 거터 16 / 마진 16
+
+## 공용 UI / 유틸리티
+
+`@/shared/ui`, `@/shared/lib`에 지금까지 만든 공용 모듈입니다. 자세한 사용법은
+각 README를 참고하세요.
+
+| 모듈 | 위치 | 설명 |
+| --- | --- | --- |
+| `Button` | [`shared/ui`](src/shared/ui/README.md) | 기본 버튼(배경색 + hover/disabled) |
+| `IconButton` | [`shared/ui`](src/shared/ui/README.md) | 아이콘 전용 버튼. `aria-label` 필수 |
+| `PixelCornerButton` | [`shared/ui`](src/shared/ui/README.md) | 계단형(픽셀아트) 모서리 버튼. `cornerSize`로 크기 조절 |
+| `Typography` | [`shared/ui`](src/shared/ui/README.md) | 토큰 기반 텍스트 컴포넌트 (`family`/`size`/`weight`/`color`) |
+| `IconSpeaker`, `IconButtonArrow` 등 | [`shared/ui`](src/shared/ui/README.md) | SVGR 아이콘 컴포넌트 |
+| `cn` | [`shared/lib`](src/shared/lib/README.md) | `clsx` re-export |
+| `useLocalStorage` | [`shared/lib`](src/shared/lib/README.md) | SSR 안전 `localStorage` 상태 훅 (`useSyncExternalStore`) |
+| `useHasMounted` | [`shared/lib`](src/shared/lib/README.md) | hydration 완료 여부. 클라이언트 전용 값의 flicker 방지용 |
 
 ## 서버 상태 (TanStack Query)
 

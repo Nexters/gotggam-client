@@ -12,6 +12,7 @@
     "prepare": "husky || true"
   },
   "dependencies": {
+    "@lottiefiles/dotlottie-react": "^0.19.13",
     "@tanstack/react-query": "^5.101.4",
     "@tanstack/react-query-devtools": "^5.101.4",
     "@vanilla-extract/css": "^1.21.1",

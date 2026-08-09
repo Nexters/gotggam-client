@@ -8,6 +8,8 @@ import {
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import type { ReactNode } from "react";
 
+import { BgmPlayer } from "./bgm-player";
+
 function makeQueryClient() {
   return new QueryClient({
     defaultOptions: {
@@ -38,6 +40,7 @@ export function Providers({ children }: { children: ReactNode }) {
   return (
     <QueryClientProvider client={queryClient}>
       {children}
+      <BgmPlayer />
       <ReactQueryDevtools initialIsOpen={false} />
     </QueryClientProvider>
   );

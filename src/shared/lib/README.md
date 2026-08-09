@@ -4,7 +4,7 @@
 모두 `@/shared/lib`에서 import합니다.
 
 ```ts
-import { cn, useHasMounted, useLocalStorage } from "@/shared/lib";
+import { cn, useAudio, useHasMounted, useLocalStorage } from "@/shared/lib";
 ```
 
 ## cn
@@ -81,3 +81,23 @@ function BgmToggleButton() {
   );
 }
 ```
+
+## useAudio
+
+오디오 리소스를 재생/일시정지하는 훅. `isPlaying`이 처음 `true`가 되는
+시점에 `Audio` 인스턴스를 지연 생성해서, 꺼져 있는 동안에는 리소스를 아예
+요청하지 않습니다. 이후에는 같은 인스턴스를 재사용해 `play`/`pause`만 하므로
+다시 켜도 리소스를 다시 불러오지 않습니다.
+
+```tsx
+"use client";
+
+import { useAudio } from "@/shared/lib";
+
+useAudio("/audio/bgm.mp3", isPlaying, { loop: true });
+```
+
+자동재생 정책으로 `play()`가 거부될 수 있어 내부에서 조용히 무시합니다.
+전역에서 한 번만 재생해야 하는 배경음악 등은 라우트별 컴포넌트가 아니라
+`app/providers`처럼 앱 전체에 마운트되는 위치에서 이 훅을 호출하세요
+(예: `BgmPlayer`).

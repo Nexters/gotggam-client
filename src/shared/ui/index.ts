@@ -1,5 +1,7 @@
+export { BottomPanel } from "./bottom-panel";
 export { Button } from "./button";
 export { IconButton } from "./icon-button";
+export { InputPanel } from "./input-panel";
 export * from "./icon";
 export { Lottie } from "./lottie";
 export { PixelCornerButton } from "./pixel-corner-button";

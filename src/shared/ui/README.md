@@ -91,6 +91,58 @@ import { IconButton, IconSpeaker } from "@/shared/ui";
 </IconButton>
 ```
 
+## BottomPanel
+
+화면 하단에 블러 배경(`rgba(18,18,18,0.8)` + blur 6px)으로 깔리는 패널 골격입니다.
+내용(`children`)과 그라데이션 CTA 버튼 사이 배치를 책임지고, 내용 구성은 사용처가
+정합니다. 부모가 `position` 기준이 되어야 합니다(패널이 `position: absolute;
+bottom: 0`으로 깔림). `InputPanel`이 이 골격 위에 만들어져 있습니다.
+
+```tsx
+import { BottomPanel } from "@/shared/ui";
+
+<BottomPanel ctaLabel="다음" ctaDisabled={!isValid} onCtaClick={handleNext}>
+  {/* 제목·입력 UI 등 패널 내용 */}
+</BottomPanel>
+```
+
+| Prop | 필수 | 설명 |
+| --- | --- | --- |
+| `children` | ✅ | 패널 내용 |
+| `ctaLabel` | ✅ | CTA 버튼 텍스트 |
+| `ctaDisabled` |  | CTA 비활성 여부 |
+| `onCtaClick` |  | CTA 클릭 핸들러 |
+
+## InputPanel
+
+`BottomPanel` 위에 만든 한 줄 입력 폼입니다. 제목 + 픽셀 코너 입력창 + 힌트로
+구성되고, `ctaDisabled`를 생략하면 입력값이 비어 있을 때 CTA가 비활성화됩니다.
+
+```tsx
+import { InputPanel } from "@/shared/ui";
+
+<InputPanel
+  title="이름을 알려달라냥."
+  value={name}
+  onChange={setName}
+  placeholder="이름을 입력해주세요."
+  maxLength={4}
+  hint="- 4자 이내로 작성해주세요."
+  ctaLabel="다음"
+  onCtaClick={handleSubmit}
+/>
+```
+
+| Prop | 필수 | 설명 |
+| --- | --- | --- |
+| `title` | ✅ | 패널 상단 안내 문구 |
+| `value` / `onChange` | ✅ | 제어 입력값. `onChange`는 문자열을 그대로 받음 |
+| `ctaLabel` | ✅ | CTA 버튼 텍스트 |
+| `placeholder` `maxLength` |  | 입력창에 그대로 전달 |
+| `hint` |  | 입력창 아래 보조 문구 |
+| `ctaDisabled` |  | CTA 비활성 조건. 생략하면 값이 비어 있을 때 비활성화 |
+| `onCtaClick` |  | CTA 클릭 핸들러 |
+
 ## PixelCornerButton
 
 계단형(픽셀아트) 모서리를 가진 버튼. `Button`을 감싸서 hover/disabled/타이포는
@@ -110,14 +162,16 @@ import { PixelCornerButton } from "@/shared/ui";
 | `cornerSize` | 계단 한 칸의 크기(px). 기본값 `4`. 모서리는 `2 * cornerSize`만큼 잘려나간다 |
 | 그 외 | `ButtonHTMLAttributes` 전부 그대로 전달 (`className` `style` 포함, `style`은 내부 `clip-path`와 병합됨) |
 
-같은 계단 실루엣이 필요한 별도 레이어(예: 버튼 뒤에 깔리는 글로우/배경)를 만들 때는
-버튼과 똑같은 `clip-path` 값을 재사용할 수 있게 `getPixelCornerClipPath(step)`도
-같이 export합니다.
+같은 계단 실루엣이 필요한 다른 요소(예: 버튼 뒤에 깔리는 글로우/배경, 입력창)에는
+동일한 `clip-path` 값을 만드는 `getPixelCornerClipPath(step)`를 씁니다. React 의존이
+없는 순수 함수라 `@/shared/styles`에 있고, `*.css.ts`에서도 import할 수 있습니다.
+(`*.css.ts`에서 `@/shared/ui`를 import하면 vanilla-extract 컴파일이 React Refresh
+변환과 충돌해 dev 빌드가 깨지니 주의하세요.)
 
 ```ts
-import { getPixelCornerClipPath } from "@/shared/ui";
+import { getPixelCornerClipPath } from "@/shared/styles/pixel-corner";
 
-style={{ clipPath: `polygon(${getPixelCornerClipPath(4)})` }}
+clipPath: `polygon(${getPixelCornerClipPath(4)})`,
 ```
 
 > ⚠️ `filter`(예: `drop-shadow`, `blur`)를 `clip-path`가 걸린 요소에 직접 걸면

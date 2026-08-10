@@ -258,8 +258,8 @@ class ApiError {
 | 상황 | 처리 위치 |
 | --- | --- |
 | 첫 로드 pending | 섹션의 `<Suspense>` + `<Delay ms={200}>` |
-| 4xx·네트워크·타임아웃 | 섹션의 `<ErrorBoundary>` fallback — 인라인 재시도 |
-| 5xx·그 외 렌더 에러 | `shouldCatch` 를 통과해 `app/error.tsx` 로 올라감 |
+| API 에러 (`ApiError`) | 섹션의 `<ErrorBoundary>` fallback — 인라인 재시도 |
+| 그 외 렌더 에러 | `shouldCatch` 를 통과해 `app/error.tsx` 로 올라감 |
 | 데이터를 이미 들고 있을 때 | 아무 일도 안 일어난다. 화면을 날리지 않는다 |
 
 ### 섹션 바운더리
@@ -277,18 +277,12 @@ import { useQueryErrorResetBoundary } from "@tanstack/react-query";
 
 import { ApiError } from "@/shared/api";
 
-function isInlineRecoverable(error: Error): error is ApiError {
-  return (
-    ApiError.isApiError(error) && (error.status === null || error.status < 500)
-  );
-}
-
 export function HealthSection() {
   const { reset: resetQueryErrors } = useQueryErrorResetBoundary();
 
   return (
     <ErrorBoundary
-      shouldCatch={isInlineRecoverable}
+      shouldCatch={ApiError.isApiError}
       onReset={resetQueryErrors}
       fallback={({ error, reset }) => (
         <div>

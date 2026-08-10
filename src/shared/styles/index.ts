@@ -1,3 +1,4 @@
+export { getPixelCornerClipPath } from "./pixel-corner";
 export { semantic, vars } from "./theme.css";
 export {
   getTypographyClassName,

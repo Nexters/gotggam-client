@@ -2,5 +2,5 @@ export { Button } from "./button";
 export { IconButton } from "./icon-button";
 export * from "./icon";
 export { Lottie } from "./lottie";
-export { getPixelCornerClipPath, PixelCornerButton } from "./pixel-corner-button";
+export { PixelCornerButton } from "./pixel-corner-button";
 export { Typography } from "./typography";

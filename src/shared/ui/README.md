@@ -143,6 +143,31 @@ import { InputPanel } from "@/shared/ui";
 | `ctaDisabled` |  | CTA 비활성 조건. 생략하면 값이 비어 있을 때 비활성화 |
 | `onCtaClick` |  | CTA 클릭 핸들러 |
 
+## WheelPicker / WheelPickerGroup
+
+iOS식 휠 피커(`@ncdai/react-wheel-picker` 래핑). 선택 행은 중앙에 흰색
+Galmuri11 24px로 표시되고, 위아래 행은 마스크로 페이드됩니다. 여러 열(연/월/일
+등)은 `WheelPickerGroup` 안에 `WheelPicker`를 나란히 넣어 구성합니다.
+
+```tsx
+import { WheelPicker, WheelPickerGroup, type WheelPickerOption } from "@/shared/ui";
+
+const years: WheelPickerOption[] = [{ value: "2005", label: "2005" }, ...];
+
+<WheelPickerGroup>
+  <WheelPicker options={years} value={year} onChange={setYear} />
+  <WheelPicker options={months} value={month} onChange={setMonth} />
+</WheelPickerGroup>
+```
+
+| Prop | 필수 | 설명 |
+| --- | --- | --- |
+| `options` | ✅ | `{ value, label }` 배열 (`WheelPickerOption`) |
+| `value` / `onChange` | ✅ | 제어 선택값 |
+
+> 휠 높이는 CSS가 아니라 라이브러리가 `visibleCount`로 계산합니다(현재 8 ≈ 90px).
+> 래퍼에 고정 높이를 주면 중앙 하이라이트가 잘려나가니 주의하세요.
+
 ## PixelCornerButton
 
 계단형(픽셀아트) 모서리를 가진 버튼. `Button`을 감싸서 hover/disabled/타이포는

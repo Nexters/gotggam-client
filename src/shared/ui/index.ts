@@ -6,3 +6,4 @@ export * from "./icon";
 export { Lottie } from "./lottie";
 export { PixelCornerButton } from "./pixel-corner-button";
 export { Typography } from "./typography";
+export { WheelPicker, WheelPickerGroup, type WheelPickerOption } from "./wheel-picker";

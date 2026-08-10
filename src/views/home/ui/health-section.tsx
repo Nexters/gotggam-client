@@ -7,7 +7,7 @@ import { ApiError } from "@/shared/api";
 import { Button } from "@/shared/ui";
 
 import { HealthStatus } from "./health-status";
-import * as styles from "./home-page.css";
+import * as styles from "./health-section.css";
 
 export function HealthSection() {
   const { reset: resetQueryErrors } = useQueryErrorResetBoundary();

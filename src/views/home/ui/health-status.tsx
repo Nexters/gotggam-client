@@ -5,7 +5,7 @@ import { useSuspenseQuery } from "@tanstack/react-query";
 import { Button } from "@/shared/ui";
 
 import { healthQueries } from "../api/health-queries";
-import * as styles from "./home-page.css";
+import * as styles from "./health-section.css";
 
 export function HealthStatus() {
   const { data, isFetching, refetch } = useSuspenseQuery(

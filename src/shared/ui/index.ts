@@ -1,5 +1,6 @@
 export { BottomPanel } from "./bottom-panel";
 export { Button } from "./button";
+export { ChoicePanel } from "./choice-panel";
 export { IconButton } from "./icon-button";
 export { InputPanel } from "./input-panel";
 export * from "./icon";

@@ -113,6 +113,30 @@ import { BottomPanel } from "@/shared/ui";
 | `ctaDisabled` |  | CTA 비활성 여부 |
 | `onCtaClick` |  | CTA 클릭 핸들러 |
 
+## ChoicePanel
+
+화면 하단에 블러 배경으로 깔리는 선택지 패널입니다. 제목 + 전체 폭 선택지 행으로
+구성되고, 선택된 행은 보라색(`rgba(107,76,168,0.32)`)으로 강조되며 패널 하단은
+배경색으로 잦아듭니다. CTA 버튼이 없으므로 다음 단계 진행은 `onSelect`에서
+사용처가 처리합니다. 부모가 `position` 기준이 되어야 합니다.
+
+```tsx
+import { ChoicePanel } from "@/shared/ui";
+
+<ChoicePanel
+  title="성별을 알려달라냥."
+  options={["여성", "남성"]}
+  value={gender}
+  onSelect={setGender}
+/>
+```
+
+| Prop | 필수 | 설명 |
+| --- | --- | --- |
+| `title` | ✅ | 패널 상단 안내 문구 |
+| `options` | ✅ | 선택지 텍스트 목록. 표시 텍스트가 곧 값 |
+| `value` / `onSelect` | ✅ | 제어 선택값 (`null`이면 미선택) |
+
 ## InputPanel
 
 `BottomPanel` 위에 만든 한 줄 입력 폼입니다. 제목 + 픽셀 코너 입력창 + 힌트로

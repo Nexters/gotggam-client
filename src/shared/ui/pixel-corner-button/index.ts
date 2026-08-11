@@ -1,4 +1,1 @@
-export {
-  getPixelCornerClipPath,
-  PixelCornerButton,
-} from "./pixel-corner-button";
+export { PixelCornerButton } from "./pixel-corner-button";

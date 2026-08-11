@@ -11,6 +11,9 @@ importers:
       '@lottiefiles/dotlottie-react':
         specifier: ^0.19.13
         version: 0.19.13(react@19.2.4)
+      '@ncdai/react-wheel-picker':
+        specifier: ^1.2.2
+        version: 1.2.2(react@19.2.4)
       '@suspensive/react':
         specifier: ^3.21.3
         version: 3.21.3(react@19.2.4)
@@ -1167,6 +1170,11 @@ packages:
     peerDependencies:
       '@emnapi/core': ^1.7.1
       '@emnapi/runtime': ^1.7.1
+
+  '@ncdai/react-wheel-picker@1.2.2':
+    resolution: {integrity: sha512-5BUA3ZsF6vCSSmshJml0ScjoDkzMTLc8cs7HtFHazERbhxdMEbBJKD01kLZNtnTgZ9DNL/e/+8WZnwBzOrIO4A==}
+    peerDependencies:
+      react: ^16.8 || ^17.0 || ^18.0 || ^19.0.0 || ^19.0.0-rc
 
   '@next/env@16.2.11':
     resolution: {integrity: sha512-0do5A3BJ2gxWr0ZCMcD6BhW+e595jyxdTl3rXTS6lOtD8ektMiW6CO+EPwt1Eca1DBnm90r/7GdiKWBKxH++DA==}
@@ -5150,6 +5158,10 @@ snapshots:
       '@emnapi/runtime': 1.11.1
       '@tybys/wasm-util': 0.10.3
     optional: true
+
+  '@ncdai/react-wheel-picker@1.2.2(react@19.2.4)':
+    dependencies:
+      react: 19.2.4
 
   '@next/env@16.2.11': {}
 

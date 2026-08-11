@@ -1,25 +1,16 @@
 "use client";
 
+import { useSuspenseQuery } from "@tanstack/react-query";
+
 import { Button } from "@/shared/ui";
 
-import { useHealthQuery } from "../api/use-health-query";
-import * as styles from "./home-page.css";
+import { healthQueries } from "../api/health-queries";
+import * as styles from "./health-section.css";
 
 export function HealthStatus() {
-  const { data, isPending, isError, isFetching, refetch } = useHealthQuery();
-
-  if (isPending) {
-    return <div className={styles.status}>서버 상태 확인 중...</div>;
-  }
-
-  if (isError) {
-    return (
-      <div className={styles.status}>
-        서버 상태를 불러오지 못했어요.
-        <Button onClick={() => refetch()}>다시 시도</Button>
-      </div>
-    );
-  }
+  const { data, isFetching, refetch } = useSuspenseQuery(
+    healthQueries.status(),
+  );
 
   return (
     <div className={styles.status}>

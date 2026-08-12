@@ -2,6 +2,8 @@ import { keyframes, style } from "@vanilla-extract/css";
 
 import { vars } from "@/shared/styles/theme.css";
 
+import { CHOICE_PANEL_BLINK_DURATION_MS } from "./constants";
+
 const SELECTED_BACKGROUND = "rgba(107, 76, 168, 0.32)";
 
 // 답변을 고르는 순간 선택색↔투명을 두 번 깜빡이고 선택색으로 정착한다.
@@ -46,6 +48,6 @@ export const option = style({
 export const optionSelected = style({
   backgroundColor: SELECTED_BACKGROUND,
   animationName: selectBlink,
-  animationDuration: "240ms",
+  animationDuration: `${CHOICE_PANEL_BLINK_DURATION_MS}ms`,
   animationTimingFunction: "steps(1, end)",
 });

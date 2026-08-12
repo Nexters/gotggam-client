@@ -2,12 +2,19 @@ import { globalStyle } from "@vanilla-extract/css";
 
 import "./font-face.css";
 
+import { reset } from "./layers.css";
 import { semantic, vars } from "./theme.css";
 
+// 전역 리셋은 reset 레이어에 둔다. 레이어 없는 규칙은 레이어 규칙을 항상
+// 이기므로, 리셋을 레이어 밖에 두면 ui-base/ui-variant의 컴포넌트 스킨을 덮어버린다.
 globalStyle("*, *::before, *::after", {
-  boxSizing: "border-box",
-  margin: 0,
-  padding: 0,
+  "@layer": {
+    [reset]: {
+      boxSizing: "border-box",
+      margin: 0,
+      padding: 0,
+    },
+  },
 });
 
 globalStyle("html, body", {
@@ -28,10 +35,18 @@ globalStyle("body", {
 });
 
 globalStyle("a", {
-  color: "inherit",
-  textDecoration: "none",
+  "@layer": {
+    [reset]: {
+      color: "inherit",
+      textDecoration: "none",
+    },
+  },
 });
 
 globalStyle("button", {
-  font: "inherit",
+  "@layer": {
+    [reset]: {
+      font: "inherit",
+    },
+  },
 });

@@ -1,24 +1,30 @@
 import { style, styleVariants } from "@vanilla-extract/css";
 
+import { uiBase } from "./layers.css";
 import { vars } from "./theme.css";
 
 // Figma [디자인 작업장 > Typography] 문서 기준. 모든 스타일이 line-height 150%,
 // letter-spacing 0px를 공유하므로 base에 고정하고, family/size/weight만 조합한다.
+// ui-base 레이어에 둬서 사용처(레이어 없는 클래스)가 개별 속성을 항상 덮어쓸 수 있다.
 export const base = style({
-  lineHeight: vars.lineHeight.normal,
-  letterSpacing: vars.letterSpacing.normal,
+  "@layer": {
+    [uiBase]: {
+      lineHeight: vars.lineHeight.normal,
+      letterSpacing: vars.letterSpacing.normal,
+    },
+  },
 });
 
 export const family = styleVariants(vars.font, (fontFamily) => ({
-  fontFamily,
+  "@layer": { [uiBase]: { fontFamily } },
 }));
 
 export const size = styleVariants(vars.fontSize, (fontSize) => ({
-  fontSize,
+  "@layer": { [uiBase]: { fontSize } },
 }));
 
 export const weight = styleVariants(vars.fontWeight, (fontWeight) => ({
-  fontWeight,
+  "@layer": { [uiBase]: { fontWeight } },
 }));
 
 // vars.color의 12단계 스케일(accent1-5, gray)과 단일 토큰(white/black/background 등)을
@@ -105,5 +111,5 @@ const colorTokens = {
 } as const;
 
 export const color = styleVariants(colorTokens, (value) => ({
-  color: value,
+  "@layer": { [uiBase]: { color: value } },
 }));

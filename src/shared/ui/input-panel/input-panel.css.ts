@@ -17,7 +17,7 @@ export const input = style({
   outline: "none",
   backgroundColor: vars.color.gray["3"],
   clipPath: `polygon(${getPixelCornerClipPath(4)})`,
-  fontFamily: vars.font.galmuri11,
+  fontFamily: vars.font.galmuri9,
   fontSize: vars.fontSize["16"],
   color: vars.color.white,
   "::placeholder": {
@@ -27,4 +27,8 @@ export const input = style({
 
 export const hint = style({
   color: "rgba(231, 227, 255, 0.5)",
+});
+
+export const hintAccent = style({
+  color: vars.color.accent1["9"],
 });

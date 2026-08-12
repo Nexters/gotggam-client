@@ -22,7 +22,7 @@ export function ChoicePanel({
     <div className={styles.panel}>
       <Typography
         as="p"
-        family="galmuri11"
+        family="galmuri9"
         size="22"
         color="white"
         className={styles.title}
@@ -41,7 +41,7 @@ export function ChoicePanel({
             )}
             onClick={() => onSelect(option)}
           >
-            <Typography family="galmuri11" size="24" color="gray-12">
+            <Typography family="galmuri9" size="24" color="gray-12">
               {"> "}
               {option}
             </Typography>

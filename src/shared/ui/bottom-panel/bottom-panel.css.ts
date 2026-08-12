@@ -18,13 +18,8 @@ export const ctaButton = style({
   width: "100%",
   height: 52,
   color: vars.color.white,
+  background: `linear-gradient(to right, ${vars.color.accent2["9"]}, ${vars.color.accent3["9"]})`,
   selectors: {
-    // 이 파일은 pixel-corner-button.css보다 먼저 방출되므로, 같은 특이도로 두면
-    // PixelCornerButton 리셋(background: none)에 배경이 밀린다. :not(:disabled)로
-    // 특이도를 올려 방출 순서와 무관하게 만든다.
-    "&:not(:disabled)": {
-      background: `linear-gradient(to right, ${vars.color.accent2["9"]}, ${vars.color.accent3["9"]})`,
-    },
     "&:disabled": {
       opacity: 1,
       background: vars.color.gray["8"],

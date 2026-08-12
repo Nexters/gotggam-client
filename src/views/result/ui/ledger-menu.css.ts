@@ -1,0 +1,53 @@
+import { keyframes, style } from "@vanilla-extract/css";
+
+import { vars } from "@/shared/styles/theme.css";
+
+const SELECTED_BACKGROUND = "rgba(107, 76, 168, 0.32)";
+
+// 선택 순간 선택색↔투명을 깜빡이고 정착한다 (choice-panel과 같은 픽셀 게임 연출).
+const selectBlink = keyframes({
+  "0%": { backgroundColor: SELECTED_BACKGROUND },
+  "25%": { backgroundColor: "transparent" },
+  "50%": { backgroundColor: SELECTED_BACKGROUND },
+  "75%": { backgroundColor: "transparent" },
+  "100%": { backgroundColor: SELECTED_BACKGROUND },
+});
+
+export const panel = style({
+  position: "absolute",
+  insetInline: 0,
+  bottom: 0,
+  paddingTop: vars.spacing["48"],
+  paddingBottom: vars.spacing["36"],
+  backgroundColor: "rgba(18, 18, 18, 0.8)",
+  backdropFilter: "blur(6px)",
+});
+
+export const item = style({
+  display: "flex",
+  alignItems: "center",
+  width: "100%",
+  height: 52,
+  padding: `0 ${vars.spacing["24"]}`,
+  border: "none",
+  backgroundColor: "transparent",
+  textAlign: "left",
+  cursor: "pointer",
+});
+
+export const itemSelected = style({
+  backgroundColor: SELECTED_BACKGROUND,
+  animationName: selectBlink,
+  animationDuration: "240ms",
+  animationTimingFunction: "steps(1, end)",
+});
+
+export const bottomFade = style({
+  position: "absolute",
+  insetInline: 0,
+  bottom: 0,
+  height: 79,
+  background:
+    "linear-gradient(to bottom, rgba(18, 18, 18, 0) 0%, rgba(18, 18, 18, 0.85) 22%, #121212 100%)",
+  pointerEvents: "none",
+});

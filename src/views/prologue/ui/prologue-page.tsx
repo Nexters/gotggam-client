@@ -42,8 +42,9 @@ export function ProloguePage() {
     setIsPanelOpen(false);
     if (sceneIndex < SCENES.length - 1) {
       setSceneIndex((prev) => prev + 1);
+      return;
     }
-    // TODO: 마지막 대사 이후 /form/question 으로 이동
+    router.push("/form/question");
   };
 
   const handleAdvance = () => {

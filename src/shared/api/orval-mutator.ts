@@ -1,7 +1,7 @@
 import type { Options } from "ky";
 
 import { ApiError } from "./error";
-import { httpClient } from "./http-client";
+import { API_PREFIX, httpClient } from "./http-client";
 
 const BODYLESS_STATUS = new Set([204, 205, 304]);
 
@@ -13,7 +13,9 @@ export async function orvalMutator<T>(
   url: string,
   init: RequestInit,
 ): Promise<T> {
-  const response = await httpClient(url, init as Options);
+  // 스펙 경로에 이미 /api/v1 이 있어 httpClient 의 prefix 와 중복되므로 벗긴다.
+  const path = url.startsWith(API_PREFIX) ? url.slice(API_PREFIX.length) : url;
+  const response = await httpClient(path, init as Options);
 
   if (BODYLESS_STATUS.has(response.status)) {
     return undefined as T;

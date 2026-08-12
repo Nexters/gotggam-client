@@ -5,7 +5,7 @@ import { env } from "@/shared/config/env";
 import { ApiError } from "./error";
 
 const TIMEOUT = 10_000;
-const API_PREFIX = "/api/v1";
+export const API_PREFIX = "/api/v1";
 
 function parseJson(text: string): unknown {
   try {

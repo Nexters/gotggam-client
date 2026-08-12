@@ -1,91 +1,82 @@
 "use client";
 
-import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
-import { useTypewriter } from "@/shared/lib";
-import {
-  IconButton,
-  IconButtonBack,
-  IconButtonHome,
-  IconButtonNext,
-  Lottie,
-  Typography,
-} from "@/shared/ui";
+import { BACKGROUND_IMAGE_URLS } from "@/shared/config";
 
+import { SCENES } from "../model/constants";
+import { AppBar } from "./app-bar";
+import { BirthDatePanel } from "./birth-date-panel";
+import { Character } from "./character";
+import { GenderPanel } from "./gender-panel";
+import { NamePanel } from "./name-panel";
+import { NarrationBox } from "./narration-box";
 import * as styles from "./prologue-page.css";
-
-const DIALOGUES = [
-  "나는 저승사자 곧감이다냥!",
-  "오늘도 영혼 회수 실적을 채우러 왔다냥.",
-  "그런데 실수로 잉크를 엎질러서 누가 누군지 모르겠다냥.",
-  "그러니까 잠깐만 협조해라냥. 우선 이름부터 확인하겠다냥.",
-  "너를 뭐라고 부르면 되냥?",
-];
+import { SceneBackground } from "./scene-background";
 
 export function ProloguePage() {
   const router = useRouter();
-  const [dialogueIndex, setDialogueIndex] = useState(0);
-  const { words, skip, isDone } = useTypewriter(DIALOGUES[dialogueIndex]);
+  const [sceneIndex, setSceneIndex] = useState(0);
+  const [isPanelOpen, setIsPanelOpen] = useState(false);
 
-  const advanceDialogue = () => {
-    if (!isDone) {
-      skip();
+  const scene = SCENES[sceneIndex];
+
+  // 진행의 역순으로 되감는다: 패널 → 그 장면의 대사, 대사 → 이전 장면
+  // (이전 장면이 입력 장면이었다면 패널부터). 첫 장면에서는 페이지를 벗어난다.
+  const goToPreviousScene = () => {
+    if (isPanelOpen) {
+      setIsPanelOpen(false);
       return;
     }
-    if (dialogueIndex < DIALOGUES.length - 1) {
-      setDialogueIndex((prev) => prev + 1);
+    if (sceneIndex === 0) {
+      router.back();
+      return;
     }
+    const previousIndex = sceneIndex - 1;
+    setSceneIndex(previousIndex);
+    setIsPanelOpen(Boolean(SCENES[previousIndex].input));
+  };
+
+  const goToNextScene = () => {
+    setIsPanelOpen(false);
+    if (sceneIndex < SCENES.length - 1) {
+      setSceneIndex((prev) => prev + 1);
+    }
+    // TODO: 마지막 대사 이후 /form/question 으로 이동
+  };
+
+  const handleAdvance = () => {
+    if (scene.input) {
+      setIsPanelOpen(true);
+      return;
+    }
+    goToNextScene();
   };
 
   return (
     <div className={styles.page}>
-      <div className={styles.backgroundLayer}>
-        <Image
-          src="/images/landing/background.png"
-          alt=""
-          fill
-          priority
-          sizes="(min-width: 480px) 480px, 100vw"
-          className={styles.backgroundImage}
-        />
-        <div className={styles.backgroundOverlay} />
-      </div>
-
-      <div className={styles.appBar}>
-        <IconButton aria-label="뒤로 가기" onClick={() => router.back()}>
-          <IconButtonBack />
-        </IconButton>
-        <IconButton aria-label="홈으로 가기" onClick={() => router.push("/")}>
-          <IconButtonHome />
-        </IconButton>
-      </div>
+      <SceneBackground src={BACKGROUND_IMAGE_URLS.landing} />
+      <AppBar onBack={goToPreviousScene} />
 
       <div className={styles.content}>
-        <Lottie
-          autoplay
-          loop
-          src="/lottie/question_normal.lottie"
-          className={styles.character}
-        />
+        <Character />
 
-        {/* 버튼 클릭도 여기로 버블링되므로 핸들러는 이 컨테이너 한 곳에만 둔다. */}
-        <div className={styles.narration} onClick={advanceDialogue}>
-          <div className={styles.bubble}>
-            <Typography as="p" family="galmuri11" size="22" color="gray-1">
-              {words}
-            </Typography>
-          </div>
-          <div className={styles.nameTag}>
-            <Typography family="galmuri11" size="18" color="accent2-9">
-              곧감이
-            </Typography>
-          </div>
-          <IconButton aria-label="다음" className={styles.nextButton}>
-            <IconButtonNext />
-          </IconButton>
-        </div>
+        {!isPanelOpen && (
+          <NarrationBox text={scene.text} onAdvance={handleAdvance} />
+        )}
+
+        {isPanelOpen && scene.input === "name" && (
+          <NamePanel onSubmit={goToNextScene} />
+        )}
+
+        {isPanelOpen && scene.input === "birth" && (
+          <BirthDatePanel onSubmit={goToNextScene} />
+        )}
+
+        {isPanelOpen && scene.input === "gender" && (
+          <GenderPanel onSubmit={goToNextScene} />
+        )}
       </div>
     </div>
   );

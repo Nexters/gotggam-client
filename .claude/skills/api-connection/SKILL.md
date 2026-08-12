@@ -336,7 +336,7 @@ pnpm generate:api        # 1회 생성
 pnpm generate:api:watch  # 워치 모드
 ```
 
-- 스펙 주소: `.env.local` 의 `API_SPEC_URL`, 없으면 `${NEXT_PUBLIC_API_BASE_URL}/api-docs`
+- 스펙 주소: `.env.local` 의 `API_SPEC_URL`, 없으면 `${NEXT_PUBLIC_API_BASE_URL}/v3/api-docs`
 - 산출물: `src/shared/api/generated/` — **직접 수정하지 않는다.** eslint 대상에서 제외돼 있다.
 - 생성된 함수는 `orval-mutator.ts` 를 거쳐 ky 를 타므로 타임아웃·`ApiError` 정규화가
   그대로 적용된다.

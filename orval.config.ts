@@ -7,7 +7,7 @@ loadEnvConfig(process.cwd());
 const specUrl =
   process.env.API_SPEC_URL ??
   (process.env.NEXT_PUBLIC_API_BASE_URL
-    ? `${process.env.NEXT_PUBLIC_API_BASE_URL}/api-docs`
+    ? `${process.env.NEXT_PUBLIC_API_BASE_URL}/v3/api-docs`
     : undefined);
 
 if (!specUrl) {

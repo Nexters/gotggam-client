@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 
 import { cn } from "@/shared/lib";
@@ -12,6 +13,7 @@ import * as styles from "./home-page.css";
 import { StartButton } from "./start-button";
 
 export function HomePage() {
+  const router = useRouter();
   // 마운트가 아니라 lottie 로드 완료를 기준으로 연다. 마운트 시점엔 캔버스가
   // 아직 비어 있어서, 로고·버튼만 먼저 뜨고 캐릭터가 뒤늦게 튀어나온다.
   const [isReady, setIsReady] = useState(false);
@@ -61,7 +63,10 @@ export function HomePage() {
       </div>
 
       <div className={cn(styles.footer, revealClassName)}>
-        <StartButton participantCount={19089} />
+        <StartButton
+          participantCount={19089}
+          onClick={() => router.push("/form/prologue")}
+        />
       </div>
     </div>
   );

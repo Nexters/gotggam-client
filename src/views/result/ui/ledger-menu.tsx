@@ -15,6 +15,8 @@ const MENU_ITEMS: { action: LedgerMenuAction; label: string }[] = [
   { action: "finish", label: "끝내기" },
 ];
 
+const HIGHLIGHT_RESET_MS = 600;
+
 type LedgerMenuProps = {
   onSelect: (action: LedgerMenuAction) => void;
 };
@@ -24,8 +26,26 @@ export function LedgerMenu({ onSelect }: LedgerMenuProps) {
     null,
   );
 
+  const handleSelect = (action: LedgerMenuAction) => {
+    // 끝내기를 고른 뒤에는 화면 전환 대기 중이므로 추가 입력을 막는다.
+    if (selectedAction === "finish") {
+      return;
+    }
+
+    setSelectedAction(action);
+    onSelect(action);
+
+    if (action !== "finish") {
+      // 이동하지 않는 항목은 깜빡임 연출 후 하이라이트를 되돌린다.
+      window.setTimeout(() => {
+        setSelectedAction((current) => (current === action ? null : current));
+      }, HIGHLIGHT_RESET_MS);
+    }
+  };
+
   return (
     <div className={styles.panel}>
+      <div className={styles.bottomFade} aria-hidden />
       {MENU_ITEMS.map(({ action, label }) => (
         <button
           key={action}
@@ -35,10 +55,7 @@ export function LedgerMenu({ onSelect }: LedgerMenuProps) {
             styles.item,
             action === selectedAction && styles.itemSelected,
           )}
-          onClick={() => {
-            setSelectedAction(action);
-            onSelect(action);
-          }}
+          onClick={() => handleSelect(action)}
         >
           <Typography family="galmuri11" size="22" color="gray-12">
             {"> "}
@@ -46,7 +63,6 @@ export function LedgerMenu({ onSelect }: LedgerMenuProps) {
           </Typography>
         </button>
       ))}
-      <div className={styles.bottomFade} aria-hidden />
     </div>
   );
 }

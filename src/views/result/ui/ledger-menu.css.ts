@@ -24,6 +24,7 @@ export const panel = style({
 });
 
 export const item = style({
+  position: "relative",
   display: "flex",
   alignItems: "center",
   width: "100%",
@@ -42,6 +43,7 @@ export const itemSelected = style({
   animationTimingFunction: "steps(1, end)",
 });
 
+// Figma 레이어 순서상 페이드는 메뉴 텍스트 아래(배경 쪽)에 깔린다.
 export const bottomFade = style({
   position: "absolute",
   insetInline: 0,

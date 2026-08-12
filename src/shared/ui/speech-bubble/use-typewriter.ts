@@ -17,13 +17,18 @@ export function useTypewriter(text: string) {
   }
 
   useEffect(() => {
+    // 모션 최소화 환경에서는 한 틱에 전부 드러낸다.
+    const step = window.matchMedia("(prefers-reduced-motion: reduce)").matches
+      ? text.length
+      : 1;
+
     const intervalId = window.setInterval(() => {
       setVisibleLength((length) => {
         if (length >= text.length) {
           window.clearInterval(intervalId);
           return length;
         }
-        return length + 1;
+        return Math.min(length + step, text.length);
       });
     }, TYPING_INTERVAL_MS);
 

@@ -8,18 +8,20 @@ export const scene = style({
   flexDirection: "column",
 });
 
+// 디자인상 캐릭터는 말풍선 바로 위에 붙는다 (스포트라이트 하단부).
 export const characterArea = style({
   display: "flex",
   flex: 1,
-  alignItems: "center",
+  alignItems: "flex-end",
   justifyContent: "center",
   overflow: "hidden",
 });
 
 export const character = style({
-  width: "100%",
-  maxWidth: 420,
+  width: "92%",
+  maxWidth: 400,
   aspectRatio: "1 / 1",
+  marginBottom: -12,
   opacity: 0,
   transition: "opacity 400ms ease-out",
   "@media": {
@@ -34,5 +36,7 @@ export const characterVisible = style({
 });
 
 export const bubbleArea = style({
-  padding: "0 16px 24px",
+  position: "relative",
+  zIndex: 1,
+  padding: "0 16px 32px",
 });

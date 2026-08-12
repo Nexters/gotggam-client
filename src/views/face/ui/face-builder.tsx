@@ -46,13 +46,18 @@ export function FaceBuilder({
           unoptimized
           className={styles.previewPanelBg}
         />
-        <CharacterFace selection={selection} className={styles.previewFace} />
+        <CharacterFace
+          selection={selection}
+          withBody={false}
+          className={styles.previewFace}
+        />
       </div>
       <div className={styles.controls}>
         {FACE_PART_CATEGORIES.map((category) => (
           <div key={category} className={styles.controlRow}>
             <IconButton
               aria-label={`이전 ${FACE_PART_LABELS[category]}`}
+              className={styles.arrowButton}
               onClick={() => shiftPart(category, -1)}
             >
               <Typography family="galmuri11" size="22" color="gray-12">
@@ -64,6 +69,7 @@ export function FaceBuilder({
             </Typography>
             <IconButton
               aria-label={`다음 ${FACE_PART_LABELS[category]}`}
+              className={styles.arrowButton}
               onClick={() => shiftPart(category, 1)}
             >
               <Typography family="galmuri11" size="22" color="gray-12">

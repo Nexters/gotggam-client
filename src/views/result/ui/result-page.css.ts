@@ -10,9 +10,22 @@ export const page = style({
   overflow: "hidden",
 });
 
+const fadeIn = keyframes({
+  from: { opacity: 0 },
+  to: { opacity: 1 },
+});
+
 export const endingBackground = style({
   position: "absolute",
   inset: 0,
+  animationName: fadeIn,
+  animationDuration: "600ms",
+  animationTimingFunction: "ease-out",
+  "@media": {
+    "(prefers-reduced-motion: reduce)": {
+      animationName: "none",
+    },
+  },
 });
 
 export const endingBackgroundImage = style({

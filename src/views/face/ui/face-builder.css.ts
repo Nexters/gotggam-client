@@ -29,17 +29,28 @@ export const previewFace = style({
   width: "59.2%",
 });
 
+// 패널·스테퍼·CTA 사이 남는 공간을 위아래로 나눠, 스테퍼가 디자인처럼 화면 중단에 온다.
 export const controls = style({
   display: "flex",
   flexDirection: "column",
   gap: vars.spacing["12"],
-  marginTop: vars.spacing["36"],
+  marginTop: "auto",
+  paddingTop: vars.spacing["24"],
 });
 
 export const controlRow = style({
   display: "flex",
   alignItems: "center",
   justifyContent: "space-between",
+  height: 35,
+});
+
+// 24px 아이콘보다 넓은 터치 영역을 확보한다.
+export const arrowButton = style({
+  display: "inline-flex",
+  alignItems: "center",
+  justifyContent: "center",
+  width: 44,
   height: 35,
 });
 

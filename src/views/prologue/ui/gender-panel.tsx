@@ -3,9 +3,9 @@
 import { useFormContext } from "react-hook-form";
 
 import type { FormValues } from "@/features/form";
-import { ChoicePanel } from "@/shared/ui";
+import { CHOICE_PANEL_ADVANCE_DELAY_MS, ChoicePanel } from "@/shared/ui";
 
-import { GENDER_ADVANCE_DELAY_MS, GENDER_OPTIONS } from "../model/constants";
+import { GENDER_OPTIONS } from "../model/constants";
 
 type GenderPanelProps = {
   onSubmit: () => void;
@@ -17,7 +17,7 @@ export function GenderPanel({ onSubmit }: GenderPanelProps) {
 
   const handleSelect = (value: string) => {
     setValue("gender", value);
-    setTimeout(onSubmit, GENDER_ADVANCE_DELAY_MS);
+    setTimeout(onSubmit, CHOICE_PANEL_ADVANCE_DELAY_MS);
   };
 
   return (

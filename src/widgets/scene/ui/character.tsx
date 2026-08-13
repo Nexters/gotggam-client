@@ -3,16 +3,16 @@
 import { Lottie } from "@/shared/ui";
 
 type CharacterProps = {
-  /** 배치·크기는 화면마다 달라 사용처가 정한다. */
   className: string;
+  src?: string | null;
 };
 
-export function Character({ className }: CharacterProps) {
+export function Character({ className, src }: CharacterProps) {
   return (
     <Lottie
       autoplay
       loop
-      src="/lottie/question_normal.lottie"
+      src={src ?? "/lottie/question_normal.lottie"}
       className={className}
     />
   );

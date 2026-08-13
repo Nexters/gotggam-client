@@ -17,6 +17,12 @@ import { ReviewPanel } from "./review-panel";
 
 type ClosingStep = "ask" | "input" | "outro";
 
+const CLOSING_BACK_STEP: Record<ClosingStep, ClosingStep | null> = {
+  ask: null,
+  input: "ask",
+  outro: "input",
+};
+
 export function QuestionPage() {
   const router = useRouter();
   const [closingStep, setClosingStep] = useState<ClosingStep | null>(null);
@@ -39,9 +45,7 @@ export function QuestionPage() {
   const isClosing = closingStep !== null;
 
   const goBackFromClosing = () => {
-    if (closingStep === "ask") setClosingStep(null);
-    if (closingStep === "input") setClosingStep("ask");
-    if (closingStep === "outro") setClosingStep("input");
+    if (closingStep) setClosingStep(CLOSING_BACK_STEP[closingStep]);
   };
 
   return (
@@ -64,7 +68,7 @@ export function QuestionPage() {
         <div className={styles.characterArea}>
           <Character
             className={styles.character}
-            src={isClosing ? undefined : (feedbackCharacterSrc ?? undefined)}
+            src={isClosing ? null : feedbackCharacterSrc}
           />
         </div>
 

@@ -1,10 +1,10 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 import { CHOICE_PANEL_ADVANCE_DELAY_MS } from "@/shared/ui";
 
-import { FEEDBACK_CHARACTER_LOTTIE_URLS } from "../model/feedback-lotties";
+import { pickFeedbackLottie } from "../model/feedback-lotties";
 import type { Question } from "../model/questions";
 
 type Phase = "question" | "feedback";
@@ -24,36 +24,38 @@ export function useQuestionFlow(
   const [feedbackCharacterSrc, setFeedbackCharacterSrc] = useState<
     string | null
   >(null);
+  const advanceTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const question = questions[questionIndex];
   const feedback =
     question.answers.find((answer) => answer.label === selectedAnswer)
       ?.feedback ?? "";
 
+  const clearAdvanceTimer = () => {
+    if (advanceTimerRef.current !== null) {
+      clearTimeout(advanceTimerRef.current);
+      advanceTimerRef.current = null;
+    }
+  };
+
+  useEffect(() => clearAdvanceTimer, []);
+
   const selectAnswer = (label: string) => {
     setSelectedAnswer(label);
 
-    const answerIndex = question.answers.findIndex(
-      (item) => item.label === label,
-    );
-    const lotties =
-      FEEDBACK_CHARACTER_LOTTIE_URLS[
-        answerIndex === 0 ? "positive" : "negative"
-      ];
-    const characterSrc =
-      lotties[Math.floor(Math.random() * lotties.length)] ?? null;
+    const answer = question.answers.find((item) => item.label === label);
+    const characterSrc = answer ? pickFeedbackLottie(answer.tone) : null;
 
-    if (characterSrc) {
-      fetch(characterSrc).catch(() => {});
-    }
-
-    setTimeout(() => {
+    clearAdvanceTimer();
+    advanceTimerRef.current = setTimeout(() => {
+      advanceTimerRef.current = null;
       setPhase("feedback");
       setFeedbackCharacterSrc(characterSrc);
     }, CHOICE_PANEL_ADVANCE_DELAY_MS);
   };
 
   const showQuestion = () => {
+    clearAdvanceTimer();
     setPhase("question");
     setSelectedAnswer(null);
     setFeedbackCharacterSrc(null);
@@ -73,6 +75,7 @@ export function useQuestionFlow(
       showQuestion();
       return;
     }
+    clearAdvanceTimer();
     if (questionIndex === 0) {
       onExit();
       return;

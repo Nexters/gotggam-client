@@ -24,7 +24,6 @@ export const skipButton = style({
   textDecorationColor: vars.color.gray["11"],
 });
 
-
 export const hint = style({
   color: "rgba(231, 227, 255, 0.5)",
 });

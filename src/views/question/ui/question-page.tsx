@@ -1,9 +1,106 @@
 "use client";
 
-import { QuestionSection } from "./question-section";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
 
-// TODO: 질문 리스트 GET 스펙이 나오면 useSuspenseQuery + Suspensive 바운더리를
-// 연결하고, fallback으로 LoadingScreen("질문 작성중...")을 최소 1.5초 보여준다.
+import { ChoicePanel } from "@/shared/ui";
+import { AppBar } from "@/widgets/app-bar";
+import { Character, NarrationBox, SceneBackground } from "@/widgets/scene";
+
+import { useQuestionFlow } from "../lib/use-question-flow";
+import { ACT_BACKGROUND_URLS } from "../model/act-backgrounds";
+import { CLOSING_ASK, CLOSING_OUTRO } from "../model/closing";
+import { QUESTIONS } from "../model/questions";
+import * as styles from "./question-page.css";
+import { QuestionPrompt } from "./question-prompt";
+import { ReviewPanel } from "./review-panel";
+
+type ClosingStep = "ask" | "input" | "outro";
+
 export function QuestionPage() {
-  return <QuestionSection />;
+  const router = useRouter();
+  const [closingStep, setClosingStep] = useState<ClosingStep | null>(null);
+
+  const {
+    question,
+    questionNumber,
+    phase,
+    selectedAnswer,
+    feedback,
+    feedbackCharacterSrc,
+    selectAnswer,
+    advanceFeedback,
+    goBack,
+  } = useQuestionFlow(QUESTIONS, {
+    onComplete: () => setClosingStep("ask"),
+    onExit: () => router.back(),
+  });
+
+  const isClosing = closingStep !== null;
+
+  const goBackFromClosing = () => {
+    if (closingStep === "ask") setClosingStep(null);
+    if (closingStep === "input") setClosingStep("ask");
+    if (closingStep === "outro") setClosingStep("input");
+  };
+
+  return (
+    <div className={styles.page}>
+      <SceneBackground src={ACT_BACKGROUND_URLS[question.act]} dimmed />
+      <AppBar
+        onBack={isClosing ? goBackFromClosing : goBack}
+        showHome={false}
+      />
+
+      <div className={styles.content}>
+        {!isClosing && (
+          <QuestionPrompt
+            current={questionNumber}
+            total={QUESTIONS.length}
+            question={question.question}
+          />
+        )}
+
+        <div className={styles.characterArea}>
+          <Character
+            className={styles.character}
+            src={isClosing ? undefined : (feedbackCharacterSrc ?? undefined)}
+          />
+        </div>
+
+        {isClosing ? (
+          <>
+            {closingStep === "ask" && (
+              <NarrationBox
+                text={CLOSING_ASK}
+                onAdvance={() => setClosingStep("input")}
+              />
+            )}
+            {closingStep === "input" && (
+              <ReviewPanel
+                onSubmit={() => setClosingStep("outro")}
+                onSkip={() => setClosingStep("outro")}
+              />
+            )}
+            {closingStep === "outro" && (
+              <NarrationBox
+                text={CLOSING_OUTRO}
+                // TODO: 답변 제출 API 연동 후 다음 페이지로 이동
+                onAdvance={() => {}}
+              />
+            )}
+          </>
+        ) : phase === "question" ? (
+          <ChoicePanel
+            variant="spaced"
+            options={question.answers.map((answer) => answer.label)}
+            value={selectedAnswer}
+            onSelect={selectAnswer}
+          />
+        ) : (
+          <NarrationBox text={feedback} onAdvance={advanceFeedback} />
+        )}
+      </div>
+    </div>
+  );
 }

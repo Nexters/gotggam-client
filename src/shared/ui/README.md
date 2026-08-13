@@ -179,6 +179,7 @@ import { InputPanel } from "@/shared/ui";
 | `hintTone` |  | `muted`(기본, 흐린 안내) 또는 `accent`(긍정 피드백, accent1-9) |
 | `ctaDisabled` |  | CTA 비활성 조건. 생략하면 값이 비어 있을 때 비활성화 |
 | `onCtaClick` |  | CTA 클릭 핸들러 |
+| `skipLabel` / `onSkip` |  | 둘 다 넘기면 제목 우측에 건너뛰기 텍스트 버튼이 렌더 |
 
 ## WheelPicker / WheelPickerGroup
 

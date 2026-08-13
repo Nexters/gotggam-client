@@ -7,10 +7,12 @@ export type FormValues = {
   /** YYYY-MM-DD */
   birthDate: string;
   gender: string;
+  review: string;
 };
 
 export const FORM_DEFAULT_VALUES: FormValues = {
   name: "",
   birthDate: "",
   gender: "",
+  review: "",
 };

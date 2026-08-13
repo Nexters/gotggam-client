@@ -7,13 +7,19 @@ import { useFormContext } from "react-hook-form";
 
 import type { FaceSelection } from "@/entities/character";
 import type { FormValues } from "@/features/form";
-import { AppBar, SpeechBubble } from "@/shared/ui";
+import { AppBar, SpeechBubble, Typography } from "@/shared/ui";
 import { GotggamDialogue, SpotlightBackdrop } from "@/widgets/gotggam-dialogue";
 
-import { buildLedgerResult, type LedgerResult } from "../model/ledger";
+import {
+  buildLedgerResult,
+  pickRandomLedgerVariant,
+  type LedgerResult,
+  type LedgerVariant,
+} from "../model/ledger";
 import { LedgerCard } from "./ledger-card";
 import { LedgerMenu, type LedgerMenuAction } from "./ledger-menu";
 import * as styles from "./result-page.css";
+import { useCardFlip } from "./use-card-flip";
 
 const INTRO_LINES = ["흠 아직은 데려갈 때가 아닌 것 같다냥.."];
 
@@ -35,6 +41,9 @@ export function ResultPage() {
   // TODO: 제출 API 응답으로 교체한다 (views/result/model/ledger.ts 참고).
   const [ledger] = useState<LedgerResult>(() => buildLedgerResult(getValues()));
   const [face] = useState<FaceSelection>(() => getValues("face"));
+  const [variant] = useState<LedgerVariant>(() => pickRandomLedgerVariant());
+
+  const cardFlip = useCardFlip();
 
   const advanceCardLine = () => {
     if (cardLineIndex >= CARD_LINES.length - 1) {
@@ -76,7 +85,27 @@ export function ResultPage() {
       )}
       {(step === "card" || step === "menu") && (
         <div className={styles.cardStage}>
-          <LedgerCard result={ledger} face={face} className={styles.card} />
+          <LedgerCard
+            result={ledger}
+            face={face}
+            variant={variant}
+            rotation={cardFlip.rotation}
+            isDragging={cardFlip.isDragging}
+            interactive={step === "menu"}
+            handlers={cardFlip.handlers}
+            className={styles.card}
+          />
+          {step === "menu" && (
+            <button
+              type="button"
+              className={styles.flipHint}
+              onClick={cardFlip.flip}
+            >
+              <Typography family="galmuri11" size="14" color="gray-11">
+                {"< 카드를 돌려서 뒷면을 확인하라냥 >"}
+              </Typography>
+            </button>
+          )}
           {step === "card" && (
             <div className={styles.bubbleArea}>
               <SpeechBubble

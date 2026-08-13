@@ -41,24 +41,54 @@ export const cardStage = style({
   alignItems: "center",
 });
 
-// 명부 등장 시 카드가 돌아가며 나타나는 모션 (회의록: 카드 돌아가는 모션)
-const cardSpinIn = keyframes({
-  from: {
-    transform: "perspective(700px) rotateY(540deg) scale(0.5)",
+// 명부 등장 모션 — 여러 바퀴 돌며 내려앉고 살짝 오버슈트 후 정착한다.
+// (레퍼런스: 3D 카드 회전 + 반사광. 반사광은 ledger-card의 sheen이 담당)
+const cardEntry = keyframes({
+  "0%": {
+    transform:
+      "perspective(900px) translateY(-40px) rotateY(900deg) scale(0.4)",
     opacity: 0,
   },
-  to: {
-    transform: "perspective(700px) rotateY(0deg) scale(1)",
+  "45%": {
     opacity: 1,
+  },
+  "80%": {
+    transform: "perspective(900px) translateY(3px) rotateY(-12deg) scale(1.02)",
+  },
+  "100%": {
+    transform: "perspective(900px) translateY(0) rotateY(0deg) scale(1)",
   },
 });
 
 export const card = style({
   marginTop: vars.spacing["32"],
-  animationName: cardSpinIn,
-  animationDuration: "1.2s",
-  animationTimingFunction: "cubic-bezier(0.2, 0.8, 0.25, 1)",
+  animationName: cardEntry,
+  animationDuration: "1.4s",
+  animationTimingFunction: "cubic-bezier(0.3, 0.75, 0.25, 1)",
   animationFillMode: "backwards",
+  "@media": {
+    "(prefers-reduced-motion: reduce)": {
+      animationName: "none",
+    },
+  },
+});
+
+// 뒤집기 안내 — 은은하게 깜빡여 인터랙션을 유도한다.
+const hintPulse = keyframes({
+  "0%, 100%": { opacity: 0.95 },
+  "50%": { opacity: 0.45 },
+});
+
+export const flipHint = style({
+  marginTop: vars.spacing["12"],
+  padding: `${vars.spacing["4"]} ${vars.spacing["12"]}`,
+  border: "none",
+  background: "none",
+  cursor: "pointer",
+  animationName: hintPulse,
+  animationDuration: "1.8s",
+  animationTimingFunction: "ease-in-out",
+  animationIterationCount: "infinite",
   "@media": {
     "(prefers-reduced-motion: reduce)": {
       animationName: "none",

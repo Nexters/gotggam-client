@@ -137,6 +137,18 @@ import { ChoicePanel } from "@/shared/ui";
 | `options` | ✅ | 선택지 텍스트 목록. 표시 텍스트가 곧 값 |
 | `value` / `onSelect` | ✅ | 제어 선택값 (`null`이면 미선택) |
 
+## Input
+
+픽셀 코너 모양의 한 줄 텍스트 입력 프리미티브입니다. `InputHTMLAttributes`를 전부
+그대로 받으며, 기본 스킨(높이·배경·타이포·placeholder 색)은 ui-base 레이어에 있어
+사용처 클래스가 항상 덮어쓸 수 있습니다. `InputPanel`이 내부적으로 사용합니다.
+
+```tsx
+import { Input } from "@/shared/ui";
+
+<Input value={value} onChange={(e) => setValue(e.target.value)} maxLength={15} />
+```
+
 ## InputPanel
 
 `BottomPanel` 위에 만든 한 줄 입력 폼입니다. 제목 + 픽셀 코너 입력창 + 힌트로

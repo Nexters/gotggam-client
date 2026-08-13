@@ -1,7 +1,7 @@
 "use client";
 
 import * as styles from "./input-panel.css";
-import { BottomPanel, Typography } from "..";
+import { BottomPanel, Input, Typography } from "..";
 
 type InputPanelProps = {
   title: string;
@@ -41,8 +41,7 @@ export function InputPanel({
         <Typography as="p" family="galmuri9" size="22" color="white">
           {title}
         </Typography>
-        <input
-          className={styles.input}
+        <Input
           value={value}
           onChange={(event) => onChange(event.target.value)}
           placeholder={placeholder}

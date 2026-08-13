@@ -101,6 +101,8 @@ export const vars = createGlobalTheme(":root", {
     // 한글 본문용
     galmuri14: "Galmuri14, Galmuri11, sans-serif",
     galmuri11: "Galmuri11, sans-serif",
+    // 대사·패널 텍스트용
+    galmuri9: "Galmuri9, Galmuri11, sans-serif",
     // 상세 설명 등 가독성이 필요한 곳(기본 본문)
     spoqa:
       "'Spoqa Han Sans Neo', -apple-system, BlinkMacSystemFont, 'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif",

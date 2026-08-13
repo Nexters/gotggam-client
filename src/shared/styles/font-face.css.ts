@@ -10,6 +10,13 @@ globalFontFace("Departure Mono", {
   fontDisplay: "swap",
 });
 
+globalFontFace("Galmuri9", {
+  src: `url("/fonts/galmuri/Galmuri9.woff2") format("woff2")`,
+  fontWeight: "400",
+  fontStyle: "normal",
+  fontDisplay: "swap",
+});
+
 globalFontFace("Galmuri14", {
   src: `url("/fonts/galmuri/Galmuri14.woff2") format("woff2")`,
   fontWeight: "400",

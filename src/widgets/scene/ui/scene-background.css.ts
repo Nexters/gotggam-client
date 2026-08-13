@@ -14,6 +14,15 @@ export const backgroundImageDimmed = style({
   filter: "blur(2px)",
 });
 
+export const backgroundImageIncoming = style({
+  opacity: 0,
+  transition: "opacity 500ms ease",
+});
+
+export const backgroundImageIncomingVisible = style({
+  opacity: 1,
+});
+
 export const backgroundOverlay = style({
   position: "absolute",
   inset: 0,

@@ -115,10 +115,9 @@ import { BottomPanel } from "@/shared/ui";
 
 ## ChoicePanel
 
-화면 하단에 블러 배경으로 깔리는 선택지 패널입니다. 제목 + 전체 폭 선택지 행으로
-구성되고, 선택된 행은 보라색(`rgba(107,76,168,0.32)`)으로 강조되며 패널 하단은
-배경색으로 잦아듭니다. CTA 버튼이 없으므로 다음 단계 진행은 `onSelect`에서
-사용처가 처리합니다. 부모가 `position` 기준이 되어야 합니다.
+화면 하단에 블러 배경으로 깔리는 선택지 패널입니다. 선택된 행은 보라색
+(`rgba(107,76,168,0.32)`)으로 blink 후 강조됩니다. CTA 버튼이 없으므로 다음 단계
+진행은 `onSelect`에서 사용처가 처리합니다. 부모가 `position` 기준이 되어야 합니다.
 
 ```tsx
 import { ChoicePanel } from "@/shared/ui";
@@ -133,7 +132,8 @@ import { ChoicePanel } from "@/shared/ui";
 
 | Prop | 필수 | 설명 |
 | --- | --- | --- |
-| `title` | ✅ | 패널 상단 안내 문구 |
+| `title` |  | 패널 상단 안내 문구. 질문이 패널 밖에 있는 화면에서는 생략 |
+| `variant` |  | `grouped`(기본, 선택지가 붙은 24px) 또는 `spaced`(행 간격 넓은 질문용 22px) |
 | `options` | ✅ | 선택지 텍스트 목록. 표시 텍스트가 곧 값 |
 | `value` / `onSelect` | ✅ | 제어 선택값 (`null`이면 미선택) |
 

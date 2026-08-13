@@ -9,6 +9,6 @@ export const startButton = style({
   justifyContent: "center",
   gap: vars.spacing["2"],
   width: "100%",
-  height: "70px",
+  height: "7rem",
   background: `linear-gradient(to right, ${vars.color.accent2["9"]}, ${vars.color.accent3["9"]}) lightgray 50% / cover no-repeat`,
 });

@@ -11,7 +11,7 @@ export const content = style({
 
 export const input = style({
   width: "100%",
-  height: 48,
+  height: "4.8rem",
   padding: `0 ${vars.spacing["16"]}`,
   border: "none",
   outline: "none",

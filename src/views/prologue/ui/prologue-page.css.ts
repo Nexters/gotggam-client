@@ -25,7 +25,7 @@ export const content = style({
 
 export const character = style({
   position: "absolute",
-  bottom: NARRATION_BOTTOM + NARRATION_HEIGHT - CHARACTER_OVERLAP,
+  bottom: `${(NARRATION_BOTTOM + NARRATION_HEIGHT - CHARACTER_OVERLAP) / 10}rem`,
   left: "50%",
   transform: "translateX(-50%)",
   width: "105%",

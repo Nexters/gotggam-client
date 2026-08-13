@@ -37,7 +37,7 @@ export const option = style({
   display: "flex",
   alignItems: "center",
   width: "100%",
-  height: 52,
+  height: "5.2rem",
   padding: `0 ${vars.spacing["24"]}`,
   border: "none",
   backgroundColor: "transparent",

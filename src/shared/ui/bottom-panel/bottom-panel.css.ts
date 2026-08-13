@@ -16,7 +16,7 @@ export const panel = style({
 
 export const ctaButton = style({
   width: "100%",
-  height: 52,
+  height: "5.2rem",
   color: vars.color.white,
   background: `linear-gradient(to right, ${vars.color.accent2["9"]}, ${vars.color.accent3["9"]})`,
   selectors: {

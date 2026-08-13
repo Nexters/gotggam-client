@@ -17,6 +17,13 @@ globalStyle("*, *::before, *::after", {
   },
 });
 
+// 디자인 프레임(393×852)에서 1rem = 10px. 뷰포트가 프레임보다 작으면 가로·세로 중
+// 더 부족한 축의 비율만큼 루트 폰트가 줄어 rem 수치 전체가 함께 축소된다.
+// (10px × 100 / 393 ≈ 2.5445vw, 10px × 100 / 852 ≈ 1.1737svh, 하한 8px 상한 10px)
+globalStyle("html", {
+  fontSize: "clamp(8px, min(2.5445vw, 1.1737svh), 10px)",
+});
+
 globalStyle("html, body", {
   height: "100%",
   maxWidth: "100vw",

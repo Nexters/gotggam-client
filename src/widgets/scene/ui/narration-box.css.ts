@@ -11,15 +11,15 @@ export const NARRATION_HEIGHT = 123;
 export const narration = style({
   position: "absolute",
   insetInline: vars.spacing["16"],
-  bottom: NARRATION_BOTTOM,
+  bottom: `${NARRATION_BOTTOM / 10}rem`,
   cursor: "pointer",
   userSelect: "none",
 });
 
 export const bubble = style({
-  minHeight: 110,
+  minHeight: "11rem",
   padding: `${vars.spacing["24"]} ${vars.spacing["20"]}`,
-  marginTop: 13,
+  marginTop: "1.3rem",
   backgroundColor: vars.color.accent5["11"],
   clipPath: `polygon(${getPixelCornerClipPath(4)})`,
 });
@@ -27,7 +27,7 @@ export const bubble = style({
 export const bubbleText = style({
   whiteSpace: "pre-line",
   lineHeight: "160%",
-  letterSpacing: "-0.242px",
+  letterSpacing: "-0.0242rem",
 });
 
 // 말풍선(2단 계단)과 달리 이름표 모서리는 4px 한 단만 잘려나간다.
@@ -53,7 +53,7 @@ export const nameTag = style({
   display: "inline-flex",
   alignItems: "center",
   justifyContent: "center",
-  height: 26,
+  height: "2.6rem",
   padding: `0 ${vars.spacing["20"]}`,
   backgroundColor: vars.color.accent5["10"],
   clipPath: `polygon(${nameTagClipPath})`,
@@ -63,6 +63,6 @@ export const nextButton = style({
   position: "absolute",
   right: vars.spacing["20"],
   bottom: vars.spacing["20"],
-  width: 24,
-  height: 24,
+  width: "2.4rem",
+  height: "2.4rem",
 });

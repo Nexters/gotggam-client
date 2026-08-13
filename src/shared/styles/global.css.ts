@@ -20,8 +20,9 @@ globalStyle("*, *::before, *::after", {
 // 디자인 프레임(393×852)에서 1rem = 10px. 뷰포트가 프레임보다 작으면 가로·세로 중
 // 더 부족한 축의 비율만큼 루트 폰트가 줄어 rem 수치 전체가 함께 축소된다.
 // (10px × 100 / 393 ≈ 2.5445vw, 10px × 100 / 852 ≈ 1.1737svh, 하한 8px 상한 10px)
+// svh 미지원 브라우저는 clamp 선언 전체가 무효라 62.5%(=10px, 스케일 없음)로 동작한다.
 globalStyle("html", {
-  fontSize: "clamp(8px, min(2.5445vw, 1.1737svh), 10px)",
+  fontSize: ["62.5%", "clamp(8px, min(2.5445vw, 1.1737svh), 10px)"],
 });
 
 globalStyle("html, body", {

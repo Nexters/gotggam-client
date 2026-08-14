@@ -1,23 +1,24 @@
-import { style } from "@vanilla-extract/css";
+import { createVar, fallbackVar, style } from "@vanilla-extract/css";
 
 import { getPixelCornerClipPath } from "@/shared/styles/pixel-corner";
 import { vars } from "@/shared/styles/theme.css";
 
-// 디자인 기준(852px 프레임): 나레이션 박스가 하단에서 48px 떠 있다.
-// 캐릭터 위치 계산(prologue-page.css)에서도 참조한다.
+// 하단 오프셋은 화면마다 다르다(프롤로그 48px, 질문 96px). 기본값은 프롤로그 시안
+// 기준이고, 다른 화면은 NarrationBox의 className으로 narrationBottomVar를 덮어쓴다.
+export const narrationBottomVar = createVar();
 export const NARRATION_BOTTOM = 48;
 export const NARRATION_HEIGHT = 123;
 
 export const narration = style({
   position: "absolute",
   insetInline: vars.spacing["16"],
-  bottom: `${NARRATION_BOTTOM / 10}rem`,
+  bottom: fallbackVar(narrationBottomVar, `${NARRATION_BOTTOM / 10}rem`),
   cursor: "pointer",
   userSelect: "none",
 });
 
 export const bubble = style({
-  minHeight: "11rem",
+  height: "11rem",
   padding: `${vars.spacing["24"]} ${vars.spacing["20"]}`,
   marginTop: "1.3rem",
   backgroundColor: vars.color.accent5["11"],

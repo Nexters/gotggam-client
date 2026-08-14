@@ -1,6 +1,6 @@
 "use client";
 
-import { useTypewriter } from "@/shared/lib";
+import { cn, useTypewriter } from "@/shared/lib";
 import { IconButton, IconButtonNext, Typography } from "@/shared/ui";
 
 import * as styles from "./narration-box.css";
@@ -8,9 +8,10 @@ import * as styles from "./narration-box.css";
 type NarrationBoxProps = {
   text: string;
   onAdvance: () => void;
+  className?: string;
 };
 
-export function NarrationBox({ text, onAdvance }: NarrationBoxProps) {
+export function NarrationBox({ text, onAdvance, className }: NarrationBoxProps) {
   const { words, skip, isDone } = useTypewriter(text);
 
   const handleClick = () => {
@@ -22,7 +23,7 @@ export function NarrationBox({ text, onAdvance }: NarrationBoxProps) {
   };
 
   return (
-    <div className={styles.narration} onClick={handleClick}>
+    <div className={cn(styles.narration, className)} onClick={handleClick}>
       <div className={styles.bubble}>
         <Typography
           as="p"

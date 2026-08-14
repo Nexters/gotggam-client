@@ -2,9 +2,12 @@ import { style } from "@vanilla-extract/css";
 
 import { vars } from "@/shared/styles/theme.css";
 import {
-  NARRATION_BOTTOM,
   NARRATION_HEIGHT,
+  narrationBottomVar,
 } from "@/widgets/scene/ui/narration-box.css";
+
+const NARRATION_BOTTOM = 96;
+const CHARACTER_OVERLAP = 48;
 
 export const emptyNotice = style({
   display: "flex",
@@ -39,7 +42,13 @@ export const characterArea = style({
   display: "flex",
   justifyContent: "center",
   alignItems: "flex-end",
-  paddingBottom: `${(NARRATION_BOTTOM + NARRATION_HEIGHT) / 10}rem`,
+  paddingBottom: `${(NARRATION_BOTTOM + NARRATION_HEIGHT - CHARACTER_OVERLAP) / 10}rem`,
+});
+
+export const narration = style({
+  vars: {
+    [narrationBottomVar]: `${NARRATION_BOTTOM / 10}rem`,
+  },
 });
 
 export const character = style({

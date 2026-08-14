@@ -12,6 +12,7 @@ export { InputPanel } from "./input-panel";
 export * from "./icon";
 export { Lottie } from "./lottie";
 export { PixelCornerButton } from "./pixel-corner-button";
+export { RollingNumber } from "./rolling-number";
 export { SpeechBubble } from "./speech-bubble";
 export { Typography } from "./typography";
 export { WheelPicker, WheelPickerGroup, type WheelPickerOption } from "./wheel-picker";

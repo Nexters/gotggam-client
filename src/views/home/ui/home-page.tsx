@@ -10,6 +10,7 @@ import Logo from "../assets/logo.svg";
 import { BgmToggleButton } from "./bgm-toggle-button";
 import { HomeLottie } from "./home-lottie";
 import * as styles from "./home-page.css";
+import { ParticipantCountSection } from "./participant-count";
 import { StartButton } from "./start-button";
 
 export function HomePage() {
@@ -64,7 +65,7 @@ export function HomePage() {
 
       <div className={cn(styles.footer, revealClassName)}>
         <StartButton
-          participantCount={19089}
+          description={<ParticipantCountSection />}
           onClick={() => router.push("/form/prologue")}
         />
       </div>

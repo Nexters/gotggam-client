@@ -20,6 +20,10 @@ export const SCENES: { text: string; input?: SceneInput }[] = [
   { text: "그럼 바로 시작하겠다냥." },
 ];
 
+export const LAST_INPUT_SCENE_INDEX = SCENES.findLastIndex(
+  (scene) => scene.input,
+);
+
 const CURRENT_YEAR = new Date().getFullYear();
 
 export const YEAR_OPTIONS: WheelPickerOption[] = Array.from(

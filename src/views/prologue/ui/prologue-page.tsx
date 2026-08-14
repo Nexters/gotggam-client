@@ -2,12 +2,14 @@
 
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { useFormContext } from "react-hook-form";
 
+import type { FormValues } from "@/features/form";
 import { BACKGROUND_IMAGE_URLS } from "@/shared/config";
 import { AppBar } from "@/widgets/app-bar";
 import { Character, NarrationBox, SceneBackground } from "@/widgets/scene";
 
-import { SCENES } from "../model/constants";
+import { LAST_INPUT_SCENE_INDEX, SCENES } from "../model/constants";
 import { BirthDatePanel } from "./birth-date-panel";
 import { GenderPanel } from "./gender-panel";
 import { NamePanel } from "./name-panel";
@@ -15,25 +17,31 @@ import * as styles from "./prologue-page.css";
 
 export function ProloguePage() {
   const router = useRouter();
-  const [sceneIndex, setSceneIndex] = useState(0);
-  const [isPanelOpen, setIsPanelOpen] = useState(false);
+  const { getValues } = useFormContext<FormValues>();
+
+  // 질문 페이지에서 뒤로 돌아온 경우(입력이 모두 채워져 있음) 인트로 대사를
+  // 건너뛰고 마지막 입력(성별)부터 보여준다.
+  const { name, birthDate, gender } = getValues();
+  const hasCompletedInputs = Boolean(name && birthDate && gender);
+
+  const [sceneIndex, setSceneIndex] = useState(
+    hasCompletedInputs ? LAST_INPUT_SCENE_INDEX : 0,
+  );
+  const [isPanelOpen, setIsPanelOpen] = useState(hasCompletedInputs);
 
   const scene = SCENES[sceneIndex];
 
-  // 진행의 역순으로 되감는다: 패널 → 그 장면의 대사, 대사 → 이전 장면
-  // (이전 장면이 입력 장면이었다면 패널부터). 첫 장면에서는 페이지를 벗어난다.
+  // 대사는 앞으로 갈 때의 연출일 뿐이라 되감지 않는다. 뒤로가기는 항상 이전
+  // 입력 항목의 패널로 직행하고, 앞선 입력이 없으면 페이지를 벗어난다.
   const goToPreviousScene = () => {
-    if (isPanelOpen) {
-      setIsPanelOpen(false);
-      return;
+    for (let index = sceneIndex - 1; index >= 0; index -= 1) {
+      if (SCENES[index].input) {
+        setSceneIndex(index);
+        setIsPanelOpen(true);
+        return;
+      }
     }
-    if (sceneIndex === 0) {
-      router.back();
-      return;
-    }
-    const previousIndex = sceneIndex - 1;
-    setSceneIndex(previousIndex);
-    setIsPanelOpen(Boolean(SCENES[previousIndex].input));
+    router.back();
   };
 
   const goToNextScene = () => {

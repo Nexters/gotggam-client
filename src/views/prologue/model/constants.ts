@@ -52,4 +52,7 @@ export const MONTH_OPTIONS: WheelPickerOption[] = MONTH_LABELS.map(
   }),
 );
 
-export const GENDER_OPTIONS = ["여성", "남성"];
+export const GENDER_OPTIONS = [
+  { label: "여성", code: "FEMALE" },
+  { label: "남성", code: "MALE" },
+] as const;

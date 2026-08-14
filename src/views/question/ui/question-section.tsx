@@ -110,6 +110,7 @@ function QuestionFlow({ questions }: { questions: Question[] }) {
             {closingStep === "ask" && (
               <NarrationBox
                 text={CLOSING_ASK}
+                className={styles.narration}
                 onAdvance={() => setClosingStep("input")}
               />
             )}
@@ -122,6 +123,7 @@ function QuestionFlow({ questions }: { questions: Question[] }) {
             {closingStep === "outro" && (
               <NarrationBox
                 text={CLOSING_OUTRO}
+                className={styles.narration}
                 // TODO: 답변 제출 API 연동 후 다음 페이지로 이동
                 onAdvance={() => {}}
               />
@@ -135,7 +137,11 @@ function QuestionFlow({ questions }: { questions: Question[] }) {
             onSelect={handleSelectAnswer}
           />
         ) : (
-          <NarrationBox text={feedback} onAdvance={advanceFeedback} />
+          <NarrationBox
+            text={feedback}
+            className={styles.narration}
+            onAdvance={advanceFeedback}
+          />
         )}
       </div>
     </div>

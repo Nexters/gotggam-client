@@ -2,6 +2,9 @@
 
 import type { ReactNode } from "react";
 
+import { BGM_STORAGE_KEY, CLICK_SFX_SRC } from "@/shared/config";
+import { playSfx, useLocalStorage } from "@/shared/lib";
+
 import * as styles from "./bottom-panel.css";
 import { PixelCornerButton, Typography } from "..";
 
@@ -19,6 +22,8 @@ export function BottomPanel({
   ctaDisabled,
   onCtaClick,
 }: BottomPanelProps) {
+  const [isSoundOn] = useLocalStorage(BGM_STORAGE_KEY, true);
+
   return (
     <div className={styles.panel}>
       {children}
@@ -26,7 +31,10 @@ export function BottomPanel({
         cornerSize={4}
         className={styles.ctaButton}
         disabled={ctaDisabled}
-        onClick={onCtaClick}
+        onClick={() => {
+          if (isSoundOn) playSfx(CLICK_SFX_SRC);
+          onCtaClick?.();
+        }}
       >
         <Typography family="galmuri11" size="18">
           {ctaLabel}

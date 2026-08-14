@@ -16,10 +16,9 @@ export type FormValues = {
   /** YYYY-MM-DD */
   birthDate: string;
   gender: Gender;
+  /** 질의응답 마지막의 오늘의 한 마디 (10~15자) */
   todayMessage: string;
   answers: Record<number, number>;
-  /** 질의응답 마지막의 오늘의 한 마디 (10~15자) */
-  todayComment: string;
   /** 얼굴 커스터마이징 결과. /form/face 에서 채운다 */
   face: FaceSelection;
 };
@@ -29,6 +28,5 @@ export const FORM_DEFAULT_VALUES: DefaultValues<FormValues> = {
   birthDate: "",
   todayMessage: "",
   answers: {},
-  todayComment: "",
   face: DEFAULT_FACE_SELECTION,
 };

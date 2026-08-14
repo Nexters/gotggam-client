@@ -2,6 +2,9 @@
 
 import { useRef, useState, type PointerEvent } from "react";
 
+import { BGM_STORAGE_KEY, CLICK_SFX_SRC } from "@/shared/config";
+import { playSfx, useLocalStorage } from "@/shared/lib";
+
 const DRAG_DEG_PER_PX = 0.7;
 const TAP_THRESHOLD_PX = 6;
 
@@ -23,11 +26,15 @@ export type CardFlipHandlers = {
 export function useCardFlip() {
   const [rotation, setRotation] = useState(0);
   const [isDragging, setIsDragging] = useState(false);
+  const [isSoundOn] = useLocalStorage(BGM_STORAGE_KEY, true);
   const startXRef = useRef(0);
   const startRotationRef = useRef(0);
   const hasMovedRef = useRef(false);
 
   const flip = () => {
+    if (isSoundOn) {
+      playSfx(CLICK_SFX_SRC);
+    }
     setRotation((current) => snapToFace(current) + 180);
   };
 
@@ -55,9 +62,11 @@ export function useCardFlip() {
       return;
     }
     setIsDragging(false);
-    setRotation((current) =>
-      hasMovedRef.current ? snapToFace(current) : snapToFace(current) + 180,
-    );
+    if (hasMovedRef.current) {
+      setRotation(snapToFace);
+      return;
+    }
+    flip();
   };
 
   const handlers: CardFlipHandlers = {

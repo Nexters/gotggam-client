@@ -13,8 +13,8 @@ import * as styles from "./ledger-card.css";
 import type { CardFlipHandlers } from "./use-card-flip";
 
 const GENDER_MARKS: Record<string, string> = {
-  남성: "男",
-  여성: "女",
+  MALE: "男",
+  FEMALE: "女",
 };
 
 // TODO: 게이지 채움량(-n년 → %) 환산 규칙 기획 확정 필요. 임시로 30년 감소를 최저로 본다.
@@ -71,7 +71,7 @@ function LedgerCardFront({
       </span>
       <span className={styles.commentLabel}>오늘의 한 마디</span>
       <FitText maxFontSize={13.4} className={styles.commentValue}>
-        {result.todayComment}
+        {result.todayMessage}
       </FitText>
       <span className={styles.warningLabel}>WARNING</span>
       <FitText maxFontSize={16.8} className={styles.warningValue}>

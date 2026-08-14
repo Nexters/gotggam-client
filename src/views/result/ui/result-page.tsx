@@ -101,7 +101,7 @@ export function ResultPage() {
               className={styles.flipHint}
               onClick={cardFlip.flip}
             >
-              <Typography family="galmuri11" size="14" color="gray-11">
+              <Typography family="galmuri9" size="14" color="gray-11">
                 {"< 카드를 돌려서 뒷면을 확인하라냥 >"}
               </Typography>
             </button>

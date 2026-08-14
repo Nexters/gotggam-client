@@ -39,7 +39,7 @@ export interface LedgerResult {
   birthDate: string;
   gender: string;
   expectedAge: number;
-  todayComment: string;
+  todayMessage: string;
   warning: string;
   /** 특별준수사항. 서버가 최대 3개, 없으면 "흠, 잘 하고 있다냥"을 내려준다. */
   specialDirectives: string[];
@@ -49,9 +49,9 @@ export interface LedgerResult {
 const FALLBACK_LEDGER: LedgerResult = {
   name: "홍길동",
   birthDate: "2002-10-11",
-  gender: "남성",
+  gender: "MALE",
   expectedAge: 88,
-  todayComment: "오늘도 최선을 다했다.",
+  todayMessage: "오늘도 최선을 다했다.",
   warning: "잠은 선택이 아니라 생존이다냥!",
   specialDirectives: [
     "오후 10시 이후 배달앱 접속을 제한할 것",
@@ -75,7 +75,7 @@ export function buildLedgerResult(form: FormValues): LedgerResult {
     birthDate: form.birthDate || FALLBACK_LEDGER.birthDate,
     gender: form.gender || FALLBACK_LEDGER.gender,
     expectedAge: FALLBACK_LEDGER.expectedAge,
-    todayComment: form.todayComment || FALLBACK_LEDGER.todayComment,
+    todayMessage: form.todayMessage || FALLBACK_LEDGER.todayMessage,
     warning: FALLBACK_LEDGER.warning,
     specialDirectives: FALLBACK_LEDGER.specialDirectives,
     details: FALLBACK_LEDGER.details,

@@ -49,7 +49,7 @@ export const card3dInteractive = style({
 export const face = style({
   position: "absolute",
   inset: 0,
-  fontFamily: vars.font.galmuri11,
+  fontFamily: vars.font.galmuri9,
   color: vars.color.white,
   backfaceVisibility: "hidden",
   WebkitBackfaceVisibility: "hidden",
@@ -138,11 +138,13 @@ const label = style({
   whiteSpace: "nowrap",
 });
 
+// NAME/BIRTH 라벨과 수명 숫자는 원안이 Galmuri11 Bold다.
 export const nameLabel = style([
   label,
   {
     left: 133.5,
     top: 72,
+    fontFamily: vars.font.galmuri11,
     fontWeight: vars.fontWeight.bold,
     lineHeight: 1.5,
     letterSpacing: "-0.11px",
@@ -154,6 +156,7 @@ export const birthLabel = style([
   {
     left: 133.5,
     top: 139,
+    fontFamily: vars.font.galmuri11,
     fontWeight: vars.fontWeight.bold,
     lineHeight: 1.5,
     letterSpacing: "-0.11px",
@@ -205,6 +208,7 @@ export const ageValue = style({
 });
 
 export const ageNumber = style({
+  fontFamily: vars.font.galmuri11,
   fontWeight: vars.fontWeight.bold,
 });
 
@@ -326,6 +330,7 @@ export const directivesLabel = style({
 });
 
 // AI 생성 문구(최대 3개, 줄바꿈 가능) — FitText가 박스에 맞춰 폰트를 줄인다.
+// 준수사항 본문은 원안이 Galmuri11 Regular다.
 export const directives = style({
   position: "absolute",
   left: 19.7,
@@ -333,6 +338,7 @@ export const directives = style({
   width: 213,
   height: 150,
   overflow: "hidden",
+  fontFamily: vars.font.galmuri11,
   fontSize: 13.4,
   lineHeight: 1.6,
   letterSpacing: "-0.15px",

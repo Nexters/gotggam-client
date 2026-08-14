@@ -11,10 +11,10 @@
 
 const ANIMALESE_SRC = "/audio/animalese.wav";
 const LIBRARY_LETTER_SECS = 0.15;
-const PLAY_LETTER_SECS = 0.08;
-const BASE_PITCH = 1.3;
-const PITCH_JITTER = 0.12;
-const GAIN = 0.5;
+const PLAY_LETTER_SECS = 0.08; //글자당 소리 길이.
+const BASE_PITCH = 1.3; // 톤 조절
+const PITCH_JITTER = 0.12; //  억양 흔들림 폭
+const GAIN = 1; // BGM 대비 음량
 
 // prettier-ignore
 const CHOSEONG_ROMAN = ["g", "kk", "n", "d", "tt", "r", "m", "b", "pp", "s", "ss", "", "j", "jj", "ch", "k", "t", "p", "h"];

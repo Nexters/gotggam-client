@@ -9,9 +9,9 @@ import type { AnswerOptionResponse } from './answerOptionResponse';
 
 export interface QuestionResponse {
   /** 문항 ID */
-  id?: number;
+  id: number;
   /** 문항 내용 */
-  question?: string;
+  question: string;
   /** 선택지 목록 */
-  answers?: AnswerOptionResponse[];
+  answers: AnswerOptionResponse[];
 }

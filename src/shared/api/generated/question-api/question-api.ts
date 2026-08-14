@@ -6,7 +6,7 @@
  * OpenAPI spec version: v0.0.1
  */
 import type {
-  ApiResponseListActQuestionsResponse
+  GetQuestionnaire200
 } from '../models';
 
 import { orvalMutator } from '../../orval-mutator';
@@ -23,9 +23,9 @@ export const getGetQuestionnaireUrl = () => {
  * act별로 그룹핑된 활성 문항과 선택지 구성을 반환한다.
  * @summary 질문지 구성 조회
  */
-export const getQuestionnaire = async ( options?: Parameters<typeof orvalMutator>[1]): Promise<ApiResponseListActQuestionsResponse> => {
+export const getQuestionnaire = async ( options?: Parameters<typeof orvalMutator>[1]): Promise<GetQuestionnaire200> => {
 
-  return orvalMutator<ApiResponseListActQuestionsResponse>(getGetQuestionnaireUrl(),
+  return orvalMutator<GetQuestionnaire200>(getGetQuestionnaireUrl(),
   {
     ...options,
     method: 'GET'

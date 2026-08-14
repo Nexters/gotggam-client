@@ -10,7 +10,7 @@ import type { QuestionResponse } from './questionResponse';
 
 export interface ActQuestionsResponse {
   /** act 정보 */
-  act?: ActResponse;
+  act: ActResponse;
   /** 해당 act에 속한 문항 목록 */
-  questions?: QuestionResponse[];
+  questions: QuestionResponse[];
 }

@@ -8,7 +8,7 @@
 
 export interface ActResponse {
   /** act 코드 */
-  code?: string;
+  code: string;
   /** act 이름 */
-  label?: string;
+  label: string;
 }

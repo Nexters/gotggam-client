@@ -8,9 +8,9 @@
 
 export interface AnswerOptionResponse {
   /** 선택지 ID */
-  id?: number;
+  id: number;
   /** 선택지 내용 */
-  answer?: string;
+  answer: string;
   /** 선택 시 피드백 */
-  feedback?: string;
+  feedback: string;
 }

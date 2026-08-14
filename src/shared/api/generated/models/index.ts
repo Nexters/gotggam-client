@@ -8,3 +8,9 @@
 
 export * from './getParticipantCount200';
 export * from './resultCountResponse';
+export * from './actQuestionsResponse';
+export * from './actResponse';
+export * from './answerOptionResponse';
+export * from './apiResponseListActQuestionsResponse';
+export * from './getQuestionnaire200';
+export * from './questionResponse';

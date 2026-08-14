@@ -20,6 +20,11 @@ export default defineConfig({
   deathClient: {
     input: {
       target: specUrl,
+      // 지금 쓰는 엔드포인트의 태그만 생성한다. 새 API를 붙일 때 태그를 추가할 것.
+      filters: {
+        mode: "include",
+        tags: ["Question API"],
+      },
     },
     output: {
       target: "./src/shared/api/generated",

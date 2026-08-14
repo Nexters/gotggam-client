@@ -45,9 +45,15 @@ export function RollingNumber({ value, className }: RollingNumberProps) {
   const [rolledValue, setRolledValue] = useState(0);
 
   useEffect(() => {
-    const frame = requestAnimationFrame(() => setRolledValue(targetValue));
+    let paintedFrame = 0;
+    const mountedFrame = requestAnimationFrame(() => {
+      paintedFrame = requestAnimationFrame(() => setRolledValue(targetValue));
+    });
 
-    return () => cancelAnimationFrame(frame);
+    return () => {
+      cancelAnimationFrame(mountedFrame);
+      cancelAnimationFrame(paintedFrame);
+    };
   }, [targetValue]);
 
   const formatted = targetValue.toLocaleString("ko-KR");

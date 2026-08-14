@@ -1,12 +1,16 @@
 "use client";
 
-import { cn } from "@/shared/lib";
+import { BGM_STORAGE_KEY, CLICK_SFX_SRC } from "@/shared/config";
+import { cn, playSfx, useLocalStorage } from "@/shared/lib";
 
 import * as styles from "./choice-panel.css";
 import { Typography } from "..";
 
+type ChoicePanelVariant = "grouped" | "spaced";
+
 type ChoicePanelProps = {
-  title: string;
+  title?: string;
+  variant?: ChoicePanelVariant;
   options: string[];
   value: string | null;
   onSelect: (value: string) => void;
@@ -14,22 +18,28 @@ type ChoicePanelProps = {
 
 export function ChoicePanel({
   title,
+  variant = "grouped",
   options,
   value,
   onSelect,
 }: ChoicePanelProps) {
+  const isSpaced = variant === "spaced";
+  const [isSoundOn] = useLocalStorage(BGM_STORAGE_KEY, true);
+
   return (
-    <div className={styles.panel}>
-      <Typography
-        as="p"
-        family="galmuri9"
-        size="22"
-        color="white"
-        className={styles.title}
-      >
-        {title}
-      </Typography>
-      <div>
+    <div className={cn(styles.panel, isSpaced && styles.panelSpaced)}>
+      {title && (
+        <Typography
+          as="p"
+          family="galmuri9"
+          size="22"
+          color="white"
+          className={styles.title}
+        >
+          {title}
+        </Typography>
+      )}
+      <div className={cn(isSpaced && styles.optionGroupSpaced)}>
         {options.map((option) => (
           <button
             key={option}
@@ -39,9 +49,16 @@ export function ChoicePanel({
               styles.option,
               option === value && styles.optionSelected,
             )}
-            onClick={() => onSelect(option)}
+            onClick={() => {
+              if (isSoundOn) playSfx(CLICK_SFX_SRC);
+              onSelect(option);
+            }}
           >
-            <Typography family="galmuri9" size="24" color="gray-12">
+            <Typography
+              family="galmuri9"
+              size={isSpaced ? "22" : "24"}
+              color="gray-12"
+            >
               {"> "}
               {option}
             </Typography>

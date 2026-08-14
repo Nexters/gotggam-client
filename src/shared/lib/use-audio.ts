@@ -81,6 +81,13 @@ export function setAudioPlaying(
   });
 }
 
+/** 짧은 효과음을 처음부터 재생한다. 연타하면 이전 재생을 끊고 되감는다. */
+export function playSfx(src: string) {
+  const audio = getAudio(src);
+  audio.currentTime = 0;
+  audio.play().catch(() => {});
+}
+
 type UseAudioOptions = AudioOptions & {
   src: string;
   isPlaying: boolean;

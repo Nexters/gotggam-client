@@ -28,6 +28,16 @@ export const panel = style({
   backgroundColor: "rgba(18, 18, 18, 0.8)",
   backdropFilter: "blur(6px)",
 });
+export const panelSpaced = style({
+  paddingTop: "3.9rem",
+  paddingBottom: "8.6rem",
+});
+
+export const optionGroupSpaced = style({
+  display: "flex",
+  flexDirection: "column",
+  gap: vars.spacing["32"],
+});
 
 export const title = style({
   marginInline: vars.spacing["24"],
@@ -37,7 +47,7 @@ export const option = style({
   display: "flex",
   alignItems: "center",
   width: "100%",
-  height: 52,
+  height: "5.2rem",
   padding: `0 ${vars.spacing["24"]}`,
   border: "none",
   backgroundColor: "transparent",

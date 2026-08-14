@@ -4,16 +4,14 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 
 import { BACKGROUND_IMAGE_URLS } from "@/shared/config";
+import { AppBar } from "@/widgets/app-bar";
+import { Character, NarrationBox, SceneBackground } from "@/widgets/scene";
 
 import { SCENES } from "../model/constants";
-import { AppBar } from "./app-bar";
 import { BirthDatePanel } from "./birth-date-panel";
-import { Character } from "./character";
 import { GenderPanel } from "./gender-panel";
 import { NamePanel } from "./name-panel";
-import { NarrationBox } from "./narration-box";
 import * as styles from "./prologue-page.css";
-import { SceneBackground } from "./scene-background";
 
 export function ProloguePage() {
   const router = useRouter();
@@ -61,7 +59,7 @@ export function ProloguePage() {
       <AppBar onBack={goToPreviousScene} />
 
       <div className={styles.content}>
-        <Character />
+        <Character className={styles.character} />
 
         {!isPanelOpen && (
           <NarrationBox text={scene.text} onAdvance={handleAdvance} />

@@ -1,9 +1,37 @@
 "use client";
 
+import { ErrorBoundary, Suspense } from "@suspensive/react";
+import { useQueryErrorResetBoundary } from "@tanstack/react-query";
+
+import { ApiError } from "@/shared/api";
+import { Button, Typography } from "@/shared/ui";
+import { LoadingScreen } from "@/widgets/loading-screen";
+
+import * as styles from "./question-page.css";
 import { QuestionSection } from "./question-section";
 
-// TODO: 질문 리스트 GET 스펙이 나오면 useSuspenseQuery + Suspensive 바운더리를
-// 연결하고, fallback으로 LoadingScreen("질문 작성중...")을 최소 1.5초 보여준다.
 export function QuestionPage() {
-  return <QuestionSection />;
+  const { reset: resetQueryErrors } = useQueryErrorResetBoundary();
+
+  return (
+    <ErrorBoundary
+      shouldCatch={ApiError.isApiError}
+      onReset={resetQueryErrors}
+      fallback={({ error, reset }) => (
+        <div className={styles.errorFallback}>
+          <Typography as="p" family="galmuri9" size="16" color="gray-11">
+            {error.message}
+          </Typography>
+          <Button onClick={reset}>다시 시도</Button>
+        </div>
+      )}
+    >
+      <Suspense
+        clientOnly
+        fallback={<LoadingScreen text="질문 작성중..." />}
+      >
+        <QuestionSection />
+      </Suspense>
+    </ErrorBoundary>
+  );
 }

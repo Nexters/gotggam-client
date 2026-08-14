@@ -1,7 +1,7 @@
 "use client";
 
 import * as styles from "./input-panel.css";
-import { BottomPanel, Typography } from "..";
+import { BottomPanel, Input, Typography } from "..";
 
 type InputPanelProps = {
   title: string;
@@ -10,15 +10,13 @@ type InputPanelProps = {
   placeholder?: string;
   maxLength?: number;
   hint?: string;
-  /** 힌트 색. muted(기본)는 흐린 안내, accent는 유효성 통과 같은 긍정 피드백에 쓴다. */
   hintTone?: "muted" | "accent";
   ctaLabel: string;
-  /** CTA 비활성 조건. 생략하면 값이 비어 있을 때 비활성화된다. */
   ctaDisabled?: boolean;
   onCtaClick?: () => void;
+  skipLabel?: string;
+  onSkip?: () => void;
 };
-
-/** 화면 하단 패널에 담긴 한 줄 입력 폼. */
 export function InputPanel({
   title,
   value,
@@ -30,6 +28,8 @@ export function InputPanel({
   ctaLabel,
   ctaDisabled,
   onCtaClick,
+  skipLabel,
+  onSkip,
 }: InputPanelProps) {
   return (
     <BottomPanel
@@ -38,11 +38,23 @@ export function InputPanel({
       onCtaClick={onCtaClick}
     >
       <div className={styles.content}>
-        <Typography as="p" family="galmuri9" size="22" color="white">
-          {title}
-        </Typography>
-        <input
-          className={styles.input}
+        <div className={styles.titleRow}>
+          <Typography as="p" family="galmuri9" size="22" color="white">
+            {title}
+          </Typography>
+          {skipLabel && onSkip && (
+            <button
+              type="button"
+              className={styles.skipButton}
+              onClick={onSkip}
+            >
+              <Typography family="galmuri9" size="14" color="gray-11">
+                {skipLabel}
+              </Typography>
+            </button>
+          )}
+        </div>
+        <Input
           value={value}
           onChange={(event) => onChange(event.target.value)}
           placeholder={placeholder}

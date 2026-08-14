@@ -1,7 +1,4 @@
-import {
-  CHOICE_PANEL_BLINK_DURATION_MS,
-  type WheelPickerOption,
-} from "@/shared/ui";
+import type { WheelPickerOption } from "@/shared/ui";
 
 export const KOREAN_NAME_REGEX = /^[가-힣]{1,4}$/;
 
@@ -55,7 +52,7 @@ export const MONTH_OPTIONS: WheelPickerOption[] = MONTH_LABELS.map(
   }),
 );
 
-export const GENDER_OPTIONS = ["여성", "남성"];
-
-/** 선택 blink 애니메이션이 끝나고 잠깐 머문 뒤 다음 장면으로 넘어간다. */
-export const GENDER_ADVANCE_DELAY_MS = CHOICE_PANEL_BLINK_DURATION_MS + 360;
+export const GENDER_OPTIONS = [
+  { label: "여성", code: "FEMALE" },
+  { label: "남성", code: "MALE" },
+] as const;

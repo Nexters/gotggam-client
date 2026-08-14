@@ -12,7 +12,7 @@ export const button = style({
       gap: vars.spacing["4"],
       padding: `${vars.spacing["8"]} ${vars.spacing["16"]}`,
       border: "none",
-      borderRadius: "10px",
+      borderRadius: "1rem",
       backgroundColor: semantic.color.accent1,
       color: semantic.color.white,
       lineHeight: 1,

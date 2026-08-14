@@ -1,110 +1,37 @@
 "use client";
 
-import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { ErrorBoundary, Suspense } from "@suspensive/react";
+import { useQueryErrorResetBoundary } from "@tanstack/react-query";
 
-import { ChoicePanel } from "@/shared/ui";
-import { AppBar } from "@/widgets/app-bar";
-import { Character, NarrationBox, SceneBackground } from "@/widgets/scene";
+import { ApiError } from "@/shared/api";
+import { Button, Typography } from "@/shared/ui";
+import { LoadingScreen } from "@/widgets/loading-screen";
 
-import { useQuestionFlow } from "../lib/use-question-flow";
-import { ACT_BACKGROUND_URLS } from "../model/act-backgrounds";
-import { CLOSING_ASK, CLOSING_OUTRO } from "../model/closing";
-import { QUESTIONS } from "../model/questions";
 import * as styles from "./question-page.css";
-import { QuestionPrompt } from "./question-prompt";
-import { ReviewPanel } from "./review-panel";
-
-type ClosingStep = "ask" | "input" | "outro";
-
-const CLOSING_BACK_STEP: Record<ClosingStep, ClosingStep | null> = {
-  ask: null,
-  input: "ask",
-  outro: "input",
-};
+import { QuestionSection } from "./question-section";
 
 export function QuestionPage() {
-  const router = useRouter();
-  const [closingStep, setClosingStep] = useState<ClosingStep | null>(null);
-
-  const {
-    question,
-    questionNumber,
-    phase,
-    selectedAnswer,
-    feedback,
-    feedbackCharacterSrc,
-    selectAnswer,
-    advanceFeedback,
-    goBack,
-  } = useQuestionFlow(QUESTIONS, {
-    onComplete: () => setClosingStep("ask"),
-    onExit: () => router.back(),
-  });
-
-  const isClosing = closingStep !== null;
-
-  const goBackFromClosing = () => {
-    if (closingStep) setClosingStep(CLOSING_BACK_STEP[closingStep]);
-  };
+  const { reset: resetQueryErrors } = useQueryErrorResetBoundary();
 
   return (
-    <div className={styles.page}>
-      <SceneBackground src={ACT_BACKGROUND_URLS[question.act]} dimmed />
-      <AppBar
-        onBack={isClosing ? goBackFromClosing : goBack}
-        showHome={false}
-      />
-
-      <div className={styles.content}>
-        {!isClosing && (
-          <QuestionPrompt
-            current={questionNumber}
-            total={QUESTIONS.length}
-            question={question.question}
-          />
-        )}
-
-        <div className={styles.characterArea}>
-          <Character
-            className={styles.character}
-            src={isClosing ? null : feedbackCharacterSrc}
-          />
+    <ErrorBoundary
+      shouldCatch={ApiError.isApiError}
+      onReset={resetQueryErrors}
+      fallback={({ error, reset }) => (
+        <div className={styles.errorFallback}>
+          <Typography as="p" family="galmuri9" size="16" color="gray-11">
+            {error.message}
+          </Typography>
+          <Button onClick={reset}>다시 시도</Button>
         </div>
-
-        {isClosing ? (
-          <>
-            {closingStep === "ask" && (
-              <NarrationBox
-                text={CLOSING_ASK}
-                onAdvance={() => setClosingStep("input")}
-              />
-            )}
-            {closingStep === "input" && (
-              <ReviewPanel
-                onSubmit={() => setClosingStep("outro")}
-                onSkip={() => setClosingStep("outro")}
-              />
-            )}
-            {closingStep === "outro" && (
-              <NarrationBox
-                text={CLOSING_OUTRO}
-                // TODO: 답변 제출 API 연동 후 다음 페이지로 이동
-                onAdvance={() => {}}
-              />
-            )}
-          </>
-        ) : phase === "question" ? (
-          <ChoicePanel
-            variant="spaced"
-            options={question.answers.map((answer) => answer.label)}
-            value={selectedAnswer}
-            onSelect={selectAnswer}
-          />
-        ) : (
-          <NarrationBox text={feedback} onAdvance={advanceFeedback} />
-        )}
-      </div>
-    </div>
+      )}
+    >
+      <Suspense
+        clientOnly
+        fallback={<LoadingScreen text="질문 작성중..." />}
+      >
+        <QuestionSection />
+      </Suspense>
+    </ErrorBoundary>
   );
 }

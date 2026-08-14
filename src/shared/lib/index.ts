@@ -1,3 +1,4 @@
+export { playAnimalese } from "./animalese";
 export { default as cn } from "clsx";
 export { delay } from "./delay";
 export { playSfx, setAudioPlaying, useAudio } from "./use-audio";

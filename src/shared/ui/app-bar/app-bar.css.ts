@@ -14,7 +14,3 @@ export const spacer = style({
   width: 24,
   height: 24,
 });
-
-export const homeLink = style({
-  display: "inline-flex",
-});

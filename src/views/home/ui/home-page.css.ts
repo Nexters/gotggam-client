@@ -5,10 +5,10 @@ import { vars } from "@/shared/styles/theme.css";
 // 배경이 먼저 떠오르고, lottie가 준비되면 나머지 요소가 한 번에 서서히
 // 나타난다. keyframes가 아니라 transition을 쓰는 이유는 등장 시점이 "첫
 // 페인트"가 아니라 리소스 로드 완료라서 상태 변화에 묶여야 하기 때문이다.
-function hidden(durationMs: number) {
+function hidden(durationMs: number, delayMs = 0) {
   return style({
     opacity: 0,
-    transition: `opacity ${durationMs}ms ease-out`,
+    transition: `opacity ${durationMs}ms ease-out ${delayMs}ms`,
     "@media": {
       "(prefers-reduced-motion: reduce)": {
         transition: "none",
@@ -17,10 +17,13 @@ function hidden(durationMs: number) {
   });
 }
 
-export const reveal = hidden(800);
+export const reveal = hidden(300);
 
 // 배경은 더 천천히 떠올라서, 그 위에 로고·캐릭터가 얹히는 순서가 눈에 들어온다.
 export const revealSlow = hidden(1200);
+
+// 로고·캐릭터·CTA는 배경이 어느 정도 떠오른 뒤에 한 박자 늦게 얹힌다.
+export const revealDelayed = hidden(300, 1400);
 
 // reveal/revealSlow보다 뒤에 선언해야 같은 특이도에서 opacity를 덮어쓴다.
 export const revealed = style({

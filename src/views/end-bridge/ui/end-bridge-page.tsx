@@ -4,7 +4,6 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
-import { cn } from "@/shared/lib";
 import { Lottie } from "@/shared/ui";
 
 import * as styles from "./end-bridge-page.css";
@@ -32,10 +31,7 @@ export function EndBridgePage() {
           autoplay
           loop
           src="/lottie/question_normal.lottie"
-          className={cn(
-            styles.character,
-            isReady && styles.characterDisappearing,
-          )}
+          className={styles.character}
           onReady={() => setIsReady(true)}
         />
       </div>

@@ -15,7 +15,9 @@ export const input = style({
       backgroundColor: vars.color.gray["3"],
       clipPath: `polygon(${getPixelCornerClipPath(4)})`,
       fontFamily: vars.font.galmuri9,
-      fontSize: vars.fontSize["16"],
+      // iOS 사파리는 포커스된 인풋 폰트가 16px 미만이면 강제 줌인한다.
+      // 루트 폰트 축소로 rem 값이 줄어도 하한이 지켜지도록 px로 고정한다.
+      fontSize: "16px",
       color: vars.color.white,
       "::placeholder": {
         color: vars.color.gray["7"],

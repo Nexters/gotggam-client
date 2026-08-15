@@ -31,7 +31,7 @@ export function ReviewPanel({ onSubmit, onSkip }: ReviewPanelProps) {
       placeholder="오늘 하루에 대해 적어주세요."
       maxLength={15}
       ctaLabel="다음"
-      hint="10-15자 이내로 표현해주세요."
+      hint="15자 이내로 표현해주세요."
       ctaDisabled={todayMessage.trim().length < TODAY_MESSAGE_MIN}
       onCtaClick={onSubmit}
       skipLabel="건너뛰기 >>"

@@ -3,7 +3,7 @@
 import { useQuery } from "@tanstack/react-query";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useFormContext } from "react-hook-form";
 
 import { toFaceSelection } from "@/entities/character";
@@ -37,7 +37,8 @@ const CARD_LINES = [
   "'명부 저장하기'를 누르면 너의 명부를 확인 할 수 있다냥",
 ];
 
-const ENDING_LINES = ["앞으로 어떻게 바뀔건지는 너에게 달렸으니 조심하라냥."];
+// 엔딩에서 곧감이만 보여주는 시간. 이후 자동으로 암전 깜빡임이 시작된다.
+const ENDING_HOLD_MS = 1500;
 
 type ResultStep = "intro" | "card" | "menu" | "ending";
 
@@ -91,15 +92,23 @@ export function ResultPage() {
     // TODO: save — 명부 앞/뒷장 이미지 2장 저장, visit-room — 곧감이의 방 (스펙 미정)
   };
 
-  // 곧감이는 그 자리에 둔 채 화면만 깜빡이며 암전한 뒤 홈으로 돌아간다.
-  // (페이지를 옮기면 캐릭터 크기·위치가 튀어서, 엔딩 화면 안에서 마무리한다)
-  const finishEnding = () => {
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
-      router.replace("/");
+  // 엔딩은 말풍선 없이 곧감이만 잠시 보여준 뒤, 그 자리에서 화면만 깜빡이며
+  // 암전하고 홈으로 돌아간다. (페이지를 옮기면 캐릭터 크기·위치가 튄다)
+  useEffect(() => {
+    if (step !== "ending" || isLeaving) {
       return;
     }
-    setIsLeaving(true);
-  };
+
+    const timerId = window.setTimeout(() => {
+      if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+        router.replace("/");
+        return;
+      }
+      setIsLeaving(true);
+    }, ENDING_HOLD_MS);
+
+    return () => window.clearTimeout(timerId);
+  }, [step, isLeaving, router]);
 
   return (
     <div className={styles.page}>
@@ -168,9 +177,7 @@ export function ResultPage() {
           {step === "menu" && <LedgerMenu onSelect={handleMenuSelect} />}
         </div>
       )}
-      {step === "ending" && (
-        <GotggamDialogue lines={ENDING_LINES} onComplete={finishEnding} />
-      )}
+      {step === "ending" && <GotggamDialogue />}
       {isLeaving && (
         <div
           className={styles.blackout}

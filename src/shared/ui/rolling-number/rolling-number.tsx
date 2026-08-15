@@ -37,14 +37,24 @@ function digitAt(value: number, place: number): number {
 type RollingNumberProps = {
   /** 0 이상의 정수. 소수점과 음수는 잘라낸다. */
   value: number;
+  /** false면 0에 머물고, true가 되는 순간 목표값까지 굴러간다. */
+  isPlaying?: boolean;
   className?: string;
 };
 
-export function RollingNumber({ value, className }: RollingNumberProps) {
+export function RollingNumber({
+  value,
+  isPlaying = true,
+  className,
+}: RollingNumberProps) {
   const targetValue = Math.max(0, Math.trunc(value));
   const [rolledValue, setRolledValue] = useState(0);
 
   useEffect(() => {
+    if (!isPlaying) {
+      return;
+    }
+
     let paintedFrame = 0;
     const mountedFrame = requestAnimationFrame(() => {
       paintedFrame = requestAnimationFrame(() => setRolledValue(targetValue));
@@ -54,7 +64,7 @@ export function RollingNumber({ value, className }: RollingNumberProps) {
       cancelAnimationFrame(mountedFrame);
       cancelAnimationFrame(paintedFrame);
     };
-  }, [targetValue]);
+  }, [targetValue, isPlaying]);
 
   const formatted = targetValue.toLocaleString("ko-KR");
 

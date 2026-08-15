@@ -1,4 +1,9 @@
+import { getFacePartTypeNumber } from "@/entities/character";
 import type { FormValues } from "@/features/form";
+import type {
+  SurveyResultRequest,
+  SurveyResultResponse,
+} from "@/shared/api/generated/models";
 
 /** 명부 카드 색상 베리에이션. Figma [명부_템플릿]의 8종과 1:1 대응한다. */
 export const LEDGER_VARIANTS = [
@@ -41,9 +46,71 @@ export interface LedgerResult {
   expectedAge: number;
   todayMessage: string;
   warning: string;
-  /** 특별준수사항. 서버가 최대 3개, 없으면 "흠, 잘 하고 있다냥"을 내려준다. */
+  /** 특별준수사항. 서버가 최대 3개, 없으면 기본 문장을 내려준다. */
   specialDirectives: string[];
   details: LedgerDetail[];
+}
+
+// 서버가 10~15자 검증을 하므로, 조건에 맞을 때만 실어 보낸다 (미입력 시 기본 문장 제공).
+const TODAY_MESSAGE_MIN = 10;
+const TODAY_MESSAGE_MAX = 15;
+
+/**
+ * 폼 값 → 설문 결과 제출 요청. 필수 값(이름·생년월일·성별·답변)이 비어 있으면
+ * null을 반환한다 — 개발 중 결과 화면에 직접 진입한 경우로 보고 목업으로 그린다.
+ */
+export function buildSurveyResultRequest(
+  form: FormValues,
+): SurveyResultRequest | null {
+  const answers = Object.entries(form.answers ?? {}).map(
+    ([questionId, optionId]) => ({
+      questionId: Number(questionId),
+      optionId,
+    }),
+  );
+
+  if (!form.name || !form.birthDate || !form.gender || answers.length === 0) {
+    return null;
+  }
+
+  const todayMessage = form.todayMessage?.trim();
+  const isValidTodayMessage =
+    !!todayMessage &&
+    todayMessage.length >= TODAY_MESSAGE_MIN &&
+    todayMessage.length <= TODAY_MESSAGE_MAX;
+
+  return {
+    name: form.name,
+    birthDate: form.birthDate,
+    gender: form.gender,
+    ...(isValidTodayMessage ? { todayMessage } : {}),
+    answers,
+    character: {
+      faceType: getFacePartTypeNumber(form.face.face),
+      hairType: getFacePartTypeNumber(form.face.hair),
+      eyeType: getFacePartTypeNumber(form.face.eyes),
+      noseType: getFacePartTypeNumber(form.face.nose),
+      mouthType: getFacePartTypeNumber(form.face.mouth),
+    },
+  };
+}
+
+/** 설문 결과 응답 → 명부 카드 표시 모델. */
+export function toLedgerResult(response: SurveyResultResponse): LedgerResult {
+  return {
+    name: response.name,
+    birthDate: response.birthDate,
+    gender: response.gender,
+    expectedAge: response.expectedLife,
+    todayMessage: response.todayMessage,
+    warning: response.warningMessage,
+    specialDirectives: response.specialRules,
+    // penalty는 차감량(양수)로 내려온다 — 카드에는 -n년으로 표기한다.
+    details: response.categoryPenalties.map((penalty) => ({
+      category: penalty.categoryName,
+      years: -penalty.penalty,
+    })),
+  };
 }
 
 const FALLBACK_LEDGER: LedgerResult = {
@@ -64,20 +131,13 @@ const FALLBACK_LEDGER: LedgerResult = {
   ],
 };
 
-/**
- * TODO: 제출 API 응답으로 교체한다.
- * 지금은 폼에서 채운 값을 쓰고, 서버가 계산해줄 값(예상수명, 경고문구, 준수사항,
- * 상세내역)과 폼이 비어 있는 경우(개발 중 직접 진입)는 목업으로 채운다.
- */
-export function buildLedgerResult(form: FormValues): LedgerResult {
+/** 개발 중 직접 진입(폼 미완성) 시 화면 확인용 목업. */
+export function buildMockLedgerResult(form: FormValues): LedgerResult {
   return {
+    ...FALLBACK_LEDGER,
     name: form.name || FALLBACK_LEDGER.name,
     birthDate: form.birthDate || FALLBACK_LEDGER.birthDate,
     gender: form.gender || FALLBACK_LEDGER.gender,
-    expectedAge: FALLBACK_LEDGER.expectedAge,
     todayMessage: form.todayMessage || FALLBACK_LEDGER.todayMessage,
-    warning: FALLBACK_LEDGER.warning,
-    specialDirectives: FALLBACK_LEDGER.specialDirectives,
-    details: FALLBACK_LEDGER.details,
   };
 }

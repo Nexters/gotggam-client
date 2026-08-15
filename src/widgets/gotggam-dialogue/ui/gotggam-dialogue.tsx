@@ -9,8 +9,8 @@ import * as styles from "./gotggam-dialogue.css";
 
 type GotggamDialogueProps = {
   lines: string[];
-  /** 마지막 대사에서 탭했을 때 */
-  onComplete: () => void;
+  /** 마지막 대사에서 탭했을 때. 생략하면 마지막 대사에서 진행 표시(▼) 없이 머문다. */
+  onComplete?: () => void;
   className?: string;
 };
 
@@ -23,9 +23,11 @@ export function GotggamDialogue({
   const [lineIndex, setLineIndex] = useState(0);
   const [isCharacterReady, setIsCharacterReady] = useState(false);
 
+  const isLastLine = lineIndex >= lines.length - 1;
+
   const goNext = () => {
-    if (lineIndex >= lines.length - 1) {
-      onComplete();
+    if (isLastLine) {
+      onComplete?.();
       return;
     }
     setLineIndex((index) => index + 1);
@@ -46,7 +48,10 @@ export function GotggamDialogue({
         />
       </div>
       <div className={styles.bubbleArea}>
-        <SpeechBubble text={lines[lineIndex]} onNext={goNext} />
+        <SpeechBubble
+          text={lines[lineIndex]}
+          onNext={isLastLine && !onComplete ? undefined : goNext}
+        />
       </div>
     </div>
   );

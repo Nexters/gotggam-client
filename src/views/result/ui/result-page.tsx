@@ -1,19 +1,22 @@
 "use client";
 
+import { useQuery } from "@tanstack/react-query";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useFormContext } from "react-hook-form";
 
-import type { FaceSelection } from "@/entities/character";
+import { toFaceSelection } from "@/entities/character";
+import { resultQueries } from "@/entities/result";
 import type { FormValues } from "@/features/form";
 import { AppBar, SpeechBubble, Typography } from "@/shared/ui";
 import { GotggamDialogue, SpotlightBackdrop } from "@/widgets/gotggam-dialogue";
 
 import {
-  buildLedgerResult,
+  buildMockLedgerResult,
+  buildSurveyResultRequest,
   pickRandomLedgerVariant,
-  type LedgerResult,
+  toLedgerResult,
   type LedgerVariant,
 } from "../model/ledger";
 import { LedgerCard } from "./ledger-card";
@@ -22,6 +25,12 @@ import * as styles from "./result-page.css";
 import { useCardFlip } from "./use-card-flip";
 
 const INTRO_LINES = ["흠 아직은 데려갈 때가 아닌 것 같다냥.."];
+
+const SUBMIT_PENDING_LINES = ["명부를 확인하는 중이다냥.."];
+
+const SUBMIT_ERROR_LINES = [
+  "명부를 불러오지 못했다냥.. 다시 한번 확인해보겠냥.",
+];
 
 const CARD_LINES = [
   "대신 오늘의 기록은 명부에 남겨뒀다냥.",
@@ -37,13 +46,33 @@ export function ResultPage() {
   const { getValues } = useFormContext<FormValues>();
   const [step, setStep] = useState<ResultStep>("intro");
   const [cardLineIndex, setCardLineIndex] = useState(0);
-
-  // TODO: 제출 API 응답으로 교체한다 (views/result/model/ledger.ts 참고).
-  const [ledger] = useState<LedgerResult>(() => buildLedgerResult(getValues()));
-  const [face] = useState<FaceSelection>(() => getValues("face"));
   const [variant] = useState<LedgerVariant>(() => pickRandomLedgerVariant());
 
+  // 폼이 완성돼 있으면 제출 요청을, 아니면(개발 중 직접 진입) 목업을 쓴다.
+  const [request] = useState(() => buildSurveyResultRequest(getValues()));
+  const [mockLedger] = useState(() =>
+    request ? null : buildMockLedgerResult(getValues()),
+  );
+  const [mockFace] = useState(() => getValues("face"));
+
+  // 인트로 대사가 나가는 동안 백그라운드로 제출된다 (resultQueries.submission 참고).
+  const {
+    data: surveyResult,
+    isError: isSubmitError,
+    refetch: retrySubmit,
+  } = useQuery({
+    ...resultQueries.submission(request),
+    enabled: request !== null,
+  });
+
+  // TODO: 공유 기능에서 surveyResult.resultId / shareToken 을 사용한다.
+  const ledger = surveyResult ? toLedgerResult(surveyResult) : mockLedger;
+  const face = surveyResult
+    ? toFaceSelection(surveyResult.character)
+    : mockFace;
+
   const cardFlip = useCardFlip();
+  const isCardPhase = step === "card" || step === "menu";
 
   const advanceCardLine = () => {
     if (cardLineIndex >= CARD_LINES.length - 1) {
@@ -63,7 +92,7 @@ export function ResultPage() {
 
   return (
     <div className={styles.page}>
-      {step === "intro" && <SpotlightBackdrop />}
+      {(step === "intro" || (isCardPhase && !ledger)) && <SpotlightBackdrop />}
       {step === "ending" && (
         <div className={styles.endingBackground}>
           <Image
@@ -83,7 +112,18 @@ export function ResultPage() {
           onComplete={() => setStep("card")}
         />
       )}
-      {(step === "card" || step === "menu") && (
+      {isCardPhase &&
+        !ledger &&
+        (isSubmitError ? (
+          <GotggamDialogue
+            key="submit-error"
+            lines={SUBMIT_ERROR_LINES}
+            onComplete={() => retrySubmit()}
+          />
+        ) : (
+          <GotggamDialogue key="submit-pending" lines={SUBMIT_PENDING_LINES} />
+        ))}
+      {isCardPhase && ledger && face && (
         <div className={styles.cardStage}>
           <LedgerCard
             result={ledger}

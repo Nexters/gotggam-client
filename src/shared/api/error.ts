@@ -100,7 +100,6 @@ function toErrorCode(status: number): ApiErrorCode {
   return status >= 500 ? "INTERNAL_ERROR" : "UNKNOWN";
 }
 
-// TODO: 에러 응답 스펙 확정 시 키 목록을 좁힌다.
 function extractMessage(data: unknown): string | undefined {
   if (typeof data === "string") {
     return data.trim() || undefined;
@@ -111,6 +110,14 @@ function extractMessage(data: unknown): string | undefined {
   }
 
   const record = data as Record<string, unknown>;
+
+  // 공통 응답 envelope: { status, error: { code, message, fieldErrors }, timestamp }
+  if (typeof record.error === "object" && record.error !== null) {
+    const nestedMessage = (record.error as Record<string, unknown>).message;
+    if (typeof nestedMessage === "string" && nestedMessage.trim()) {
+      return nestedMessage;
+    }
+  }
 
   for (const key of ["message", "error", "detail"]) {
     const value = record[key];

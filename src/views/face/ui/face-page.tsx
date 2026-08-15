@@ -25,8 +25,7 @@ export function FacePage() {
 
   const submitFace = (selection: FaceSelection) => {
     setValue("face", selection);
-    // TODO: 여기서 폼 전체 payload(이름·생년월일·성별·답변·얼굴)를 제출 API로 보내고,
-    //  응답을 결과 화면에 넘긴다. API 연동 전까지는 결과 화면이 폼 값 + 목업으로 그린다.
+    // 제출은 결과 화면이 인트로 대사 동안 백그라운드로 수행한다 (views/result).
     router.push("/form/result");
   };
 

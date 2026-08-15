@@ -102,18 +102,22 @@ export const bubbleArea = style({
   bottom: vars.spacing["24"],
 });
 
-// 엔딩 마무리 — 화면이 4번 깜빡이다 암전된 채 홈으로 전환된다 (end-bridge와 같은 리듬).
-// steps(1, end)라 각 키프레임 값이 다음 키프레임까지 유지된다.
+// 엔딩 마무리 — end-bridge와 동일한 "빰 - 빠밤 - 빰" 리듬으로 깜빡이다
+// 암전된 채 홈으로 전환된다. 마지막 암전은 걷지 않는다: 홈의 페이드인이
+// 곧 걷히는 연출이라, 여기서 걷으면 깜빡임이 한 번 더 있어 보인다.
+// (수치 변경 시 end-bridge-page.css.ts와 함께 맞출 것)
+const BLACKOUT_DURATION_MS = 1160;
+
+const at = (ms: number) => `${(ms / BLACKOUT_DURATION_MS) * 100}%`;
+
 const blackoutBlink = keyframes({
   "0%": { opacity: 0 },
-  "14.29%": { opacity: 1 },
-  "22.86%": { opacity: 0 },
-  "34.29%": { opacity: 1 },
-  "42.86%": { opacity: 0 },
-  "54.29%": { opacity: 1 },
-  "62.86%": { opacity: 0 },
-  "74.29%": { opacity: 1 },
-  "82.86%": { opacity: 0 },
+  [at(200)]: { opacity: 1 },
+  [at(320)]: { opacity: 0 },
+  [at(560)]: { opacity: 1 },
+  [at(640)]: { opacity: 0 },
+  [at(740)]: { opacity: 1 },
+  [at(860)]: { opacity: 0 },
   "100%": { opacity: 1 },
 });
 
@@ -121,9 +125,9 @@ export const blackout = style({
   position: "absolute",
   inset: 0,
   zIndex: 2,
-  backgroundColor: vars.color.black,
+  backgroundColor: vars.color.background,
   animationName: blackoutBlink,
-  animationDuration: "1400ms",
+  animationDuration: `${BLACKOUT_DURATION_MS}ms`,
   animationTimingFunction: "steps(1, end)",
   animationFillMode: "forwards",
 });

@@ -167,8 +167,9 @@ function QuestionFlow({ questions }: { questions: Question[] }) {
               <NarrationBox
                 text={CLOSING_OUTRO}
                 className={styles.narration}
-                // 답변 제출은 결과 화면이 수행한다 (views/result). 여기선 얼굴 확인으로 넘어간다.
-                onAdvance={() => router.push("/form/face")}
+                // 답변 제출은 결과 화면이 수행한다 (views/result).
+                // 여기선 "기록 중.." 로딩을 보여준 뒤 얼굴 확인으로 넘어간다.
+                onAdvance={() => setIsRoutingToFace(true)}
               />
             )}
           </>

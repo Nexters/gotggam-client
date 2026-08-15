@@ -2,12 +2,13 @@
 
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useFormContext } from "react-hook-form";
 
 import type { FormValues } from "@/features/form";
 import { ChoicePanel, Typography } from "@/shared/ui";
 import { AppBar } from "@/widgets/app-bar";
+import { LoadingScreen } from "@/widgets/loading-screen";
 import { Character, NarrationBox, SceneBackground } from "@/widgets/scene";
 
 import { questionQueries } from "../api/question-queries";
@@ -24,6 +25,9 @@ import { ReviewPanel } from "./review-panel";
  * 아니라 체크포인트라 ?panel=review 쿼리 파라미터가 소유한다.
  */
 type ClosingStep = "ask" | "outro";
+
+/** 얼굴 페이지로 넘어가기 전 로딩 연출을 보여줄 시간. */
+const FACE_ROUTING_LOADING_MS = 1500;
 
 export function QuestionSection() {
   const { data: questions } = useSuspenseQuery(questionQueries.list());
@@ -46,6 +50,19 @@ function QuestionFlow({ questions }: { questions: Question[] }) {
   const searchParams = useSearchParams();
   const { setValue, getValues } = useFormContext<FormValues>();
   const [closingStep, setClosingStep] = useState<ClosingStep | null>(null);
+  const [isRoutingToFace, setIsRoutingToFace] = useState(false);
+
+  // 로딩 연출을 잠깐 보여준 뒤 얼굴 페이지로 넘어간다.
+  useEffect(() => {
+    if (!isRoutingToFace) {
+      return;
+    }
+    const id = setTimeout(
+      () => router.push("/form/face"),
+      FACE_ROUTING_LOADING_MS,
+    );
+    return () => clearTimeout(id);
+  }, [isRoutingToFace, router]);
 
   const isReviewPanelOpen = searchParams.get("panel") === "review";
 
@@ -104,6 +121,10 @@ function QuestionFlow({ questions }: { questions: Question[] }) {
     router.push(`?q=${questionNumber}&panel=review`);
   };
 
+  if (isRoutingToFace) {
+    return <LoadingScreen text="얼굴 그리는 중..." />;
+  }
+
   return (
     <div className={styles.page}>
       <SceneBackground src={getActBackground(question.actCode)} dimmed />
@@ -147,7 +168,7 @@ function QuestionFlow({ questions }: { questions: Question[] }) {
               <NarrationBox
                 text={CLOSING_OUTRO}
                 className={styles.narration}
-                onAdvance={() => router.push("/form/face")}
+                onAdvance={() => setIsRoutingToFace(true)}
               />
             )}
           </>

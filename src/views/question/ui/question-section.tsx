@@ -127,10 +127,7 @@ function QuestionFlow({ questions }: { questions: Question[] }) {
   return (
     <div className={styles.page}>
       <SceneBackground src={getActBackground(question.actCode)} dimmed />
-      <AppBar
-        onBack={isClosing ? goBackFromClosing : goBack}
-        showHome={false}
-      />
+      <AppBar onBack={isClosing ? goBackFromClosing : goBack} />
 
       <div className={styles.content}>
         {!isClosing && (

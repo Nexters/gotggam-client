@@ -6,7 +6,7 @@ import type { FormValues } from "@/features/form";
 import { useDebouncedValue } from "@/shared/lib";
 import { InputPanel } from "@/shared/ui";
 
-import { KOREAN_NAME_REGEX } from "../model/constants";
+import { NAME_REGEX } from "../model/constants";
 
 // 한글 IME 조합 중에는 글자마다 유효성이 뒤집혀 힌트·CTA가 깜빡인다.
 // 타이핑이 잠잠해진 뒤의 값으로 검증 UI를 갱신한다.
@@ -20,7 +20,7 @@ export function NamePanel({ onSubmit }: NamePanelProps) {
   const { setValue, watch } = useFormContext<FormValues>();
   const name = watch("name");
   const debouncedName = useDebouncedValue(name, VALIDATION_DEBOUNCE_MS);
-  const isValidName = KOREAN_NAME_REGEX.test(debouncedName);
+  const isValidName = NAME_REGEX.test(debouncedName);
 
   return (
     <InputPanel
@@ -28,13 +28,13 @@ export function NamePanel({ onSubmit }: NamePanelProps) {
       value={name}
       onChange={(value) => setValue("name", value)}
       placeholder="이름을 입력해주세요."
-      maxLength={4}
+      maxLength={6}
       hint={
         isValidName
           ? "- 사용할 수 있는 이름입니다."
-          : "- 4자 이내로 작성해주세요."
+          : "- 한글 4자, 영어 6자 이내로 작성해주세요."
       }
-      hintTone={isValidName ? "accent" : "muted"}
+      hintTone={isValidName ? "accent" : debouncedName ? "warning" : "muted"}
       ctaLabel="다음"
       ctaDisabled={!isValidName}
       onCtaClick={onSubmit}

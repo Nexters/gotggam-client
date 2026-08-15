@@ -213,14 +213,16 @@ export const ageNumber = style({
 });
 
 // AI 생성 문구라 길이가 가변 — FitText가 이 박스에 맞춰 폰트를 줄인다.
+// height는 프레임 그림의 칸 하단 테두리(y 275.5) 안쪽까지만 잡는다.
 export const commentValue = style({
   position: "absolute",
   left: 180.8,
   top: 224.7,
   width: 100,
-  height: 62,
+  height: 48,
   transform: "translateX(-50%)",
   overflow: "hidden",
+  overflowWrap: "anywhere",
   fontSize: 13.4,
   lineHeight: 1.6,
   letterSpacing: "-0.15px",
@@ -234,6 +236,7 @@ export const warningValue = style({
   width: 198,
   height: 58,
   overflow: "hidden",
+  overflowWrap: "anywhere",
   fontSize: 16.8,
   lineHeight: 1.6,
   letterSpacing: "-0.18px",
@@ -263,24 +266,26 @@ export const detailsLabel = style({
   whiteSpace: "nowrap",
 });
 
+// 카테고리명 길이(몸/마음/삶태도)가 달라도 게이지 시작점이 정렬되도록,
+// 라벨 열을 가장 긴 라벨에 맞추는 grid로 잡는다. (저장 렌더도 같은 규칙 —
+// save-ledger-images.ts drawBack의 maxLabelWidth + gap 8 참조)
 export const detailRows = style({
   position: "absolute",
   left: 28.6,
   top: 84.4,
-  display: "flex",
-  flexDirection: "column",
-  gap: 15.1,
+  display: "grid",
+  gridTemplateColumns: "max-content 112px minmax(0, 1fr)",
+  alignItems: "center",
+  columnGap: 8,
+  rowGap: 15.1,
   width: 199,
 });
 
 export const detailRow = style({
-  display: "flex",
-  alignItems: "center",
-  gap: 10,
+  display: "contents",
 });
 
 export const detailCategory = style({
-  flexShrink: 0,
   fontSize: 10.1,
   lineHeight: 1.2,
   letterSpacing: "1.2px",
@@ -289,7 +294,6 @@ export const detailCategory = style({
 
 export const gauge = style({
   position: "relative",
-  flexShrink: 0,
   width: 112,
   height: 16.8,
 });
@@ -310,7 +314,7 @@ export const gaugeBarImage = style({
 });
 
 export const detailYears = style({
-  marginLeft: "auto",
+  justifySelf: "end",
   fontSize: 10.1,
   lineHeight: 1.2,
   letterSpacing: "1.2px",
@@ -338,6 +342,7 @@ export const directives = style({
   width: 213,
   height: 150,
   overflow: "hidden",
+  overflowWrap: "anywhere",
   fontFamily: vars.font.galmuri11,
   fontSize: 13.4,
   lineHeight: 1.6,

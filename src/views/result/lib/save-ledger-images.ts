@@ -197,6 +197,12 @@ function drawFitText(ctx: Ctx, spec: FitBoxSpec) {
     }
   }
 
+  ctx.save();
+  // 최소 폰트로도 넘치는 극단 입력이 와도 박스(칸) 밖으로는 그리지 않는다.
+  ctx.beginPath();
+  ctx.rect(x * SCALE, top * SCALE, width * SCALE, height * SCALE);
+  ctx.clip();
+
   ctx.fillStyle = color;
   ctx.textAlign = align === "center" ? "center" : "left";
   ctx.textBaseline = "top";
@@ -207,6 +213,7 @@ function drawFitText(ctx: Ctx, spec: FitBoxSpec) {
       top + index * fontSize * lineHeight + lineTopOffset(fontSize, lineHeight);
     ctx.fillText(line, drawX, lineTop * SCALE);
   });
+  ctx.restore();
 }
 
 /** 한 칸짜리 픽셀 코너 클리핑 패스 (카드 252 기준 step 2px = 프로필 마스크와 동일). */
@@ -323,7 +330,7 @@ async function drawFront(
   setFont(ctx, 30.2, "Galmuri9", 400, 3);
   ctx.fillText("세", 30.2 * SCALE + ageNumberWidth, ageTop * SCALE);
 
-  drawFitText(ctx, { text: result.todayMessage, x: 130.8, top: 224.7, width: 100, height: 62, maxFontSize: 13.4, lineHeight: 1.6, color: WHITE, align: "center", letterSpacing: -0.15 });
+  drawFitText(ctx, { text: result.todayMessage, x: 130.8, top: 224.7, width: 100, height: 48, maxFontSize: 13.4, lineHeight: 1.6, color: WHITE, align: "center", letterSpacing: -0.15 });
   drawFitText(ctx, { text: result.warning, x: 26.9, top: 330.5, width: 198, height: 58, maxFontSize: 16.8, lineHeight: 1.6, color: WHITE, letterSpacing: -0.18 });
 }
 
@@ -347,8 +354,15 @@ async function drawBack(
   drawTextLine(ctx, { text: "특별준수사항", x: 62.4, top: 212.2, fontSize: 11.8, lineHeight: 1.2, color: BACK_LABEL_COLOR, align: "center", letterSpacing: 1.4 });
   drawTextLine(ctx, { text: "Too Early to Go.", x: 158.1, top: 403.6, fontSize: 8, lineHeight: 1.6, color: WHITE, align: "right", letterSpacing: -0.09 });
 
-  // 상세내역 게이지 — ledger-card.css.ts detailRows(28.6, 84.4, w199, gap 15.1) 스펙
+  // 상세내역 게이지 — ledger-card.css.ts detailRows(28.6, 84.4, w199, gap 15.1) 스펙.
+  // 게이지 시작점은 카드와 같은 규칙(가장 긴 라벨 + columnGap 8)으로 모든 행 정렬.
   const rows = { x: 28.6, top: 84.4, width: 199, gaugeWidth: 112, gaugeHeight: 16.8, gap: 15.1 };
+  setFont(ctx, 10.1, "Galmuri9", 400, 1.2);
+  const maxLabelWidth = Math.max(
+    ...result.details.map(
+      (detail) => ctx.measureText(`${detail.category} :`).width,
+    ),
+  );
   result.details.forEach((detail, index) => {
     const rowTop = rows.top + index * (rows.gaugeHeight + rows.gap);
     const centerY = (rowTop + rows.gaugeHeight / 2) * SCALE;
@@ -359,9 +373,8 @@ async function drawBack(
     ctx.textBaseline = "middle";
     const label = `${detail.category} :`;
     ctx.fillText(label, rows.x * SCALE, centerY);
-    const labelWidth = ctx.measureText(label).width;
 
-    const gaugeX = rows.x * SCALE + labelWidth + 10 * SCALE;
+    const gaugeX = rows.x * SCALE + maxLabelWidth + 8 * SCALE;
     const gaugeW = rows.gaugeWidth * SCALE;
     const gaugeH = rows.gaugeHeight * SCALE;
     ctx.drawImage(gaugeArea, gaugeX, rowTop * SCALE, gaugeW, gaugeH);

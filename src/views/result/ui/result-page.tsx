@@ -46,6 +46,7 @@ export function ResultPage() {
   const { getValues } = useFormContext<FormValues>();
   const [step, setStep] = useState<ResultStep>("intro");
   const [cardLineIndex, setCardLineIndex] = useState(0);
+  const [isLeaving, setIsLeaving] = useState(false);
   const [variant] = useState<LedgerVariant>(() => pickRandomLedgerVariant());
 
   // 폼이 완성돼 있으면 제출 요청을, 아니면(개발 중 직접 진입) 목업을 쓴다.
@@ -88,6 +89,16 @@ export function ResultPage() {
       window.setTimeout(() => setStep("ending"), 400);
     }
     // TODO: save — 명부 앞/뒷장 이미지 2장 저장, visit-room — 곧감이의 방 (스펙 미정)
+  };
+
+  // 곧감이는 그 자리에 둔 채 화면만 깜빡이며 암전한 뒤 홈으로 돌아간다.
+  // (페이지를 옮기면 캐릭터 크기·위치가 튀어서, 엔딩 화면 안에서 마무리한다)
+  const finishEnding = () => {
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      router.replace("/");
+      return;
+    }
+    setIsLeaving(true);
   };
 
   return (
@@ -158,9 +169,12 @@ export function ResultPage() {
         </div>
       )}
       {step === "ending" && (
-        <GotggamDialogue
-          lines={ENDING_LINES}
-          onComplete={() => router.push("/end-bridge")}
+        <GotggamDialogue lines={ENDING_LINES} onComplete={finishEnding} />
+      )}
+      {isLeaving && (
+        <div
+          className={styles.blackout}
+          onAnimationEnd={() => router.replace("/")}
         />
       )}
     </div>

@@ -101,3 +101,29 @@ export const bubbleArea = style({
   insetInline: vars.spacing["16"],
   bottom: vars.spacing["24"],
 });
+
+// 엔딩 마무리 — 화면이 4번 깜빡이다 암전된 채 홈으로 전환된다 (end-bridge와 같은 리듬).
+// steps(1, end)라 각 키프레임 값이 다음 키프레임까지 유지된다.
+const blackoutBlink = keyframes({
+  "0%": { opacity: 0 },
+  "14.29%": { opacity: 1 },
+  "22.86%": { opacity: 0 },
+  "34.29%": { opacity: 1 },
+  "42.86%": { opacity: 0 },
+  "54.29%": { opacity: 1 },
+  "62.86%": { opacity: 0 },
+  "74.29%": { opacity: 1 },
+  "82.86%": { opacity: 0 },
+  "100%": { opacity: 1 },
+});
+
+export const blackout = style({
+  position: "absolute",
+  inset: 0,
+  zIndex: 2,
+  backgroundColor: vars.color.black,
+  animationName: blackoutBlink,
+  animationDuration: "1400ms",
+  animationTimingFunction: "steps(1, end)",
+  animationFillMode: "forwards",
+});

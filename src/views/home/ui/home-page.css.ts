@@ -37,6 +37,7 @@ export const page = style({
   display: "flex",
   flexDirection: "column",
   minHeight: "100%",
+  maxHeight: "100%",
   overflow: "hidden",
   color: vars.color.white,
 });
@@ -83,6 +84,9 @@ export const character = style({
 });
 
 export const footer = style({
+  position: 'absolute',
+  bottom: 0,
+  width: "100%",
   display: "flex",
   justifyContent: "center",
   padding: `0 ${vars.spacing["20"]} ${vars.spacing["36"]}`,

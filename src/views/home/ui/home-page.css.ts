@@ -74,7 +74,8 @@ export const revealArea = style({
 export const topBar = style({
   display: "flex",
   justifyContent: "flex-end",
-  padding: vars.spacing["16"],
+  padding: `${vars.spacing["12"]} ${vars.spacing["16"]}`,
+  marginTop: vars.spacing["20"],
 });
 
 export const content = style({

@@ -7,6 +7,7 @@ export const appBar = style({
   display: "flex",
   alignItems: "center",
   justifyContent: "space-between",
+  marginTop: vars.spacing["20"],
   padding: `${vars.spacing["12"]} ${vars.spacing["16"]}`,
   opacity: 0.8,
 });

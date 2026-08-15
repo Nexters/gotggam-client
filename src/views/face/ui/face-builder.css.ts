@@ -2,12 +2,13 @@ import { style } from "@vanilla-extract/css";
 
 import { vars } from "@/shared/styles/theme.css";
 
+// 앱바 없는 화면이라 상단 여백을 직접 확보한다.
 export const container = style({
   position: "relative",
   display: "flex",
   flex: 1,
   flexDirection: "column",
-  padding: `${vars.spacing["16"]} ${vars.spacing["24"]} ${vars.spacing["24"]}`,
+  padding: `${vars.spacing["48"]} ${vars.spacing["24"]} ${vars.spacing["24"]}`,
 });
 
 // Figma [customize]: 상단 안내 문구(y121) + 몸까지 보이는 캐릭터(210×262)
@@ -33,11 +34,13 @@ export const preview = style({
 });
 
 // 패널·스테퍼·CTA 사이 남는 공간을 위아래로 나눠, 스테퍼가 디자인처럼 화면 중단에 온다.
+// marginBottom은 선택지와 CTA 사이 최소 간격을 보장한다.
 export const controls = style({
   display: "flex",
   flexDirection: "column",
   gap: vars.spacing["12"],
   marginTop: "auto",
+  marginBottom: vars.spacing["20"],
   paddingTop: vars.spacing["24"],
 });
 

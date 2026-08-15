@@ -19,7 +19,10 @@ import {
 } from "@/widgets/gotggam-dialogue";
 
 import { copyTextToClipboard } from "../lib/copy-text";
-import { saveLedgerImages } from "../lib/save-ledger-images";
+import {
+  renderLedgerImages,
+  saveLedgerImageFiles,
+} from "../lib/save-ledger-images";
 import {
   buildMockLedgerResult,
   buildSurveyResultRequest,
@@ -30,6 +33,7 @@ import {
 import { LedgerCard } from "./ledger-card";
 import { LedgerDrawer } from "./ledger-drawer";
 import { LedgerMenu, type LedgerMenuAction } from "./ledger-menu";
+import { LedgerPreviewModal } from "./ledger-preview-modal";
 import { LinkCopiedModal } from "./link-copied-modal";
 import * as styles from "./result-page.css";
 import { useCardFlip } from "./use-card-flip";
@@ -76,6 +80,10 @@ export function ResultPage() {
     null,
   );
   const [isShareModalOpen, setIsShareModalOpen] = useState(false);
+  const [previewImages, setPreviewImages] = useState<{
+    files: File[];
+    urls: string[];
+  } | null>(null);
   const [cardScales, setCardScales] = useState(() => getCardScales());
   const hasSheetInteractedRef = useRef(false);
 
@@ -159,13 +167,24 @@ export function ResultPage() {
       return;
     }
 
-    if (action === "save" && ledger && face && !isSaving) {
-      // 명부 앞/뒷장을 600×1050 PNG 두 장으로 저장한다 (모바일: 공유 시트).
+    if (action === "save" && ledger && face && !isSaving && !previewImages) {
+      // 명부 앞/뒷장을 600×1050 PNG 두 장으로 만들어 미리보기부터 띄운다.
       setIsSaving(true);
-      saveLedgerImages({ result: ledger, face, variant })
+      renderLedgerImages({ result: ledger, face, variant })
+        .then((files) => {
+          setPreviewImages({
+            files,
+            urls: files.map((file) => URL.createObjectURL(file)),
+          });
+        })
         .catch((error) => console.error("명부 저장 실패:", error))
         .finally(() => setIsSaving(false));
     }
+  };
+
+  const closePreview = () => {
+    previewImages?.urls.forEach((url) => URL.revokeObjectURL(url));
+    setPreviewImages(null);
   };
 
   // 엔딩은 말풍선 없이 곧감이만 잠시 보여준 뒤, 그 자리에서 화면만 깜빡이며
@@ -270,6 +289,17 @@ export function ResultPage() {
       )}
       {step === "ending" && (
         <GotggamDialogue characterSrc={GOTGGAM_WITH_CHARACTER_SRC} />
+      )}
+      {previewImages && (
+        <LedgerPreviewModal
+          imageUrls={previewImages.urls}
+          onSave={() => {
+            saveLedgerImageFiles(previewImages.files).catch((error) =>
+              console.error("명부 저장 실패:", error),
+            );
+          }}
+          onClose={closePreview}
+        />
       )}
       {isShareModalOpen && (
         <LinkCopiedModal onClose={() => setIsShareModalOpen(false)} />

@@ -17,13 +17,15 @@ function hidden(durationMs: number, delayMs = 0) {
   });
 }
 
+// 로고·캐릭터·CTA가 등장하기까지 배경만 떠 있는 시간. CSS transition-delay가
+// 아니라 상태로 잡는다 — lottie 재생을 등장과 같은 시점에 시작해야 해서
+// 컴포넌트도 이 값을 알아야 하기 때문이다.
+export const REVEAL_DELAY_MS = 1400;
+
 export const reveal = hidden(300);
 
-// 배경은 더 천천히 떠올라서, 그 위에 로고·캐릭터가 얹히는 순서가 눈에 들어온다.
+// 배경과 로고·캐릭터·CTA가 같은 페이드를 쓴다. 늦게 얹히는 건 딜레이 덕이다.
 export const revealSlow = hidden(1200);
-
-// 로고·캐릭터·CTA는 배경이 어느 정도 떠오른 뒤에 한 박자 늦게 얹힌다.
-export const revealDelayed = hidden(300, 1400);
 
 // reveal/revealSlow보다 뒤에 선언해야 같은 특이도에서 opacity를 덮어쓴다.
 export const revealed = style({
@@ -58,6 +60,15 @@ export const backgroundOverlay = style({
   position: "absolute",
   inset: 0,
   backgroundColor: "rgba(18, 18, 18, 0.4)",
+});
+
+// 로고·캐릭터·CTA를 한 레이어로 묶어서 배경처럼 한 번에 떠오르게 한다.
+export const revealArea = style({
+  position: "relative",
+  display: "flex",
+  flex: 1,
+  flexDirection: "column",
+  minHeight: 0,
 });
 
 export const topBar = style({

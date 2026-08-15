@@ -20,7 +20,7 @@ export function HomePage() {
   const [isReady, setIsReady] = useState(false);
   const [isBackgroundLoaded, setIsBackgroundLoaded] = useState(false);
 
-  const revealClassName = cn(styles.reveal, isReady && styles.revealed);
+  const revealClassName = cn(styles.revealDelayed, isReady && styles.revealed);
 
   return (
     <div className={styles.page}>

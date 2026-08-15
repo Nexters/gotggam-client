@@ -13,14 +13,11 @@ const selectBlink = keyframes({
   "100%": { backgroundColor: SELECTED_BACKGROUND },
 });
 
+// 배경(어두운 패널 + 블러)은 바텀시트(ledger-drawer)가 깐다.
 export const panel = style({
-  position: "absolute",
-  insetInline: 0,
-  bottom: 0,
-  paddingTop: vars.spacing["48"],
-  paddingBottom: vars.spacing["36"],
-  backgroundColor: "rgba(18, 18, 18, 0.8)",
-  backdropFilter: "blur(6px)",
+  position: "relative",
+  paddingTop: vars.spacing["8"],
+  paddingBottom: vars.spacing["24"],
 });
 
 export const item = style({

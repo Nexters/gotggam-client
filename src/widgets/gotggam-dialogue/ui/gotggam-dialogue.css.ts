@@ -17,11 +17,18 @@ export const characterArea = style({
   overflow: "hidden",
 });
 
-export const character = style({
+// 캐릭터(로티/이미지)와 오버레이(이름 배지 등)의 공통 기준 박스
+export const characterBox = style({
+  position: "relative",
   width: "92%",
   maxWidth: 400,
   aspectRatio: "1 / 1",
   marginBottom: -12,
+});
+
+export const character = style({
+  width: "100%",
+  height: "100%",
   opacity: 0,
   transition: "opacity 400ms ease-out",
   "@media": {
@@ -33,6 +40,11 @@ export const character = style({
 
 export const characterVisible = style({
   opacity: 1,
+});
+
+export const characterImage = style({
+  objectFit: "contain",
+  imageRendering: "pixelated",
 });
 
 export const bubbleArea = style({

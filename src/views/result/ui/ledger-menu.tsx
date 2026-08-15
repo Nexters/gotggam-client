@@ -8,11 +8,12 @@ import { Typography } from "@/shared/ui";
 
 import * as styles from "./ledger-menu.css";
 
-export type LedgerMenuAction = "save" | "visit-room" | "finish";
+export type LedgerMenuAction = "save" | "visit-room" | "share" | "finish";
 
 const MENU_ITEMS: { action: LedgerMenuAction; label: string }[] = [
   { action: "save", label: "명부 저장하기" },
   { action: "visit-room", label: "곧감이의 방 방문하기" },
+  { action: "share", label: "테스트 공유하기" },
   { action: "finish", label: "끝내기" },
 ];
 

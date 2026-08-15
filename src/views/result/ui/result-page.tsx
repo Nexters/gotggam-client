@@ -3,16 +3,22 @@
 import { useQuery } from "@tanstack/react-query";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useFormContext } from "react-hook-form";
 
 import { toFaceSelection } from "@/entities/character";
 import { resultQueries } from "@/entities/result";
 import type { FormValues } from "@/features/form";
 import { GOTGGAM_INSTAGRAM_URL } from "@/shared/config";
-import { AppBar, SpeechBubble, Typography } from "@/shared/ui";
-import { GotggamDialogue, SpotlightBackdrop } from "@/widgets/gotggam-dialogue";
+import { cn } from "@/shared/lib";
+import { Typography } from "@/shared/ui";
+import {
+  GOTGGAM_WITH_CHARACTER_SRC,
+  GotggamDialogue,
+  SpotlightBackdrop,
+} from "@/widgets/gotggam-dialogue";
 
+import { copyTextToClipboard } from "../lib/copy-text";
 import { saveLedgerImages } from "../lib/save-ledger-images";
 import {
   buildMockLedgerResult,
@@ -22,7 +28,9 @@ import {
   type LedgerVariant,
 } from "../model/ledger";
 import { LedgerCard } from "./ledger-card";
+import { LedgerDrawer } from "./ledger-drawer";
 import { LedgerMenu, type LedgerMenuAction } from "./ledger-menu";
+import { LinkCopiedModal } from "./link-copied-modal";
 import * as styles from "./result-page.css";
 import { useCardFlip } from "./use-card-flip";
 
@@ -34,24 +42,42 @@ const SUBMIT_ERROR_LINES = [
   "명부를 불러오지 못했다냥.. 다시 한번 확인해보겠냥.",
 ];
 
-const CARD_LINES = [
-  "대신 오늘의 기록은 명부에 남겨뒀다냥.",
-  "'명부 저장하기'를 누르면 너의 명부를 확인 할 수 있다냥",
-];
+// 카드가 뜬 뒤 바텀시트가 저절로 올라오기까지의 시간
+const SHEET_AUTO_OPEN_MS = 3000;
 
 // 엔딩에서 곧감이만 보여주는 시간. 이후 자동으로 암전 깜빡임이 시작된다.
 const ENDING_HOLD_MS = 1500;
 
-type ResultStep = "intro" | "card" | "menu" | "ending";
+// Figma [card_drawer]: 시트 닫힘 300px / 열림 220px, 카드 원본 252px.
+// 좁거나 낮은 화면에서는 카드가 힌트·시트와 겹치지 않도록 상한을 낮춘다.
+function getCardScales() {
+  if (typeof window === "undefined") {
+    return { closed: 300 / 252, open: 220 / 252 };
+  }
+  const { innerWidth: width, innerHeight: height } = window;
+  return {
+    closed: Math.min(300 / 252, (width - 40) / 252, (height - 224) / 441),
+    open: Math.min(220 / 252, (width - 40) / 252, (height - 400) / 441),
+  };
+}
+
+type ResultStep = "intro" | "card" | "ending";
 
 export function ResultPage() {
   const router = useRouter();
   const { getValues } = useFormContext<FormValues>();
   const [step, setStep] = useState<ResultStep>("intro");
-  const [cardLineIndex, setCardLineIndex] = useState(0);
   const [isLeaving, setIsLeaving] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const [variant] = useState<LedgerVariant>(() => pickRandomLedgerVariant());
+
+  const [isSheetOpen, setIsSheetOpen] = useState(false);
+  const [sheetDragProgress, setSheetDragProgress] = useState<number | null>(
+    null,
+  );
+  const [isShareModalOpen, setIsShareModalOpen] = useState(false);
+  const [cardScales, setCardScales] = useState(() => getCardScales());
+  const hasSheetInteractedRef = useRef(false);
 
   // 폼이 완성돼 있으면 제출 요청을, 아니면(개발 중 직접 진입) 목업을 쓴다.
   const [request] = useState(() => buildSurveyResultRequest(getValues()));
@@ -70,21 +96,44 @@ export function ResultPage() {
     enabled: request !== null,
   });
 
-  // TODO: 공유 기능에서 surveyResult.resultId / shareToken 을 사용한다.
+  // TODO: 공유 조회 API가 생기면 surveyResult.resultId / shareToken 링크로 교체한다.
   const ledger = surveyResult ? toLedgerResult(surveyResult) : mockLedger;
   const face = surveyResult
     ? toFaceSelection(surveyResult.character)
     : mockFace;
 
   const cardFlip = useCardFlip();
-  const isCardPhase = step === "card" || step === "menu";
+  const isCardPhase = step === "card";
+  const isCardVisible = isCardPhase && !!ledger && !!face;
 
-  const advanceCardLine = () => {
-    if (cardLineIndex >= CARD_LINES.length - 1) {
-      setStep("menu");
+  // 카드가 뜨고 3초 뒤, 사용자가 먼저 시트를 만지지 않았다면 자동으로 올린다.
+  useEffect(() => {
+    if (!isCardVisible) {
       return;
     }
-    setCardLineIndex((index) => index + 1);
+    const timerId = window.setTimeout(() => {
+      if (!hasSheetInteractedRef.current) {
+        setIsSheetOpen(true);
+      }
+    }, SHEET_AUTO_OPEN_MS);
+    return () => window.clearTimeout(timerId);
+  }, [isCardVisible]);
+
+  useEffect(() => {
+    const handleResize = () => setCardScales(getCardScales());
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
+  const handleSheetOpenChange = (nextOpen: boolean) => {
+    hasSheetInteractedRef.current = true;
+    setSheetDragProgress(null);
+    setIsSheetOpen(nextOpen);
+  };
+
+  const handleSheetDragProgress = (progress: number | null) => {
+    hasSheetInteractedRef.current = true;
+    setSheetDragProgress(progress);
   };
 
   const handleMenuSelect = (action: LedgerMenuAction) => {
@@ -97,6 +146,16 @@ export function ResultPage() {
     if (action === "visit-room") {
       // 곧감이의 방 = 곧감 인스타그램. 결과 화면이 유지되도록 새 탭으로 연다.
       window.open(GOTGGAM_INSTAGRAM_URL, "_blank", "noopener,noreferrer");
+      return;
+    }
+
+    if (action === "share") {
+      // TODO: 공유 조회 API 연동 시 개인 결과 링크로 교체한다. 지금은 서비스 링크.
+      copyTextToClipboard(window.location.origin).then((isCopied) => {
+        if (isCopied) {
+          setIsShareModalOpen(true);
+        }
+      });
       return;
     }
 
@@ -127,6 +186,10 @@ export function ResultPage() {
     return () => window.clearTimeout(timerId);
   }, [step, isLeaving, router]);
 
+  const sheetProgress = sheetDragProgress ?? (isSheetOpen ? 1 : 0);
+  const cardScale =
+    cardScales.closed + (cardScales.open - cardScales.closed) * sheetProgress;
+
   return (
     <div className={styles.page}>
       {(step === "intro" || (isCardPhase && !ledger)) && <SpotlightBackdrop />}
@@ -142,10 +205,10 @@ export function ResultPage() {
           />
         </div>
       )}
-      <AppBar onBack={() => router.back()} />
       {step === "intro" && (
         <GotggamDialogue
           lines={INTRO_LINES}
+          characterSrc={GOTGGAM_WITH_CHARACTER_SRC}
           onComplete={() => setStep("card")}
         />
       )}
@@ -155,46 +218,62 @@ export function ResultPage() {
           <GotggamDialogue
             key="submit-error"
             lines={SUBMIT_ERROR_LINES}
+            characterSrc={GOTGGAM_WITH_CHARACTER_SRC}
             onComplete={() => retrySubmit()}
           />
         ) : (
-          <GotggamDialogue key="submit-pending" lines={SUBMIT_PENDING_LINES} />
-        ))}
-      {isCardPhase && ledger && face && (
-        <div className={styles.cardStage}>
-          <LedgerCard
-            result={ledger}
-            face={face}
-            variant={variant}
-            rotation={cardFlip.rotation}
-            isDragging={cardFlip.isDragging}
-            interactive={step === "menu"}
-            handlers={cardFlip.handlers}
-            className={styles.card}
+          <GotggamDialogue
+            key="submit-pending"
+            lines={SUBMIT_PENDING_LINES}
+            characterSrc={GOTGGAM_WITH_CHARACTER_SRC}
           />
-          {step === "menu" && (
+        ))}
+      {isCardVisible && ledger && face && (
+        <>
+          <div className={styles.cardStage}>
             <button
               type="button"
               className={styles.flipHint}
               onClick={cardFlip.flip}
             >
               <Typography family="galmuri9" size="14" color="gray-11">
-                {"< 카드를 돌려서 뒷면을 확인하라냥 >"}
+                {"<카드를 돌려서 뒷면을 확인하라냥!>"}
               </Typography>
             </button>
-          )}
-          {step === "card" && (
-            <div className={styles.bubbleArea}>
-              <SpeechBubble
-                text={CARD_LINES[cardLineIndex]}
-                onNext={advanceCardLine}
+            <div
+              className={cn(
+                styles.cardScaleBox,
+                sheetDragProgress !== null && styles.cardScaleBoxDragging,
+              )}
+              style={{ transform: `scale(${cardScale})` }}
+            >
+              <LedgerCard
+                result={ledger}
+                face={face}
+                variant={variant}
+                rotation={cardFlip.rotation}
+                isDragging={cardFlip.isDragging}
+                interactive
+                handlers={cardFlip.handlers}
+                className={styles.card}
               />
             </div>
-          )}
-          {step === "menu" && <LedgerMenu onSelect={handleMenuSelect} />}
-        </div>
+          </div>
+          <LedgerDrawer
+            isOpen={isSheetOpen}
+            onOpenChange={handleSheetOpenChange}
+            onDragProgress={handleSheetDragProgress}
+          >
+            <LedgerMenu onSelect={handleMenuSelect} />
+          </LedgerDrawer>
+        </>
       )}
-      {step === "ending" && <GotggamDialogue />}
+      {step === "ending" && (
+        <GotggamDialogue characterSrc={GOTGGAM_WITH_CHARACTER_SRC} />
+      )}
+      {isShareModalOpen && (
+        <LinkCopiedModal onClose={() => setIsShareModalOpen(false)} />
+      )}
       {isLeaving && (
         <div
           className={styles.blackout}

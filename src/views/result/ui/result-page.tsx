@@ -9,6 +9,7 @@ import { useFormContext } from "react-hook-form";
 import { toFaceSelection } from "@/entities/character";
 import { resultQueries } from "@/entities/result";
 import type { FormValues } from "@/features/form";
+import { GOTGGAM_INSTAGRAM_URL } from "@/shared/config";
 import { AppBar, SpeechBubble, Typography } from "@/shared/ui";
 import { GotggamDialogue, SpotlightBackdrop } from "@/widgets/gotggam-dialogue";
 
@@ -88,8 +89,16 @@ export function ResultPage() {
     if (action === "finish") {
       // 선택 깜빡임 연출이 끝난 뒤 엔딩으로 넘어간다.
       window.setTimeout(() => setStep("ending"), 400);
+      return;
     }
-    // TODO: save — 명부 앞/뒷장 이미지 2장 저장, visit-room — 곧감이의 방 (스펙 미정)
+
+    if (action === "visit-room") {
+      // 곧감이의 방 = 곧감 인스타그램. 결과 화면이 유지되도록 새 탭으로 연다.
+      window.open(GOTGGAM_INSTAGRAM_URL, "_blank", "noopener,noreferrer");
+      return;
+    }
+
+    // TODO: save — 명부 앞/뒷장 이미지 2장 저장 (기획 확정 대기)
   };
 
   // 엔딩은 말풍선 없이 곧감이만 잠시 보여준 뒤, 그 자리에서 화면만 깜빡이며

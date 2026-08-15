@@ -44,8 +44,11 @@ export function FitText({
     };
 
     fit();
-    // 웹폰트가 늦게 로드되면 글자 폭이 달라지므로 한 번 더 맞춘다.
+    // 웹폰트가 늦게 로드되면 글자 폭이 달라지므로 다시 맞춘다. fonts.ready는
+    // 폰트 요청 전에 이미 resolve됐을 수 있어, 이후 로드 완료(loadingdone)에도 반응한다.
     document.fonts?.ready.then(fit).catch(() => {});
+    document.fonts?.addEventListener?.("loadingdone", fit);
+    return () => document.fonts?.removeEventListener?.("loadingdone", fit);
   });
 
   return (

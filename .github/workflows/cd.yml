@@ -2,7 +2,7 @@ name: Continuous Deployment
 
 on:
   push:
-    branches: [main]
+    branches: [main, develop]
     paths: ["src/**"]
 
 jobs:

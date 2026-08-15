@@ -51,7 +51,6 @@ export function LedgerMenu({ onSelect }: LedgerMenuProps) {
 
   return (
     <div className={styles.panel}>
-      <div className={styles.bottomFade} aria-hidden />
       {MENU_ITEMS.map(({ action, label }) => (
         <button
           key={action}

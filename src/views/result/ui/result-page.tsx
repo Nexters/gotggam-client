@@ -32,13 +32,20 @@ import {
 } from "../model/ledger";
 import { LedgerCard } from "./ledger-card";
 import { LedgerDrawer } from "./ledger-drawer";
+import { DRAWER_PEEK } from "./ledger-drawer.css";
 import { LedgerMenu, type LedgerMenuAction } from "./ledger-menu";
 import { LedgerPreviewModal } from "./ledger-preview-modal";
 import { LinkCopiedModal } from "./link-copied-modal";
 import * as styles from "./result-page.css";
 import { useCardFlip } from "./use-card-flip";
 
-const INTRO_LINES = ["흠 아직은 데려갈 때가 아닌 것 같다냥.."];
+const INTRO_LINES = [
+  "확인 끝났다냥!",
+  "아직은 때가 아니지만, 네 명부는 확실히 만들어 줬다냥.",
+  "대신 오늘의 기록은 명부에 남겨줬다냥.",
+];
+
+const ENDING_LINES = ["다시 올 때까지 잘 참고해서 운명을 바꿔보라냥!"];
 
 const SUBMIT_PENDING_LINES = ["명부를 확인하는 중이다냥.."];
 
@@ -49,20 +56,25 @@ const SUBMIT_ERROR_LINES = [
 // 카드가 뜬 뒤 바텀시트가 저절로 올라오기까지의 시간
 const SHEET_AUTO_OPEN_MS = 3000;
 
-// 엔딩에서 곧감이만 보여주는 시간. 이후 자동으로 암전 깜빡임이 시작된다.
-const ENDING_HOLD_MS = 1500;
+// 힌트 줄 높이 + 카드와의 간격 — 카드 스테이지 세로 가운데 정렬 계산에 쓴다.
+const HINT_BLOCK_HEIGHT = 50;
 
 // Figma [card_drawer]: 시트 닫힘 300px / 열림 220px, 카드 원본 252px.
 // 좁거나 낮은 화면에서는 카드가 힌트·시트와 겹치지 않도록 상한을 낮춘다.
+// stageTop은 힌트+카드 묶음을 시트(peek) 위 공간에 가운데 정렬하는 상단 여백.
 function getCardScales() {
   if (typeof window === "undefined") {
-    return { closed: 300 / 252, open: 220 / 252 };
+    return { closed: 300 / 252, open: 220 / 252, stageTop: 116 };
   }
   const { innerWidth: width, innerHeight: height } = window;
-  return {
-    closed: Math.min(300 / 252, (width - 40) / 252, (height - 224) / 441),
-    open: Math.min(220 / 252, (width - 40) / 252, (height - 400) / 441),
-  };
+  const closed = Math.min(300 / 252, (width - 40) / 252, (height - 224) / 441);
+  const open = Math.min(220 / 252, (width - 40) / 252, (height - 400) / 441);
+  const cardVisualHeight = closed * 441;
+  const stageTop = Math.max(
+    24,
+    (height - DRAWER_PEEK - HINT_BLOCK_HEIGHT - cardVisualHeight) / 2,
+  );
+  return { closed, open, stageTop };
 }
 
 type ResultStep = "intro" | "card" | "ending";
@@ -187,27 +199,24 @@ export function ResultPage() {
     setPreviewImages(null);
   };
 
-  // 엔딩은 말풍선 없이 곧감이만 잠시 보여준 뒤, 그 자리에서 화면만 깜빡이며
-  // 암전하고 홈으로 돌아간다. (페이지를 옮기면 캐릭터 크기·위치가 튄다)
-  useEffect(() => {
-    if (step !== "ending" || isLeaving) {
+  // 엔딩 대사를 탭하면 그 자리에서 화면만 깜빡이며 암전하고 홈으로 돌아간다.
+  // (페이지를 옮기면 캐릭터 크기·위치가 튄다)
+  const handleEndingComplete = () => {
+    if (isLeaving) {
       return;
     }
-
-    const timerId = window.setTimeout(() => {
-      if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
-        router.replace("/");
-        return;
-      }
-      setIsLeaving(true);
-    }, ENDING_HOLD_MS);
-
-    return () => window.clearTimeout(timerId);
-  }, [step, isLeaving, router]);
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      router.replace("/");
+      return;
+    }
+    setIsLeaving(true);
+  };
 
   const sheetProgress = sheetDragProgress ?? (isSheetOpen ? 1 : 0);
   const cardScale =
     cardScales.closed + (cardScales.open - cardScales.closed) * sheetProgress;
+  // 시트가 열리면 가운데 정렬돼 있던 카드 묶음을 화면 위쪽(힌트 y≈24)까지 올린다.
+  const stageShift = Math.max(0, cardScales.stageTop - 24) * sheetProgress;
 
   return (
     <div className={styles.page}>
@@ -249,7 +258,16 @@ export function ResultPage() {
         ))}
       {isCardVisible && ledger && face && (
         <>
-          <div className={styles.cardStage}>
+          <div
+            className={cn(
+              styles.cardStage,
+              sheetDragProgress !== null && styles.cardStageDragging,
+            )}
+            style={{
+              paddingTop: cardScales.stageTop,
+              transform: `translateY(${-stageShift}px)`,
+            }}
+          >
             <button
               type="button"
               className={styles.flipHint}
@@ -288,7 +306,11 @@ export function ResultPage() {
         </>
       )}
       {step === "ending" && (
-        <GotggamDialogue characterSrc={GOTGGAM_WITH_CHARACTER_SRC} />
+        <GotggamDialogue
+          lines={ENDING_LINES}
+          characterSrc={GOTGGAM_WITH_CHARACTER_SRC}
+          onComplete={handleEndingComplete}
+        />
       )}
       {previewImages && (
         <LedgerPreviewModal

@@ -15,7 +15,6 @@ export const screen = style({
   overflowY: "auto",
   overflowX: "hidden",
   backgroundColor: semantic.color.bgCanvas,
-  border: "1px solid white",
 
   msOverflowStyle: "none",
   scrollbarWidth: "none",

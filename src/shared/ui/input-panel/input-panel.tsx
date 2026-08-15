@@ -10,7 +10,7 @@ type InputPanelProps = {
   placeholder?: string;
   maxLength?: number;
   hint?: string;
-  hintTone?: "muted" | "accent";
+  hintTone?: "muted" | "accent" | "warning";
   ctaLabel: string;
   ctaDisabled?: boolean;
   onCtaClick?: () => void;
@@ -65,7 +65,13 @@ export function InputPanel({
             as="p"
             family="galmuri9"
             size="14"
-            className={hintTone === "accent" ? styles.hintAccent : styles.hint}
+            className={
+              {
+                muted: styles.hint,
+                accent: styles.hintAccent,
+                warning: styles.hintWarning,
+              }[hintTone]
+            }
           >
             {hint}
           </Typography>

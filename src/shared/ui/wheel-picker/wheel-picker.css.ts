@@ -28,7 +28,9 @@ export const optionItem = style({
   selectors: {
     "&[data-rwp-option]": {
       fontFamily: vars.font.galmuri11,
-      fontSize: vars.fontSize["24"],
+      // Galmuri11은 11px 그리드 픽셀 폰트라 정수배(22px)가 아니면 3D 레이어
+      // 래스터에서 글리프가 가로줄로 깨진다(레티나 + 944px 이상 창에서 재현).
+      fontSize: vars.fontSize["22"],
       color: vars.color.white,
     },
   },

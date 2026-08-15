@@ -20,7 +20,7 @@ export function StartButton({
       className={cn(styles.startButton, className)}
       {...props}
     >
-      <Typography family="galmuri11" size="22" color="white">
+      <Typography family="galmuri9" size="22" color="white">
         시작하기
       </Typography>
       {description}

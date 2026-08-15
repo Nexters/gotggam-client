@@ -52,7 +52,6 @@ function QuestionFlow({ questions }: { questions: Question[] }) {
   const [closingStep, setClosingStep] = useState<ClosingStep | null>(null);
   const [isRoutingToFace, setIsRoutingToFace] = useState(false);
 
-  // 로딩 연출을 잠깐 보여준 뒤 얼굴 페이지로 넘어간다.
   useEffect(() => {
     if (!isRoutingToFace) {
       return;
@@ -122,7 +121,7 @@ function QuestionFlow({ questions }: { questions: Question[] }) {
   };
 
   if (isRoutingToFace) {
-    return <LoadingScreen text="얼굴 그리는 중..." />;
+    return <LoadingScreen text="기록 중.." />;
   }
 
   return (

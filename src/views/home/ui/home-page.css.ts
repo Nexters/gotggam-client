@@ -36,6 +36,7 @@ export const page = style({
   position: "relative",
   display: "flex",
   flexDirection: "column",
+  minHeight: "100%",
   maxHeight: "100%",
   overflow: "hidden",
   color: vars.color.white,

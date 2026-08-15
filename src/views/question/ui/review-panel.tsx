@@ -12,7 +12,7 @@ type ReviewPanelProps = {
 
 // 서버가 10~15자만 받으므로(SurveyResultRequest.todayMessage) 미달이면 진행을 막는다.
 // 건너뛰면 값이 비워지고 서버 기본 문장이 카드에 실린다.
-const TODAY_MESSAGE_MIN = 10;
+const TODAY_MESSAGE_MIN = 1;
 
 export function ReviewPanel({ onSubmit, onSkip }: ReviewPanelProps) {
   const { setValue, watch } = useFormContext<FormValues>();

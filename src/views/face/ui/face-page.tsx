@@ -7,7 +7,11 @@ import { useFormContext } from "react-hook-form";
 import type { FaceSelection } from "@/entities/character";
 import type { FormValues } from "@/features/form";
 import { AppBar } from "@/shared/ui";
-import { GotggamDialogue, SpotlightBackdrop } from "@/widgets/gotggam-dialogue";
+import {
+  GOTGGAM_WITH_CHARACTER_SRC,
+  GotggamDialogue,
+  SpotlightBackdrop,
+} from "@/widgets/gotggam-dialogue";
 
 import { FaceBuilder } from "./face-builder";
 import * as styles from "./face-page.css";
@@ -18,6 +22,7 @@ const INTRO_LINES = [
   "엉뚱한 사람을 데려가면 큰일이니 조심하라냥.",
 ];
 
+// 얼굴 확인부터는 디자인상 뒤로가기·홈이 없다 (커스터마이징만 뒤로가기 유지).
 export function FacePage() {
   const router = useRouter();
   const { getValues, setValue } = useFormContext<FormValues>();
@@ -32,21 +37,20 @@ export function FacePage() {
   return (
     <div className={styles.page}>
       <SpotlightBackdrop />
-      <AppBar
-        onBack={
-          step === "builder" ? () => setStep("intro") : () => router.back()
-        }
-      />
       {step === "intro" ? (
         <GotggamDialogue
           lines={INTRO_LINES}
+          characterSrc={GOTGGAM_WITH_CHARACTER_SRC}
           onComplete={() => setStep("builder")}
         />
       ) : (
-        <FaceBuilder
-          initialSelection={getValues("face")}
-          onSubmit={submitFace}
-        />
+        <>
+          <AppBar onBack={() => setStep("intro")} showHome={false} />
+          <FaceBuilder
+            initialSelection={getValues("face")}
+            onSubmit={submitFace}
+          />
+        </>
       )}
     </div>
   );

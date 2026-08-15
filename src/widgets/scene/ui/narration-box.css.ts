@@ -1,5 +1,6 @@
 import { createVar, fallbackVar, style } from "@vanilla-extract/css";
 
+import { pixelBlink } from "@/shared/styles/animations.css";
 import { getPixelCornerClipPath } from "@/shared/styles/pixel-corner";
 import { vars } from "@/shared/styles/theme.css";
 
@@ -18,17 +19,31 @@ export const narration = style({
 });
 
 export const bubble = style({
+  // 110px 고정. 좁은 화면에서 대사가 3줄로 꺾여 넘치면 잘리는 대신
+  // 스크롤바 없는 내부 스크롤로 넘긴다. 서버 피드백은 길이 보장이 없다.
   height: "11rem",
+  overflowY: "auto",
   padding: `${vars.spacing["24"]} ${vars.spacing["20"]}`,
   marginTop: "1.3rem",
   backgroundColor: vars.color.accent5["11"],
   clipPath: `polygon(${getPixelCornerClipPath(4)})`,
+
+  msOverflowStyle: "none",
+  scrollbarWidth: "none",
+  selectors: {
+    "&::-webkit-scrollbar": {
+      display: "none",
+    },
+  },
 });
 
 export const bubbleText = style({
   whiteSpace: "pre-line",
   lineHeight: "160%",
   letterSpacing: "-0.0242rem",
+  // 우하단 다음 버튼(2.4rem, right 2rem)이 떠 있는 세로 띠를 텍스트가
+  // 침범하지 않도록 비워둔다. 없으면 마지막 줄 꼬리를 아이콘이 가린다.
+  paddingRight: "2.4rem",
 });
 
 // 말풍선(2단 계단)과 달리 이름표 모서리는 4px 한 단만 잘려나간다.
@@ -66,4 +81,8 @@ export const nextButton = style({
   bottom: vars.spacing["20"],
   width: "2.4rem",
   height: "2.4rem",
+  animationName: pixelBlink,
+  animationDuration: "1s",
+  animationTimingFunction: "steps(1, end)",
+  animationIterationCount: "infinite",
 });

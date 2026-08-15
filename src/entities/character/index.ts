@@ -4,6 +4,7 @@ export {
   FACE_PART_CATEGORIES,
   FACE_PART_IDS,
   FACE_PART_LABELS,
+  FACE_PART_NAMES,
   getFacePartIdByType,
   getFacePartImageSrc,
   getFacePartTypeNumber,

@@ -10,23 +10,26 @@ export const container = style({
   padding: `${vars.spacing["16"]} ${vars.spacing["24"]} ${vars.spacing["24"]}`,
 });
 
-export const previewPanel = style({
-  position: "relative",
-  width: "100%",
-  aspectRatio: "355 / 310",
+// Figma [customize]: 상단 안내 문구(y121) + 몸까지 보이는 캐릭터(210×262)
+export const title = style({
+  alignSelf: "center",
+  textAlign: "center",
 });
 
-export const previewPanelBg = style({
-  objectFit: "fill",
-  imageRendering: "pixelated",
-});
-
-// Figma 기준 패널(355×310) 안 얼굴(210×263)의 위치 비율
-export const previewFace = style({
-  position: "absolute",
-  left: "20.5%",
-  top: "7.7%",
-  width: "59.2%",
+// 낮은 화면에서는 프리뷰를 줄여 파츠 선택·CTA가 잘리지 않게 한다.
+export const preview = style({
+  alignSelf: "center",
+  width: 210,
+  maxWidth: "70%",
+  marginTop: vars.spacing["8"],
+  "@media": {
+    "(max-height: 700px)": {
+      width: 168,
+    },
+    "(max-height: 600px)": {
+      width: 128,
+    },
+  },
 });
 
 // 패널·스테퍼·CTA 사이 남는 공간을 위아래로 나눠, 스테퍼가 디자인처럼 화면 중단에 온다.

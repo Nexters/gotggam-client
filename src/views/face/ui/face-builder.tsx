@@ -1,6 +1,5 @@
 "use client";
 
-import Image from "next/image";
 import { useState } from "react";
 
 import {
@@ -9,6 +8,7 @@ import {
   FACE_PART_CATEGORIES,
   FACE_PART_IDS,
   FACE_PART_LABELS,
+  FACE_PART_NAMES,
   type FacePartCategory,
   type FaceSelection,
 } from "@/entities/character";
@@ -48,20 +48,15 @@ export function FaceBuilder({
 
   return (
     <div className={styles.container}>
-      <div className={styles.previewPanel}>
-        <Image
-          src="/images/face/preview-panel.png"
-          alt=""
-          fill
-          unoptimized
-          className={styles.previewPanelBg}
-        />
-        <CharacterFace
-          selection={selection}
-          withBody={false}
-          className={styles.previewFace}
-        />
-      </div>
+      <Typography
+        family="galmuri9"
+        size="16"
+        color="gray-11"
+        className={styles.title}
+      >
+        너의 모습을 알려달라냥
+      </Typography>
+      <CharacterFace selection={selection} className={styles.preview} />
       <div className={styles.controls}>
         {FACE_PART_CATEGORIES.map((category) => (
           <div key={category} className={styles.controlRow}>
@@ -75,7 +70,8 @@ export function FaceBuilder({
               </Typography>
             </IconButton>
             <Typography family="galmuri9" size="22" color="white">
-              {FACE_PART_LABELS[category]}
+              {FACE_PART_NAMES[selection[category]] ??
+                FACE_PART_LABELS[category]}
             </Typography>
             <IconButton
               aria-label={`다음 ${FACE_PART_LABELS[category]}`}

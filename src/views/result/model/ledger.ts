@@ -51,8 +51,9 @@ export interface LedgerResult {
   details: LedgerDetail[];
 }
 
-// 서버가 10~15자 검증을 하므로, 조건에 맞을 때만 실어 보낸다 (미입력 시 기본 문장 제공).
-const TODAY_MESSAGE_MIN = 10;
+// 서버 검증이 1~15자로 완화됐다(1차 QA, 실서버 확인). 조건 밖이면 생략해
+// 기본 문장("오늘도 무사한 하루 되세요")을 받는다 — 건너뛰기와 같은 동작.
+const TODAY_MESSAGE_MIN = 1;
 const TODAY_MESSAGE_MAX = 15;
 
 /**

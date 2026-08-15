@@ -1,5 +1,6 @@
-import { keyframes, style } from "@vanilla-extract/css";
+import { style } from "@vanilla-extract/css";
 
+import { pixelBlink } from "@/shared/styles/animations.css";
 import { getPixelCornerClipPath } from "@/shared/styles/pixel-corner";
 import { vars } from "@/shared/styles/theme.css";
 
@@ -48,17 +49,11 @@ export const nameChip = style({
   backgroundColor: vars.color.accent5["10"],
 });
 
-// steps로 끊기게 깜빡여서 픽셀 게임 느낌을 유지한다.
-const blink = keyframes({
-  "0%, 49%": { opacity: 1 },
-  "50%, 100%": { opacity: 0.2 },
-});
-
 export const nextIcon = style({
   position: "absolute",
   right: 20,
   bottom: 20,
-  animationName: blink,
+  animationName: pixelBlink,
   animationDuration: "1s",
   animationTimingFunction: "steps(1, end)",
   animationIterationCount: "infinite",

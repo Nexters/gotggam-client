@@ -2,6 +2,9 @@ import { style } from "@vanilla-extract/css";
 
 import { vars } from "@/shared/styles/theme.css";
 
+const PANEL_BACKGROUND = "rgba(18, 18, 18, 0.8)";
+const PANEL_BLUR = "blur(6px)";
+
 export const panel = style({
   position: "absolute",
   insetInline: 0,
@@ -10,8 +13,16 @@ export const panel = style({
   flexDirection: "column",
   gap: vars.spacing["32"],
   padding: `${vars.spacing["48"]} ${vars.spacing["24"]}`,
-  backgroundColor: "rgba(18, 18, 18, 0.8)",
-  backdropFilter: "blur(6px)",
+  backgroundColor: PANEL_BACKGROUND,
+  backdropFilter: PANEL_BLUR,
+  transition: "transform 100ms ease-in-out",
+});
+export const keyboardBackfill = style({
+  position: "absolute",
+  top: "100%",
+  insetInline: 0,
+  backgroundColor: PANEL_BACKGROUND,
+  backdropFilter: PANEL_BLUR,
 });
 
 export const ctaButton = style({

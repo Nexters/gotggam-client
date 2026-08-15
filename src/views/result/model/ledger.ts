@@ -119,6 +119,8 @@ const FALLBACK_LEDGER: LedgerResult = {
   gender: "MALE",
   expectedAge: 88,
   todayMessage: "오늘도 최선을 다했다.",
+  // 디자인 확정 스펙: 경고 25자 이내, 특별준수사항 항목당 30자 이내.
+  // 두 최대 길이 모두 FitText·저장 렌더에서 수납 검증 완료.
   warning: "잠은 선택이 아니라 생존이다냥!",
   specialDirectives: [
     "오후 10시 이후 배달앱 접속을 제한할 것",

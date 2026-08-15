@@ -2,8 +2,8 @@
 
 import { type ReactNode, useEffect, useRef } from "react";
 
-import { BGM_STORAGE_KEY, CLICK_SFX_SRC } from "@/shared/config";
-import { playSfx, useKeyboardInset, useLocalStorage } from "@/shared/lib";
+import { CLICK_SFX_SRC } from "@/shared/config";
+import { playSfx, useBgmEnabled, useKeyboardInset } from "@/shared/lib";
 
 import * as styles from "./bottom-panel.css";
 import { PixelCornerButton, Typography } from "..";
@@ -22,7 +22,7 @@ export function BottomPanel({
   ctaDisabled,
   onCtaClick,
 }: BottomPanelProps) {
-  const [isSoundOn] = useLocalStorage(BGM_STORAGE_KEY, true);
+  const [isSoundOn] = useBgmEnabled();
   const panelRef = useRef<HTMLDivElement>(null);
   const keyboardInset = useKeyboardInset();
 

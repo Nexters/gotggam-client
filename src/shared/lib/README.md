@@ -47,6 +47,43 @@ setIsOn((prev) => !prev); // 업데이터 함수도 지원
 > 있습니다. 이 UI가 눈에 띄면 안 되는 경우 아래 `useHasMounted`로 값이 확정되기
 > 전까지 숨겨두세요.
 
+## useBgmEnabled
+
+BGM on/off 상태를 구독하는 훅. `useLocalStorage`와 동일한 `[value, setValue]`
+튜플을 반환하고, 이 훅을 쓰는 모든 컴포넌트가 같은 상태를 공유합니다.
+
+`BgmToggleButton`이 켜고 끄면 `BgmPlayer`의 배경음악뿐 아니라 클릭 효과음·타이핑
+말소리(`BottomPanel`, `ChoicePanel`, `SpeechBubble`, `NarrationBox` 등)까지 함께
+따라갑니다. 즉 이 훅은 **앱 전체의 사운드 on/off** 상태입니다.
+
+```tsx
+const [isOn, setIsOn] = useBgmEnabled();
+```
+
+동작 규칙은 두 가지입니다.
+
+- **새로고침** — 직전 on/off 상태를 그대로 유지
+- **재방문(새 탭·새 세션)** — 항상 `false`로 시작
+
+첫 진입과 재방문에서 배경음악뿐 아니라 **효과음까지 나지 않는 것은 의도된
+동작**입니다. 사용자가 토글을 눌러 직접 켜기 전까지 앱은 무음입니다.
+
+이를 위해 `useLocalStorage`의 key를 **탭 세션 ID와 합성**합니다. 세션 ID는
+`sessionStorage`(`bgm-session-id`)에 있고, 실제 값은
+`localStorage`(`bgm-enabled:<sessionId>`)에 있습니다.
+
+| 상황           | sessionStorage의 세션 ID | 바라보는 localStorage key | 결과           |
+| -------------- | ------------------------ | ------------------------- | -------------- |
+| 첫 방문        | 새로 발급                | 저장된 값 없음            | `false`        |
+| 새로고침       | 그대로 유지              | 직전과 같은 key           | 직전 상태 유지 |
+| 재방문 / 새 탭 | 새로 발급                | 저장된 값 없음            | `false`        |
+
+`sessionStorage` 하나만 써도 같은 의미를 만들 수 있지만, 값 자체는
+`localStorage`에 두어 `useLocalStorage`의 탭 간 동기화(`storage` 이벤트)와
+SSR 처리를 그대로 재사용합니다. 대신 종료된 세션의 키가
+`bgm-enabled:<sessionId>` 형태로 남습니다(방문당 수십 바이트). 다른 탭이 아직
+쓰고 있는 키를 지울 위험이 있어 일부러 청소하지 않습니다.
+
 ## useHasMounted
 
 hydration이 끝났는지(= 클라이언트 전용 값을 신뢰할 수 있게 됐는지) 판단하는

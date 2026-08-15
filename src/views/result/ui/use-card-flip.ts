@@ -2,8 +2,8 @@
 
 import { useRef, useState, type PointerEvent } from "react";
 
-import { BGM_STORAGE_KEY, CLICK_SFX_SRC } from "@/shared/config";
-import { playSfx, useLocalStorage } from "@/shared/lib";
+import { CLICK_SFX_SRC } from "@/shared/config";
+import { playSfx, useBgmEnabled } from "@/shared/lib";
 
 const DRAG_DEG_PER_PX = 0.7;
 const TAP_THRESHOLD_PX = 6;
@@ -26,7 +26,7 @@ export type CardFlipHandlers = {
 export function useCardFlip() {
   const [rotation, setRotation] = useState(0);
   const [isDragging, setIsDragging] = useState(false);
-  const [isSoundOn] = useLocalStorage(BGM_STORAGE_KEY, true);
+  const [isSoundOn] = useBgmEnabled();
   const startXRef = useRef(0);
   const startRotationRef = useRef(0);
   const hasMovedRef = useRef(false);

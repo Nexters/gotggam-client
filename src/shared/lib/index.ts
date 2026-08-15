@@ -2,6 +2,7 @@ export { playAnimalese } from "./animalese";
 export { default as cn } from "clsx";
 export { delay } from "./delay";
 export { playSfx, setAudioPlaying, useAudio } from "./use-audio";
+export { useBgmEnabled } from "./use-bgm-enabled";
 export { useDebouncedValue } from "./use-debounced-value";
 export { useKeyboardInset } from "./use-keyboard-inset";
 export { useHasMounted } from "./use-has-mounted";

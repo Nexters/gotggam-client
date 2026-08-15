@@ -37,7 +37,7 @@ function digitAt(value: number, place: number): number {
 type RollingNumberProps = {
   /** 0 이상의 정수. 소수점과 음수는 잘라낸다. */
   value: number;
-  /** false면 0에 머물고, true가 되는 순간 목표값까지 굴러간다. */
+  /** false면 0에 멈춰 있다가, true로 바뀐 시점에 굴러간다. */
   isPlaying?: boolean;
   className?: string;
 };
@@ -51,9 +51,7 @@ export function RollingNumber({
   const [rolledValue, setRolledValue] = useState(0);
 
   useEffect(() => {
-    if (!isPlaying) {
-      return;
-    }
+    if (!isPlaying) return;
 
     let paintedFrame = 0;
     const mountedFrame = requestAnimationFrame(() => {

@@ -60,9 +60,11 @@ export function NarrationBox({ text, onAdvance, className }: NarrationBoxProps) 
           곧감이
         </Typography>
       </div>
-      <IconButton aria-label="다음" className={styles.nextButton}>
-        <IconButtonNext />
-      </IconButton>
+      {isDone && (
+        <IconButton aria-label="다음" className={styles.nextButton}>
+          <IconButtonNext />
+        </IconButton>
+      )}
     </div>
   );
 }

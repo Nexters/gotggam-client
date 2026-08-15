@@ -61,7 +61,7 @@ export function HomePage() {
         className={cn(
           styles.topBar,
           styles.reveal,
-          isReady && styles.revealedDimmed,
+          isRevealing && styles.revealedDimmed,
         )}
       >
         <BgmToggleButton />

@@ -1,12 +1,19 @@
 "use client";
 
+import type { DotLottie } from "@lottiefiles/dotlottie-react";
 import { DotLottieReact } from "@lottiefiles/dotlottie-react";
-import type { ComponentProps } from "react";
+import { type ComponentProps, useEffect, useRef } from "react";
 
 type LottieProps = Omit<
   ComponentProps<typeof DotLottieReact>,
   "dotLottieRefCallback"
 > & {
+  /**
+   * `autoplay` 대신 재생 시점을 밖에서 잡고 싶을 때 쓴다. false면 로드 후에도
+   * 첫 프레임에 멈춰 있다가 true가 되는 순간 재생을 시작하므로, 등장
+   * 애니메이션과 lottie 재생을 같은 시점에 맞출 수 있다.
+   */
+  isPlaying?: boolean;
   /**
    * 더 이상 로드를 기다릴 필요가 없어진 시점에 호출된다. 로드 성공(`load`)뿐
    * 아니라 실패(`loadError`)도 포함하므로, 이 콜백으로 UI를 여는 쪽은 파일을
@@ -19,7 +26,13 @@ type LottieProps = Omit<
   onReady?: () => void;
 };
 
-export function Lottie({ onReady, ...props }: LottieProps) {
+export function Lottie({ onReady, isPlaying, ...props }: LottieProps) {
+  const dotLottieRef = useRef<DotLottie | null>(null);
+
+  useEffect(() => {
+    if (isPlaying) dotLottieRef.current?.play();
+  }, [isPlaying]);
+
   return (
     <DotLottieReact
       {...props}
@@ -27,6 +40,8 @@ export function Lottie({ onReady, ...props }: LottieProps) {
       // 리렌더마다 다시 불리지 않으므로 인라인 함수를 넘겨도 리스너가 중복
       // 등록되지 않는다.
       dotLottieRefCallback={(dotLottie) => {
+        dotLottieRef.current = dotLottie;
+
         if (!dotLottie) return;
 
         const handleReady = () => onReady?.();

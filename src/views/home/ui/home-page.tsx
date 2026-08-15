@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import { cn } from "@/shared/lib";
 
@@ -18,9 +18,21 @@ export function HomePage() {
   // 마운트가 아니라 lottie 로드 완료를 기준으로 연다. 마운트 시점엔 캔버스가
   // 아직 비어 있어서, 로고·버튼만 먼저 뜨고 캐릭터가 뒤늦게 튀어나온다.
   const [isReady, setIsReady] = useState(false);
+  const [isRevealing, setIsRevealing] = useState(false);
   const [isBackgroundLoaded, setIsBackgroundLoaded] = useState(false);
 
-  const revealClassName = cn(styles.revealDelayed, isReady && styles.revealed);
+  // 페이드인과 lottie 재생을 같은 시점에 시작한다. autoplay로 두면 로드 직후
+  // 안 보이는 채로 재생이 흘러서, 등장할 땐 이미 애니메이션이 지나가 있다.
+  useEffect(() => {
+    if (!isReady) return;
+
+    const timer = setTimeout(
+      () => setIsRevealing(true),
+      styles.REVEAL_DELAY_MS,
+    );
+
+    return () => clearTimeout(timer);
+  }, [isReady]);
 
   return (
     <div className={styles.page}>
@@ -55,19 +67,28 @@ export function HomePage() {
         <BgmToggleButton />
       </div>
 
-      <div className={styles.content}>
-        <Logo className={cn(styles.logo, revealClassName)} role="img" />
-        <HomeLottie
-          className={cn(styles.character, revealClassName)}
-          onReady={() => setIsReady(true)}
-        />
-      </div>
+      <div
+        className={cn(
+          styles.revealArea,
+          styles.revealSlow,
+          isRevealing && styles.revealed,
+        )}
+      >
+        <div className={styles.content}>
+          <Logo className={styles.logo} role="img" />
+          <HomeLottie
+            className={styles.character}
+            isPlaying={isRevealing}
+            onReady={() => setIsReady(true)}
+          />
+        </div>
 
-      <div className={cn(styles.footer, revealClassName)}>
-        <StartButton
-          description={<ParticipantCountSection />}
-          onClick={() => router.push("/form/prologue")}
-        />
+        <div className={styles.footer}>
+          <StartButton
+            description={<ParticipantCountSection />}
+            onClick={() => router.push("/form/prologue")}
+          />
+        </div>
       </div>
     </div>
   );

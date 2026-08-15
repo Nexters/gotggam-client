@@ -85,7 +85,7 @@ export function HomePage() {
 
         <div className={styles.footer}>
           <StartButton
-            description={<ParticipantCountSection />}
+            description={<ParticipantCountSection isPlaying={isRevealing} />}
             onClick={() => router.push("/form/prologue")}
           />
         </div>

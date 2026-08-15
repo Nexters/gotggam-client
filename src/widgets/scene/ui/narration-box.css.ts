@@ -18,11 +18,22 @@ export const narration = style({
 });
 
 export const bubble = style({
+  // 110px 고정. 좁은 화면에서 대사가 3줄로 꺾여 넘치면 잘리는 대신
+  // 스크롤바 없는 내부 스크롤로 넘긴다. 서버 피드백은 길이 보장이 없다.
   height: "11rem",
+  overflowY: "auto",
   padding: `${vars.spacing["24"]} ${vars.spacing["20"]}`,
   marginTop: "1.3rem",
   backgroundColor: vars.color.accent5["11"],
   clipPath: `polygon(${getPixelCornerClipPath(4)})`,
+
+  msOverflowStyle: "none",
+  scrollbarWidth: "none",
+  selectors: {
+    "&::-webkit-scrollbar": {
+      display: "none",
+    },
+  },
 });
 
 export const bubbleText = style({

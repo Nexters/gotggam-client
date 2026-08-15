@@ -126,10 +126,11 @@ const FALLBACK_LEDGER: LedgerResult = {
     "오후 10시 이후 배달앱 접속을 제한할 것",
     "주문 전 물 200ml 섭취를 명함",
   ],
+  // 실서버 카테고리 표기(몸/마음/삶태도)와 동일하게 — 라벨 길이 편차까지 재현한다.
   details: [
-    { category: "신체", years: -30 },
+    { category: "몸", years: -30 },
     { category: "마음", years: -2 },
-    { category: "태도", years: -1 },
+    { category: "삶태도", years: -1 },
   ],
 };
 

@@ -23,6 +23,9 @@ globalStyle("*, *::before, *::after", {
 // svh 미지원 브라우저는 clamp 선언 전체가 무효라 62.5%(=10px, 스케일 없음)로 동작한다.
 globalStyle("html", {
   fontSize: ["62.5%", "clamp(8px, min(2.5445vw, 1.1737svh), 10px)"],
+  // 모바일 브라우저의 자동 글자 확대(font boosting)가 고정 크기 아트웍(명부 카드)을 깨뜨리지 않게 한다.
+  WebkitTextSizeAdjust: "100%",
+  textSizeAdjust: "100%",
 });
 
 globalStyle("html, body", {

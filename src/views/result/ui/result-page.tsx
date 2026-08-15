@@ -13,6 +13,7 @@ import { GOTGGAM_INSTAGRAM_URL } from "@/shared/config";
 import { AppBar, SpeechBubble, Typography } from "@/shared/ui";
 import { GotggamDialogue, SpotlightBackdrop } from "@/widgets/gotggam-dialogue";
 
+import { saveLedgerImages } from "../lib/save-ledger-images";
 import {
   buildMockLedgerResult,
   buildSurveyResultRequest,
@@ -49,6 +50,7 @@ export function ResultPage() {
   const [step, setStep] = useState<ResultStep>("intro");
   const [cardLineIndex, setCardLineIndex] = useState(0);
   const [isLeaving, setIsLeaving] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
   const [variant] = useState<LedgerVariant>(() => pickRandomLedgerVariant());
 
   // 폼이 완성돼 있으면 제출 요청을, 아니면(개발 중 직접 진입) 목업을 쓴다.
@@ -98,7 +100,13 @@ export function ResultPage() {
       return;
     }
 
-    // TODO: save — 명부 앞/뒷장 이미지 2장 저장 (기획 확정 대기)
+    if (action === "save" && ledger && face && !isSaving) {
+      // 명부 앞/뒷장을 600×1050 PNG 두 장으로 저장한다 (모바일: 공유 시트).
+      setIsSaving(true);
+      saveLedgerImages({ result: ledger, face, variant })
+        .catch((error) => console.error("명부 저장 실패:", error))
+        .finally(() => setIsSaving(false));
+    }
   };
 
   // 엔딩은 말풍선 없이 곧감이만 잠시 보여준 뒤, 그 자리에서 화면만 깜빡이며

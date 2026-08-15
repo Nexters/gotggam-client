@@ -471,18 +471,18 @@ function downloadBlob(blob: Blob, fileName: string) {
   URL.revokeObjectURL(url);
 }
 
-type SaveLedgerImagesOptions = {
+type RenderLedgerImagesOptions = {
   result: LedgerResult;
   face: FaceSelection;
   variant: LedgerVariant;
 };
 
-/** 명부 앞/뒷장을 PNG 두 장으로 저장한다. 터치 기기는 공유 시트, 그 외는 다운로드. */
-export async function saveLedgerImages({
+/** 명부 앞/뒷장을 PNG 파일 두 개(앞, 뒤 순)로 렌더링한다. 미리보기·저장에 함께 쓴다. */
+export async function renderLedgerImages({
   result,
   face,
   variant,
-}: SaveLedgerImagesOptions) {
+}: RenderLedgerImagesOptions): Promise<File[]> {
   await ensureFontsLoaded();
 
   const front = createCanvas();
@@ -495,11 +495,14 @@ export async function saveLedgerImages({
     toBlob(back.canvas),
   ]);
 
-  const files = [
+  return [
     new File([frontBlob], "gotggam-ledger-front.png", { type: "image/png" }),
     new File([backBlob], "gotggam-ledger-back.png", { type: "image/png" }),
   ];
+}
 
+/** 렌더된 명부 파일들을 저장한다. 터치 기기는 공유 시트, 그 외는 다운로드. */
+export async function saveLedgerImageFiles(files: File[]) {
   // 터치 기기(모바일)는 공유 시트로 — '이미지 저장'으로 사진첩에 담을 수 있다.
   const isTouchDevice = window.matchMedia("(pointer: coarse)").matches;
   if (isTouchDevice && navigator.canShare?.({ files })) {
@@ -514,6 +517,7 @@ export async function saveLedgerImages({
     }
   }
 
-  downloadBlob(frontBlob, files[0].name);
-  downloadBlob(backBlob, files[1].name);
+  for (const file of files) {
+    downloadBlob(file, file.name);
+  }
 }

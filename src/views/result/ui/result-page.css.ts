@@ -41,26 +41,24 @@ export const cardStage = style({
   alignItems: "center",
 });
 
-// 명부 등장 모션 — 한 바퀴만 돌며 내려앉는다. (반사광은 ledger-card의 sheen이 담당.
-// 여러 바퀴·오버슈트 버전은 저사양 모바일에서 프레임이 밀려 한 바퀴로 줄였다)
+// 명부 등장 모션 — 아래에서 떠오르며 정착한다. transform(2D)+opacity만 써서
+// 저사양 모바일에서도 합성기만으로 돌게 한다. (3D 회전은 실기기에서 프레임 드랍)
+// 반사광은 ledger-card의 sheen이 등장 직후 이어받는다.
 const cardEntry = keyframes({
   "0%": {
-    transform:
-      "perspective(900px) translateY(-24px) rotateY(360deg) scale(0.72)",
+    transform: "translateY(26px) scale(0.94)",
     opacity: 0,
   },
-  "35%": {
-    opacity: 1,
-  },
   "100%": {
-    transform: "perspective(900px) translateY(0) rotateY(0deg) scale(1)",
+    transform: "translateY(0) scale(1)",
+    opacity: 1,
   },
 });
 
 export const card = style({
   animationName: cardEntry,
-  animationDuration: "900ms",
-  animationTimingFunction: "cubic-bezier(0.3, 0.8, 0.3, 1)",
+  animationDuration: "550ms",
+  animationTimingFunction: "cubic-bezier(0.25, 0.9, 0.3, 1)",
   animationFillMode: "backwards",
   "@media": {
     "(prefers-reduced-motion: reduce)": {

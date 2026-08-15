@@ -6,7 +6,6 @@ import { useFormContext } from "react-hook-form";
 
 import type { FaceSelection } from "@/entities/character";
 import type { FormValues } from "@/features/form";
-import { AppBar } from "@/shared/ui";
 import {
   GOTGGAM_WITH_CHARACTER_SRC,
   GotggamDialogue,
@@ -44,13 +43,10 @@ export function FacePage() {
           onComplete={() => setStep("builder")}
         />
       ) : (
-        <>
-          <AppBar onBack={() => setStep("intro")} showHome={false} />
-          <FaceBuilder
-            initialSelection={getValues("face")}
-            onSubmit={submitFace}
-          />
-        </>
+        <FaceBuilder
+          initialSelection={getValues("face")}
+          onSubmit={submitFace}
+        />
       )}
     </div>
   );

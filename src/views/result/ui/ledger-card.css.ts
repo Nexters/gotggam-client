@@ -59,31 +59,44 @@ export const backFace = style({
   transform: "rotateY(180deg)",
 });
 
-// 등장 직후 카드 표면을 쓸고 지나가는 반사광 (레퍼런스: 3D 카드 회전 + 반사광)
+// 등장 직후 카드 표면을 쓸고 지나가는 반사광. background-position·blend 애니메이션은
+// 매 프레임 리페인트라 모바일에서 끊겨서, 합성기만 타는 transform+opacity로 움직인다.
 const sheenSweep = keyframes({
-  "0%": { backgroundPosition: "140% 0", opacity: 0 },
-  "12%": { opacity: 1 },
-  "100%": { backgroundPosition: "-60% 0", opacity: 0 },
+  "0%": { transform: "translateX(-140%)", opacity: 0 },
+  "15%": { opacity: 1 },
+  "100%": { transform: "translateX(300%)", opacity: 0 },
 });
 
 export const sheen = style({
   position: "absolute",
   inset: 0,
+  overflow: "hidden",
   pointerEvents: "none",
-  background:
-    "linear-gradient(115deg, transparent 42%, rgba(255, 255, 255, 0.45) 50%, transparent 58%)",
-  backgroundSize: "260% 100%",
-  backgroundRepeat: "no-repeat",
-  mixBlendMode: "screen",
-  opacity: 0,
-  animationName: sheenSweep,
-  animationDuration: "900ms",
-  animationDelay: "950ms",
-  animationTimingFunction: "ease-out",
-  animationFillMode: "both",
+  selectors: {
+    "&::after": {
+      content: "",
+      position: "absolute",
+      top: "-10%",
+      bottom: "-10%",
+      left: 0,
+      width: "55%",
+      background:
+        "linear-gradient(115deg, transparent 18%, rgba(255, 255, 255, 0.34) 50%, transparent 82%)",
+      transform: "translateX(-140%)",
+      animationName: sheenSweep,
+      animationDuration: "800ms",
+      animationDelay: "620ms",
+      animationTimingFunction: "ease-out",
+      animationFillMode: "both",
+    },
+  },
   "@media": {
     "(prefers-reduced-motion: reduce)": {
-      animationName: "none",
+      selectors: {
+        "&::after": {
+          animationName: "none",
+        },
+      },
     },
   },
 });

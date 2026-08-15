@@ -1,13 +1,17 @@
 "use client";
 
 import { useSuspenseQuery } from "@tanstack/react-query";
-import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
+import { useEffect, useState } from "react";
 import { useFormContext } from "react-hook-form";
 
 import type { FormValues } from "@/features/form";
 import { ChoicePanel, Typography } from "@/shared/ui";
 import { AppBar } from "@/widgets/app-bar";
+import {
+  LOADING_SCREEN_MIN_DURATION_MS,
+  LoadingScreen,
+} from "@/widgets/loading-screen";
 import { Character, NarrationBox, SceneBackground } from "@/widgets/scene";
 
 import { questionQueries } from "../api/question-queries";
@@ -19,14 +23,11 @@ import * as styles from "./question-section.css";
 import { QuestionPrompt } from "./question-prompt";
 import { ReviewPanel } from "./review-panel";
 
-/** 마지막 피드백 이후의 마무리 장면: 소감 질문 → 입력 → 마무리 대사. */
-type ClosingStep = "ask" | "input" | "outro";
-
-const CLOSING_BACK_STEP: Record<ClosingStep, ClosingStep | null> = {
-  ask: null,
-  input: "ask",
-  outro: "input",
-};
+/**
+ * 마지막 피드백 이후의 마무리 대사 연출. 오늘의 한마디 입력 패널은 대사가
+ * 아니라 체크포인트라 ?panel=review 쿼리 파라미터가 소유한다.
+ */
+type ClosingStep = "ask" | "outro";
 
 export function QuestionSection() {
   const { data: questions } = useSuspenseQuery(questionQueries.list());
@@ -46,8 +47,23 @@ export function QuestionSection() {
 
 function QuestionFlow({ questions }: { questions: Question[] }) {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const { setValue, getValues } = useFormContext<FormValues>();
   const [closingStep, setClosingStep] = useState<ClosingStep | null>(null);
+  const [isRoutingToFace, setIsRoutingToFace] = useState(false);
+
+  useEffect(() => {
+    if (!isRoutingToFace) {
+      return;
+    }
+    const id = setTimeout(
+      () => router.push("/form/face"),
+      LOADING_SCREEN_MIN_DURATION_MS,
+    );
+    return () => clearTimeout(id);
+  }, [isRoutingToFace, router]);
+
+  const isReviewPanelOpen = searchParams.get("panel") === "review";
 
   const {
     question,
@@ -61,8 +77,21 @@ function QuestionFlow({ questions }: { questions: Question[] }) {
     goBack,
   } = useQuestionFlow(questions, {
     onComplete: () => setClosingStep("ask"),
-    onExit: () => router.back(),
   });
+
+  // 브라우저 뒤로/앞으로 가기로 질문이나 패널 체크포인트가 바뀌면 대사 연출을
+  // 해제한다. effect가 아니라 렌더 중에 조정해야 이전 화면 깜빡임이 없다.
+  const [prevQuestionId, setPrevQuestionId] = useState(question.id);
+  const [prevReviewPanelOpen, setPrevReviewPanelOpen] =
+    useState(isReviewPanelOpen);
+  if (
+    prevQuestionId !== question.id ||
+    prevReviewPanelOpen !== isReviewPanelOpen
+  ) {
+    setPrevQuestionId(question.id);
+    setPrevReviewPanelOpen(isReviewPanelOpen);
+    setClosingStep(null);
+  }
 
   const handleSelectAnswer = (label: string) => {
     const answer = question.answers.find((item) => item.label === label);
@@ -75,11 +104,25 @@ function QuestionFlow({ questions }: { questions: Question[] }) {
     selectAnswer(label);
   };
 
-  const isClosing = closingStep !== null;
+  const isClosing = closingStep !== null || isReviewPanelOpen;
 
+  // 마무리 대사는 연출이라 되감지 않는다: ask는 마지막 피드백으로, outro는
+  // 오늘의 한마디 패널로 로컬 복귀하고, 패널 위에서는 히스토리를 되돌린다.
   const goBackFromClosing = () => {
-    if (closingStep) setClosingStep(CLOSING_BACK_STEP[closingStep]);
+    if (closingStep !== null) {
+      setClosingStep(null);
+      return;
+    }
+    router.back();
   };
+
+  const openReviewPanel = () => {
+    router.push(`?q=${questionNumber}&panel=review`);
+  };
+
+  if (isRoutingToFace) {
+    return <LoadingScreen text="기록 중.." />;
+  }
 
   return (
     <div className={styles.page}>
@@ -111,10 +154,10 @@ function QuestionFlow({ questions }: { questions: Question[] }) {
               <NarrationBox
                 text={CLOSING_ASK}
                 className={styles.narration}
-                onAdvance={() => setClosingStep("input")}
+                onAdvance={openReviewPanel}
               />
             )}
-            {closingStep === "input" && (
+            {closingStep === null && isReviewPanelOpen && (
               <ReviewPanel
                 onSubmit={() => setClosingStep("outro")}
                 onSkip={() => setClosingStep("outro")}
@@ -124,8 +167,7 @@ function QuestionFlow({ questions }: { questions: Question[] }) {
               <NarrationBox
                 text={CLOSING_OUTRO}
                 className={styles.narration}
-                // TODO: 답변 제출 API 연동 후 다음 페이지로 이동
-                onAdvance={() => {}}
+                onAdvance={() => setIsRoutingToFace(true)}
               />
             )}
           </>

@@ -3,9 +3,14 @@
 import { useFormContext } from "react-hook-form";
 
 import type { FormValues } from "@/features/form";
+import { useDebouncedValue } from "@/shared/lib";
 import { InputPanel } from "@/shared/ui";
 
 import { KOREAN_NAME_REGEX } from "../model/constants";
+
+// 한글 IME 조합 중에는 글자마다 유효성이 뒤집혀 힌트·CTA가 깜빡인다.
+// 타이핑이 잠잠해진 뒤의 값으로 검증 UI를 갱신한다.
+const VALIDATION_DEBOUNCE_MS = 300;
 
 type NamePanelProps = {
   onSubmit: () => void;
@@ -14,7 +19,8 @@ type NamePanelProps = {
 export function NamePanel({ onSubmit }: NamePanelProps) {
   const { setValue, watch } = useFormContext<FormValues>();
   const name = watch("name");
-  const isValidName = KOREAN_NAME_REGEX.test(name);
+  const debouncedName = useDebouncedValue(name, VALIDATION_DEBOUNCE_MS);
+  const isValidName = KOREAN_NAME_REGEX.test(debouncedName);
 
   return (
     <InputPanel

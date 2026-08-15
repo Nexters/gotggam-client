@@ -1,5 +1,6 @@
 import { createVar, fallbackVar, style } from "@vanilla-extract/css";
 
+import { pixelBlink } from "@/shared/styles/animations.css";
 import { getPixelCornerClipPath } from "@/shared/styles/pixel-corner";
 import { vars } from "@/shared/styles/theme.css";
 
@@ -40,6 +41,9 @@ export const bubbleText = style({
   whiteSpace: "pre-line",
   lineHeight: "160%",
   letterSpacing: "-0.0242rem",
+  // 우하단 다음 버튼(2.4rem, right 2rem)이 떠 있는 세로 띠를 텍스트가
+  // 침범하지 않도록 비워둔다. 없으면 마지막 줄 꼬리를 아이콘이 가린다.
+  paddingRight: "2.4rem",
 });
 
 // 말풍선(2단 계단)과 달리 이름표 모서리는 4px 한 단만 잘려나간다.
@@ -77,4 +81,8 @@ export const nextButton = style({
   bottom: vars.spacing["20"],
   width: "2.4rem",
   height: "2.4rem",
+  animationName: pixelBlink,
+  animationDuration: "1s",
+  animationTimingFunction: "steps(1, end)",
+  animationIterationCount: "infinite",
 });

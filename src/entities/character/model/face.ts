@@ -41,3 +41,31 @@ export const FACE_BODY_IMAGE_SRC = "/images/character/parts/body.png";
 export function getFacePartImageSrc(partId: string) {
   return `/images/character/parts/${partId}.png`;
 }
+
+/** 파츠 id("face03") → 서버 타입 번호(3). */
+export function getFacePartTypeNumber(partId: string) {
+  return Number.parseInt(partId.slice(-2), 10);
+}
+
+/** 서버 타입 번호 → 파츠 id. 범위를 벗어나면 첫 번째 파츠로 처리한다. */
+export function getFacePartIdByType(category: FacePartCategory, type: number) {
+  const ids = FACE_PART_IDS[category];
+  return ids[type - 1] ?? ids[0];
+}
+
+/** 서버 캐릭터 응답(타입 번호) → 파츠 선택. */
+export function toFaceSelection(character: {
+  faceType: number;
+  hairType: number;
+  eyeType: number;
+  noseType: number;
+  mouthType: number;
+}): FaceSelection {
+  return {
+    face: getFacePartIdByType("face", character.faceType),
+    hair: getFacePartIdByType("hair", character.hairType),
+    eyes: getFacePartIdByType("eyes", character.eyeType),
+    nose: getFacePartIdByType("nose", character.noseType),
+    mouth: getFacePartIdByType("mouth", character.mouthType),
+  };
+}

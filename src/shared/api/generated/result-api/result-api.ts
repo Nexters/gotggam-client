@@ -6,10 +6,36 @@
  * OpenAPI spec version: v0.0.1
  */
 import type {
-  GetParticipantCount200
+  CreateResult200,
+  GetParticipantCount200,
+  SurveyResultRequest
 } from '../models';
 
 import { orvalMutator } from '../../orval-mutator';
+
+export const getCreateResultUrl = () => {
+
+
+
+
+  return `/api/v1/results`
+}
+
+/**
+ * 설문 답변을 받아 결과를 계산, 저장하고 결과 페이지 정보를 반환한다.
+ * @summary 설문 결과 제출
+ */
+export const createResult = async (surveyResultRequest: SurveyResultRequest, options?: Parameters<typeof orvalMutator>[1]): Promise<CreateResult200> => {
+
+  return orvalMutator<CreateResult200>(getCreateResultUrl(),
+  {
+    ...options,
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', ...options?.headers },
+    body: JSON.stringify(surveyResultRequest)
+  }
+);}
+
 
 export const getGetParticipantCountUrl = () => {
 

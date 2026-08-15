@@ -40,3 +40,8 @@ export const bubbleArea = style({
   zIndex: 1,
   padding: "0 16px 32px",
 });
+
+// 말풍선 없이 캐릭터만 보여줄 때도 위치가 튀지 않도록 같은 높이를 차지한다.
+export const bubblePlaceholder = style({
+  height: 123,
+});

@@ -6,11 +6,20 @@
  * OpenAPI spec version: v0.0.1
  */
 
-export * from './getParticipantCount200';
-export * from './resultCountResponse';
 export * from './actQuestionsResponse';
 export * from './actResponse';
 export * from './answerOptionResponse';
+export * from './answerRequest';
 export * from './apiResponseListActQuestionsResponse';
+export * from './categoryPenaltyResponse';
+export * from './characterRequest';
+export * from './characterResponse';
+export * from './createResult200';
+export * from './getParticipantCount200';
 export * from './getQuestionnaire200';
 export * from './questionResponse';
+export * from './resultCountResponse';
+export * from './surveyResultRequest';
+export * from './surveyResultRequestGender';
+export * from './surveyResultResponse';
+export * from './surveyResultResponseGender';

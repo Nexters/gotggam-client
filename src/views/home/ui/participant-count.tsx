@@ -6,28 +6,35 @@ import { useSuspenseQuery } from "@tanstack/react-query";
 import { resultQueries } from "@/entities/result";
 import { RollingNumber, Typography } from "@/shared/ui";
 
-function ParticipantCountText({ count }: { count: number }) {
+type ParticipantCountProps = {
+  isPlaying?: boolean;
+};
+
+function ParticipantCountText({
+  count,
+  isPlaying,
+}: ParticipantCountProps & { count: number }) {
   return (
     <Typography family="spoqa" size="12" color="gray-12">
-      지금까지 <RollingNumber value={count} />
+      지금까지 <RollingNumber value={count} isPlaying={isPlaying} />
       명이 참여했어요.
     </Typography>
   );
 }
 
-function ParticipantCount() {
+function ParticipantCount({ isPlaying }: ParticipantCountProps) {
   const { data: participantCount } = useSuspenseQuery(
     resultQueries.participantCount(),
   );
 
-  return <ParticipantCountText count={participantCount} />;
+  return <ParticipantCountText count={participantCount} isPlaying={isPlaying} />;
 }
 
-export function ParticipantCountSection() {
+export function ParticipantCountSection({ isPlaying }: ParticipantCountProps) {
   return (
     <ErrorBoundary fallback={null}>
       <Suspense clientOnly fallback={<ParticipantCountText count={0} />}>
-        <ParticipantCount />
+        <ParticipantCount isPlaying={isPlaying} />
       </Suspense>
     </ErrorBoundary>
   );

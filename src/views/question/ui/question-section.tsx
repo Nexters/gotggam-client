@@ -8,7 +8,10 @@ import { useFormContext } from "react-hook-form";
 import type { FormValues } from "@/features/form";
 import { ChoicePanel, Typography } from "@/shared/ui";
 import { AppBar } from "@/widgets/app-bar";
-import { LoadingScreen } from "@/widgets/loading-screen";
+import {
+  LOADING_SCREEN_MIN_DURATION_MS,
+  LoadingScreen,
+} from "@/widgets/loading-screen";
 import { Character, NarrationBox, SceneBackground } from "@/widgets/scene";
 
 import { questionQueries } from "../api/question-queries";
@@ -25,9 +28,6 @@ import { ReviewPanel } from "./review-panel";
  * 아니라 체크포인트라 ?panel=review 쿼리 파라미터가 소유한다.
  */
 type ClosingStep = "ask" | "outro";
-
-/** 얼굴 페이지로 넘어가기 전 로딩 연출을 보여줄 시간. */
-const FACE_ROUTING_LOADING_MS = 1500;
 
 export function QuestionSection() {
   const { data: questions } = useSuspenseQuery(questionQueries.list());
@@ -59,7 +59,7 @@ function QuestionFlow({ questions }: { questions: Question[] }) {
     }
     const id = setTimeout(
       () => router.push("/form/face"),
-      FACE_ROUTING_LOADING_MS,
+      LOADING_SCREEN_MIN_DURATION_MS,
     );
     return () => clearTimeout(id);
   }, [isRoutingToFace, router]);

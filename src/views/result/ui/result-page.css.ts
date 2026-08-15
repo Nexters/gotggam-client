@@ -32,6 +32,8 @@ export const endingBackgroundImage = style({
   objectFit: "cover",
 });
 
+// 시트가 열리면 카드 묶음이 위로 이동한다(가운데 정렬 상태로 두면 시트와 겹친다).
+// 이동량은 result-page.tsx가 progress에 맞춰 translateY로 넣는다.
 export const cardStage = style({
   position: "relative",
   display: "flex",
@@ -39,6 +41,17 @@ export const cardStage = style({
   minHeight: 0,
   flexDirection: "column",
   alignItems: "center",
+  transition: "transform 480ms cubic-bezier(0.22, 0.9, 0.3, 1)",
+  willChange: "transform",
+  "@media": {
+    "(prefers-reduced-motion: reduce)": {
+      transition: "transform 0ms",
+    },
+  },
+});
+
+export const cardStageDragging = style({
+  transition: "none",
 });
 
 // 명부 등장 모션 — 아래에서 떠오르며 정착한다. transform(2D)+opacity만 써서
@@ -91,9 +104,8 @@ const hintPulse = keyframes({
   "50%": { opacity: 0.45 },
 });
 
-// 앱바가 없는 화면이라 상단 여백을 직접 확보한다 (Figma hint y85, 상태바 제외 ≈ 31)
+// 상단 여백은 result-page.tsx의 stageTop(힌트+카드 세로 가운데 정렬)이 잡는다.
 export const flipHint = style({
-  marginTop: vars.spacing["32"],
   padding: `${vars.spacing["4"]} ${vars.spacing["12"]}`,
   border: "none",
   background: "none",

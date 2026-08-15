@@ -1,7 +1,7 @@
 "use client";
 
-import { BGM_STORAGE_KEY, CLICK_SFX_SRC } from "@/shared/config";
-import { cn, playSfx, useLocalStorage } from "@/shared/lib";
+import { CLICK_SFX_SRC } from "@/shared/config";
+import { cn, playSfx, useBgmEnabled } from "@/shared/lib";
 
 import * as styles from "./choice-panel.css";
 import { Typography } from "..";
@@ -24,7 +24,7 @@ export function ChoicePanel({
   onSelect,
 }: ChoicePanelProps) {
   const isSpaced = variant === "spaced";
-  const [isSoundOn] = useLocalStorage(BGM_STORAGE_KEY, true);
+  const [isSoundOn] = useBgmEnabled();
 
   return (
     <div className={cn(styles.panel, isSpaced && styles.panelSpaced)}>

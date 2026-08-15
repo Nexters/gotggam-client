@@ -31,3 +31,7 @@ export const hint = style({
 export const hintAccent = style({
   color: vars.color.accent1["9"],
 });
+
+export const hintWarning = style({
+  color: "#FAB039",
+});

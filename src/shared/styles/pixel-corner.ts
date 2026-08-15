@@ -26,3 +26,23 @@ export function getPixelCornerClipPath(step: number) {
     `0 calc(100% - ${s2})`,
   ].join(", ");
 }
+
+/** 모서리를 한 칸(size)만 정사각으로 도려낸 픽셀 코너 polygon 좌표. 계단이 2칸인 getPixelCornerClipPath보다 덜 깎여서 작은 요소에 쓴다. */
+export function getPixelNotchClipPath(size: number) {
+  const s = `${size}px`;
+
+  return [
+    `0 ${s}`,
+    `${s} ${s}`,
+    `${s} 0`,
+    `calc(100% - ${s}) 0`,
+    `calc(100% - ${s}) ${s}`,
+    `100% ${s}`,
+    `100% calc(100% - ${s})`,
+    `calc(100% - ${s}) calc(100% - ${s})`,
+    `calc(100% - ${s}) 100%`,
+    `${s} 100%`,
+    `${s} calc(100% - ${s})`,
+    `0 calc(100% - ${s})`,
+  ].join(", ");
+}

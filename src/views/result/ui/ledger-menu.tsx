@@ -2,8 +2,8 @@
 
 import { useState } from "react";
 
-import { BGM_STORAGE_KEY, CLICK_SFX_SRC } from "@/shared/config";
-import { cn, playSfx, useLocalStorage } from "@/shared/lib";
+import { CLICK_SFX_SRC } from "@/shared/config";
+import { cn, playSfx, useBgmEnabled } from "@/shared/lib";
 import { Typography } from "@/shared/ui";
 
 import * as styles from "./ledger-menu.css";
@@ -27,7 +27,7 @@ export function LedgerMenu({ onSelect }: LedgerMenuProps) {
   const [selectedAction, setSelectedAction] = useState<LedgerMenuAction | null>(
     null,
   );
-  const [isSoundOn] = useLocalStorage(BGM_STORAGE_KEY, true);
+  const [isSoundOn] = useBgmEnabled();
 
   const handleSelect = (action: LedgerMenuAction) => {
     // 끝내기를 고른 뒤에는 화면 전환 대기 중이므로 추가 입력을 막는다.
@@ -51,7 +51,6 @@ export function LedgerMenu({ onSelect }: LedgerMenuProps) {
 
   return (
     <div className={styles.panel}>
-      <div className={styles.bottomFade} aria-hidden />
       {MENU_ITEMS.map(({ action, label }) => (
         <button
           key={action}

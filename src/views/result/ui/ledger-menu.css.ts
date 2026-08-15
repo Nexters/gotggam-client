@@ -2,7 +2,7 @@ import { keyframes, style } from "@vanilla-extract/css";
 
 import { vars } from "@/shared/styles/theme.css";
 
-const SELECTED_BACKGROUND = "rgba(107, 76, 168, 0.32)";
+const SELECTED_BACKGROUND = "#3b314f";
 
 // 선택 순간 선택색↔투명을 깜빡이고 정착한다 (choice-panel과 같은 픽셀 게임 연출).
 const selectBlink = keyframes({
@@ -40,13 +40,3 @@ export const itemSelected = style({
   animationTimingFunction: "steps(1, end)",
 });
 
-// Figma 레이어 순서상 페이드는 메뉴 텍스트 아래(배경 쪽)에 깔린다.
-export const bottomFade = style({
-  position: "absolute",
-  insetInline: 0,
-  bottom: 0,
-  height: 79,
-  background:
-    "linear-gradient(to bottom, rgba(18, 18, 18, 0) 0%, rgba(18, 18, 18, 0.85) 22%, #121212 100%)",
-  pointerEvents: "none",
-});

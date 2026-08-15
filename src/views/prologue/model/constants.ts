@@ -1,6 +1,6 @@
 import type { WheelPickerOption } from "@/shared/ui";
 
-export const KOREAN_NAME_REGEX = /^[가-힣]{1,4}$/;
+export const NAME_REGEX = /^(?:[가-힣ㄱ-ㅣ]{1,4}|[a-zA-Z]{1,6})$/;
 
 export type SceneInput = "name" | "birth" | "gender";
 

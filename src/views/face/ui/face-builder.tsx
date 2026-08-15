@@ -12,8 +12,8 @@ import {
   type FacePartCategory,
   type FaceSelection,
 } from "@/entities/character";
-import { BGM_STORAGE_KEY, CLICK_SFX_SRC } from "@/shared/config";
-import { playSfx, useLocalStorage } from "@/shared/lib";
+import { CLICK_SFX_SRC } from "@/shared/config";
+import { playSfx, useBgmEnabled } from "@/shared/lib";
 import { IconButton, PixelCornerButton, Typography } from "@/shared/ui";
 
 import * as styles from "./face-builder.css";
@@ -28,7 +28,7 @@ export function FaceBuilder({
   onSubmit,
 }: FaceBuilderProps) {
   const [selection, setSelection] = useState(initialSelection);
-  const [isSoundOn] = useLocalStorage(BGM_STORAGE_KEY, true);
+  const [isSoundOn] = useBgmEnabled();
 
   const playClick = () => {
     if (isSoundOn) {

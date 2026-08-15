@@ -30,12 +30,24 @@ export function BirthDatePanel({ onSubmit }: BirthDatePanelProps) {
   const [month, setMonth] = useState("1");
   const [day, setDay] = useState("1");
 
-  const dayCount = getDaysInMonth(year, month);
-  const dayOptions = getDayOptions(dayCount);
-  const safeDay = clampDay(day, dayCount);
+  // 서버가 미래 생일을 거부하므로 오늘 이후는 선택지에서 잘라낸다.
+  // 올해를 고르면 이번 달까지, 이번 달이면 오늘까지만 보인다.
+  const today = new Date();
+  const isCurrentYear = Number(year) === today.getFullYear();
+  const monthOptions = isCurrentYear
+    ? MONTH_OPTIONS.slice(0, today.getMonth() + 1)
+    : MONTH_OPTIONS;
+  const safeMonth = `${Math.min(Number(month), monthOptions.length)}`;
+  const isCurrentMonth =
+    isCurrentYear && Number(safeMonth) === today.getMonth() + 1;
+
+  const dayCount = getDaysInMonth(year, safeMonth);
+  const maxDay = isCurrentMonth ? Math.min(dayCount, today.getDate()) : dayCount;
+  const dayOptions = getDayOptions(maxDay);
+  const safeDay = clampDay(day, maxDay);
 
   const submit = () => {
-    setValue("birthDate", formatBirthDate(year, month, safeDay));
+    setValue("birthDate", formatBirthDate(year, safeMonth, safeDay));
     onSubmit();
   };
 
@@ -48,8 +60,8 @@ export function BirthDatePanel({ onSubmit }: BirthDatePanelProps) {
         <WheelPickerGroup>
           <WheelPicker options={YEAR_OPTIONS} value={year} onChange={setYear} />
           <WheelPicker
-            options={MONTH_OPTIONS}
-            value={month}
+            options={monthOptions}
+            value={safeMonth}
             onChange={setMonth}
           />
           <WheelPicker options={dayOptions} value={safeDay} onChange={setDay} />

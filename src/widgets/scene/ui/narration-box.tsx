@@ -2,13 +2,7 @@
 
 import { useEffect, useRef } from "react";
 
-import { BGM_STORAGE_KEY } from "@/shared/config";
-import {
-  cn,
-  playAnimalese,
-  useLocalStorage,
-  useTypewriter,
-} from "@/shared/lib";
+import { cn, playAnimalese, useBgmEnabled, useTypewriter } from "@/shared/lib";
 import { IconButton, IconButtonNext, Typography } from "@/shared/ui";
 
 import * as styles from "./narration-box.css";
@@ -19,9 +13,13 @@ type NarrationBoxProps = {
   className?: string;
 };
 
-export function NarrationBox({ text, onAdvance, className }: NarrationBoxProps) {
+export function NarrationBox({
+  text,
+  onAdvance,
+  className,
+}: NarrationBoxProps) {
   const { words, skip, isDone } = useTypewriter(text);
-  const [isSoundOn] = useLocalStorage(BGM_STORAGE_KEY, true);
+  const [isSoundOn] = useBgmEnabled();
   const prevLengthRef = useRef(0);
 
   // 타이핑으로 글자가 하나 늘었을 때만 그 음절의 말소리를 낸다.

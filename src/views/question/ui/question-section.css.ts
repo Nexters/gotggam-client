@@ -45,12 +45,6 @@ export const characterArea = style({
   paddingBottom: `${(NARRATION_BOTTOM + NARRATION_HEIGHT - CHARACTER_OVERLAP) / 10}rem`,
 });
 
-export const narration = style({
-  vars: {
-    [narrationBottomVar]: `${NARRATION_BOTTOM / 10}rem`,
-  },
-});
-
 export const character = style({
   width: "79%",
   maxHeight: "100%",

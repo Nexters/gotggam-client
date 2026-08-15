@@ -93,7 +93,10 @@ function QuestionFlow({ questions }: { questions: Question[] }) {
     setClosingStep(null);
   }
 
+  // 첫 선택이 확정이다. 진행 대기 중 연타하면 타이머가 계속 리셋돼 피드백으로
+  // 못 넘어가므로, 선택 이후의 탭은 무시한다.
   const handleSelectAnswer = (label: string) => {
+    if (selectedAnswer !== null) return;
     const answer = question.answers.find((item) => item.label === label);
     if (answer) {
       setValue("answers", {
@@ -148,11 +151,7 @@ function QuestionFlow({ questions }: { questions: Question[] }) {
         {isClosing ? (
           <>
             {closingStep === "ask" && (
-              <NarrationBox
-                text={CLOSING_ASK}
-                className={styles.narration}
-                onAdvance={openReviewPanel}
-              />
+              <NarrationBox text={CLOSING_ASK} onAdvance={openReviewPanel} />
             )}
             {closingStep === null && isReviewPanelOpen && (
               <ReviewPanel
@@ -163,9 +162,6 @@ function QuestionFlow({ questions }: { questions: Question[] }) {
             {closingStep === "outro" && (
               <NarrationBox
                 text={CLOSING_OUTRO}
-                className={styles.narration}
-                // 답변 제출은 결과 화면이 수행한다 (views/result).
-                // 여기선 "기록 중.." 로딩을 보여준 뒤 얼굴 확인으로 넘어간다.
                 onAdvance={() => setIsRoutingToFace(true)}
               />
             )}
@@ -178,11 +174,7 @@ function QuestionFlow({ questions }: { questions: Question[] }) {
             onSelect={handleSelectAnswer}
           />
         ) : (
-          <NarrationBox
-            text={feedback}
-            className={styles.narration}
-            onAdvance={advanceFeedback}
-          />
+          <NarrationBox text={feedback} onAdvance={advanceFeedback} />
         )}
       </div>
     </div>

@@ -1,7 +1,6 @@
 "use client";
 
 import { useSuspenseQuery } from "@tanstack/react-query";
-import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useFormContext } from "react-hook-form";
 
@@ -45,7 +44,6 @@ export function QuestionSection() {
 }
 
 function QuestionFlow({ questions }: { questions: Question[] }) {
-  const router = useRouter();
   const { setValue, getValues } = useFormContext<FormValues>();
   const [closingStep, setClosingStep] = useState<ClosingStep | null>(null);
 
@@ -61,8 +59,14 @@ function QuestionFlow({ questions }: { questions: Question[] }) {
     goBack,
   } = useQuestionFlow(questions, {
     onComplete: () => setClosingStep("ask"),
-    onExit: () => router.back(),
   });
+
+  // 마무리 단계 중 브라우저 뒤로가기로 질문이 바뀌면 마무리 상태를 해제한다.
+  const [prevQuestionId, setPrevQuestionId] = useState(question.id);
+  if (prevQuestionId !== question.id) {
+    setPrevQuestionId(question.id);
+    setClosingStep(null);
+  }
 
   const handleSelectAnswer = (label: string) => {
     const answer = question.answers.find((item) => item.label === label);

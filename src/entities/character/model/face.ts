@@ -25,6 +25,36 @@ export const FACE_PART_IDS: Record<FacePartCategory, string[]> = {
   mouth: ["mouth01", "mouth02", "mouth03", "mouth04", "mouth05"],
 };
 
+// 파츠별 표시 이름 — Figma [커스터마이징] 시트 표기 그대로 (nose03·04는 원안부터 중복).
+// 화면 표시용일 뿐, 서버에는 타입 번호(getFacePartTypeNumber)만 보낸다.
+export const FACE_PART_NAMES: Record<string, string> = {
+  face01: "둥근형",
+  face02: "각진형",
+  face03: "하트형",
+  face04: "역삼각형",
+  hair01: "내추럴 헤어",
+  hair02: "사이드 헤어",
+  hair03: "반삭",
+  hair04: "긴생머리",
+  hair05: "포마드",
+  hair06: "히피펌",
+  eyes01: "동그란 눈",
+  eyes02: "올라간 눈",
+  eyes03: "처진 눈",
+  eyes04: "웃는 눈",
+  eyes05: "가는 눈",
+  nose01: "오뚝한 코",
+  nose02: "아담한 코",
+  nose03: "날렵한 코",
+  nose04: "날렵한 코",
+  nose05: "복코",
+  mouth01: "일자 입",
+  mouth02: "도톰한 입",
+  mouth03: "얇은 입",
+  mouth04: "웃는 입",
+  mouth05: "새침한 입",
+};
+
 /** 카테고리별로 선택된 파츠 id. 제출 payload에 그대로 실린다. */
 export type FaceSelection = Record<FacePartCategory, string>;
 

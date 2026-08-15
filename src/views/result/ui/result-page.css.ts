@@ -41,19 +41,16 @@ export const cardStage = style({
   alignItems: "center",
 });
 
-// 명부 등장 모션 — 여러 바퀴 돌며 내려앉고 살짝 오버슈트 후 정착한다.
-// (레퍼런스: 3D 카드 회전 + 반사광. 반사광은 ledger-card의 sheen이 담당)
+// 명부 등장 모션 — 한 바퀴만 돌며 내려앉는다. (반사광은 ledger-card의 sheen이 담당.
+// 여러 바퀴·오버슈트 버전은 저사양 모바일에서 프레임이 밀려 한 바퀴로 줄였다)
 const cardEntry = keyframes({
   "0%": {
     transform:
-      "perspective(900px) translateY(-40px) rotateY(900deg) scale(0.4)",
+      "perspective(900px) translateY(-24px) rotateY(360deg) scale(0.72)",
     opacity: 0,
   },
-  "45%": {
+  "35%": {
     opacity: 1,
-  },
-  "80%": {
-    transform: "perspective(900px) translateY(3px) rotateY(-12deg) scale(1.02)",
   },
   "100%": {
     transform: "perspective(900px) translateY(0) rotateY(0deg) scale(1)",
@@ -61,10 +58,9 @@ const cardEntry = keyframes({
 });
 
 export const card = style({
-  marginTop: vars.spacing["32"],
   animationName: cardEntry,
-  animationDuration: "1.4s",
-  animationTimingFunction: "cubic-bezier(0.3, 0.75, 0.25, 1)",
+  animationDuration: "900ms",
+  animationTimingFunction: "cubic-bezier(0.3, 0.8, 0.3, 1)",
   animationFillMode: "backwards",
   "@media": {
     "(prefers-reduced-motion: reduce)": {
@@ -73,14 +69,33 @@ export const card = style({
   },
 });
 
-// 뒤집기 안내 — 은은하게 깜빡여 인터랙션을 유도한다.
+// 바텀시트 상태에 맞춰 카드가 커지고 작아진다. 스케일 값은 result-page.tsx가
+// Figma [card_drawer] 기준(닫힘 300 / 열림 220, 카드 원본 252)으로 계산한다.
+export const cardScaleBox = style({
+  marginTop: vars.spacing["20"],
+  transformOrigin: "top center",
+  transition: "transform 480ms cubic-bezier(0.22, 0.9, 0.3, 1)",
+  willChange: "transform",
+  "@media": {
+    "(prefers-reduced-motion: reduce)": {
+      transition: "transform 0ms",
+    },
+  },
+});
+
+export const cardScaleBoxDragging = style({
+  transition: "none",
+});
+
+// 뒤집기 안내 — 카드 위에서 은은하게 깜빡여 인터랙션을 유도한다.
 const hintPulse = keyframes({
   "0%, 100%": { opacity: 0.95 },
   "50%": { opacity: 0.45 },
 });
 
+// 앱바가 없는 화면이라 상단 여백을 직접 확보한다 (Figma hint y85, 상태바 제외 ≈ 31)
 export const flipHint = style({
-  marginTop: vars.spacing["12"],
+  marginTop: vars.spacing["32"],
   padding: `${vars.spacing["4"]} ${vars.spacing["12"]}`,
   border: "none",
   background: "none",
@@ -96,11 +111,6 @@ export const flipHint = style({
   },
 });
 
-export const bubbleArea = style({
-  position: "absolute",
-  insetInline: vars.spacing["16"],
-  bottom: vars.spacing["24"],
-});
 
 // 엔딩 마무리 — end-bridge와 동일한 "빰 - 빠밤 - 빰" 리듬으로 깜빡이다
 // 암전된 채 홈으로 전환된다. 마지막 암전은 걷지 않는다: 홈의 페이드인이

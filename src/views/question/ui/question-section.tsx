@@ -1,6 +1,7 @@
 "use client";
 
 import { useSuspenseQuery } from "@tanstack/react-query";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useFormContext } from "react-hook-form";
 
@@ -44,6 +45,7 @@ export function QuestionSection() {
 }
 
 function QuestionFlow({ questions }: { questions: Question[] }) {
+  const router = useRouter();
   const { setValue, getValues } = useFormContext<FormValues>();
   const [closingStep, setClosingStep] = useState<ClosingStep | null>(null);
 
@@ -128,8 +130,7 @@ function QuestionFlow({ questions }: { questions: Question[] }) {
               <NarrationBox
                 text={CLOSING_OUTRO}
                 className={styles.narration}
-                // TODO: 답변 제출 API 연동 후 다음 페이지로 이동
-                onAdvance={() => {}}
+                onAdvance={() => router.push("/form/face")}
               />
             )}
           </>

@@ -6,6 +6,8 @@
  * OpenAPI spec version: v0.0.1
  */
 
+export * from './getParticipantCount200';
+export * from './resultCountResponse';
 export * from './actQuestionsResponse';
 export * from './actResponse';
 export * from './answerOptionResponse';

@@ -1,5 +1,6 @@
 export { AppBar } from "./app-bar";
 export { BottomPanel } from "./bottom-panel";
+export { BottomSheet } from "./bottom-sheet";
 export { Button } from "./button";
 export {
   CHOICE_PANEL_ADVANCE_DELAY_MS,

@@ -104,5 +104,5 @@ export const footer = style({
   width: "100%",
   display: "flex",
   justifyContent: "center",
-  padding: `0 ${vars.spacing["20"]} ${vars.spacing["36"]}`,
+  padding: `0 ${vars.spacing["20"]} ${vars.spacing["32"]}`,
 });

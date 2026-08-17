@@ -11,6 +11,17 @@ export function getDayOptions(dayCount: number): WheelPickerOption[] {
   }));
 }
 
+/** 만 minAge 이상만 허용할 때 가장 늦은 생년월일(오늘 기준 minAge년 전 같은 날). */
+export function getMaxBirthDate(minAge: number) {
+  const date = new Date();
+  const month = date.getMonth();
+  date.setFullYear(date.getFullYear() - minAge);
+  if (date.getMonth() !== month) {
+    date.setDate(0);
+  }
+  return date;
+}
+
 /** 월·연도가 바뀌어 일 수가 줄면 선택된 일을 그 달의 마지막 날로 보정한다. */
 export function clampDay(day: string, dayCount: number) {
   return `${Math.min(Number(day), dayCount)}`;

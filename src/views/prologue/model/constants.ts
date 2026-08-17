@@ -22,10 +22,13 @@ export const SCENES: { text: string; input?: SceneInput }[] = [
 
 const CURRENT_YEAR = new Date().getFullYear();
 
+/** 만 14세 미만은 개인정보 수집에 법정대리인 동의가 필요해 이용을 막는다. */
+export const MIN_AGE = 14;
+
 export const YEAR_OPTIONS: WheelPickerOption[] = Array.from(
-  { length: 100 },
+  { length: 100 - MIN_AGE },
   (_, i) => {
-    const year = `${CURRENT_YEAR - i}`;
+    const year = `${CURRENT_YEAR - MIN_AGE - i}`;
     return { value: year, label: year };
   },
 );

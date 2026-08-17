@@ -1,10 +1,10 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { type TransitionEvent, useState } from "react";
 
 import { BACKGROUND_IMAGE_URLS, CLICK_SFX_SRC } from "@/shared/config";
-import { playSfx, useBgmEnabled } from "@/shared/lib";
+import { cn, playSfx, useBgmEnabled } from "@/shared/lib";
 import { PixelCornerButton, Typography } from "@/shared/ui";
 import { Character, SceneBackground } from "@/widgets/scene";
 
@@ -19,13 +19,25 @@ export function ConsentPage() {
   const router = useRouter();
   const [stepIndex, setStepIndex] = useState(0);
   const [isSheetOpen, setIsSheetOpen] = useState(false);
-  // 시트는 닫히는 애니메이션 동안에도 마운트된 채라, 열 때 고정한 문서를 계속
-  // 보여준다. step.termsId 를 그대로 쓰면 동의 직후 다음 약관으로 내용이 바뀐다.
   const [sheetTermsId, setSheetTermsId] = useState(CONSENT_STEPS[0].termsId);
+  const [isBackgroundReady, setIsBackgroundReady] = useState(false);
+  const [isCharacterReady, setIsCharacterReady] = useState(false);
+  const [pendingStepIndex, setPendingStepIndex] = useState<number | null>(null);
   const [isSoundOn] = useBgmEnabled();
 
   const step = CONSENT_STEPS[stepIndex];
   const isLastStep = stepIndex === CONSENT_STEPS.length - 1;
+  const isVisible =
+    isBackgroundReady && isCharacterReady && pendingStepIndex === null;
+
+  const handleTransitionEnd = (event: TransitionEvent<HTMLDivElement>) => {
+    if (event.target !== event.currentTarget) return;
+    if (event.propertyName !== "opacity") return;
+    if (pendingStepIndex === null) return;
+
+    setStepIndex(pendingStepIndex);
+    setPendingStepIndex(null);
+  };
 
   const playClick = () => {
     if (isSoundOn) {
@@ -39,7 +51,7 @@ export function ConsentPage() {
       router.back();
       return;
     }
-    setStepIndex((index) => index - 1);
+    setPendingStepIndex(stepIndex - 1);
   };
 
   const openTermsSheet = () => {
@@ -55,42 +67,58 @@ export function ConsentPage() {
       router.push("/form/prologue");
       return;
     }
-    setStepIndex((index) => index + 1);
+    setPendingStepIndex(stepIndex + 1);
   };
 
   return (
-    <div className={styles.page}>
-      <SceneBackground src={BACKGROUND_IMAGE_URLS.landing} />
+    <div
+      className={cn(
+        styles.page,
+        styles.screen,
+        isVisible && styles.screenVisible,
+      )}
+      onTransitionEnd={handleTransitionEnd}
+    >
+      <SceneBackground
+        src={BACKGROUND_IMAGE_URLS.landing}
+        onReady={() => setIsBackgroundReady(true)}
+      />
 
       <div className={styles.content}>
-        <StepIndicator total={CONSENT_STEPS.length} current={stepIndex} />
+        {/* key로 다시 마운트해야 단계마다 등장 애니메이션이 처음부터 재생된다. */}
+        <div key={stepIndex} className={styles.stepBody}>
+          <StepIndicator total={CONSENT_STEPS.length} current={stepIndex} />
+          <Typography
+            as="h1"
+            family="galmuri9"
+            size="24"
+            color="white"
+            className={styles.heading}
+          >
+            {step.heading.map((line) => (
+              <span key={line} className={styles.headingLine}>
+                {line}
+              </span>
+            ))}
+          </Typography>
 
-        <Typography
-          as="h1"
-          family="galmuri9"
-          size="24"
-          color="white"
-          className={styles.heading}
-        >
-          {step.heading.map((line) => (
-            <span key={line} className={styles.headingLine}>
-              {line}
-            </span>
-          ))}
-        </Typography>
+          <Typography
+            as="p"
+            family="spoqa"
+            weight="medium"
+            size="16"
+            color="gray-11"
+            className={styles.description}
+          >
+            {step.description}
+          </Typography>
+        </div>
 
-        <Typography
-          as="p"
-          family="spoqa"
-          weight="medium"
-          size="16"
-          color="gray-11"
-          className={styles.description}
-        >
-          {step.description}
-        </Typography>
-
-        <Character src={CHARACTER_SRC} className={styles.character} />
+        <Character
+          src={CHARACTER_SRC}
+          className={styles.character}
+          onReady={() => setIsCharacterReady(true)}
+        />
       </div>
 
       <div className={styles.ctaRow}>

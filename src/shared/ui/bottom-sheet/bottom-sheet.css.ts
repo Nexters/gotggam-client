@@ -65,12 +65,33 @@ export const closeIcon = style({
   height: "100%",
 });
 
+// 시트가 반투명 어두운 배경이라 브라우저 기본 스크롤바의 흰 트랙이 그대로 뜬다.
+// 트랙은 비우고 손잡이만 남긴다.
+const SCROLLBAR_THUMB = "#5d5d5d";
+
 export const body = style({
   flex: 1,
   minHeight: 0,
   overflowY: "auto",
   overscrollBehavior: "contain",
   padding: `${vars.spacing["6"]} ${vars.spacing["24"]} ${vars.spacing["24"]}`,
+
+  scrollbarWidth: "thin",
+  scrollbarColor: `${SCROLLBAR_THUMB} transparent`,
+
+  selectors: {
+    "&::-webkit-scrollbar": {
+      width: "0.4rem",
+      backgroundColor: "transparent",
+    },
+    "&::-webkit-scrollbar-track": {
+      backgroundColor: "transparent",
+    },
+    "&::-webkit-scrollbar-thumb": {
+      borderRadius: "0.2rem",
+      backgroundColor: SCROLLBAR_THUMB,
+    },
+  },
 });
 
 export const footer = style({

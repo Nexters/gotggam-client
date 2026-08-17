@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { type TransitionEvent, useEffect, useState } from "react";
 
 import { cn } from "@/shared/lib";
 
@@ -20,6 +20,7 @@ export function HomePage() {
   const [isReady, setIsReady] = useState(false);
   const [isRevealing, setIsRevealing] = useState(false);
   const [isBackgroundLoaded, setIsBackgroundLoaded] = useState(false);
+  const [isLeaving, setIsLeaving] = useState(false);
 
   // 페이드인과 lottie 재생을 같은 시점에 시작한다. autoplay로 두면 로드 직후
   // 안 보이는 채로 재생이 흘러서, 등장할 땐 이미 애니메이션이 지나가 있다.
@@ -34,8 +35,21 @@ export function HomePage() {
     return () => clearTimeout(timer);
   }, [isReady]);
 
+  // 페이드아웃이 끝나야 이동한다. 등장 전환들도 여기까지 올라오므로 화면
+  // 자신의 것만, 그것도 나가는 중일 때만 받는다.
+  const handleTransitionEnd = (event: TransitionEvent<HTMLDivElement>) => {
+    if (!isLeaving) return;
+    if (event.target !== event.currentTarget) return;
+    if (event.propertyName !== "opacity") return;
+
+    router.push("/form/consent");
+  };
+
   return (
-    <div className={styles.page}>
+    <div
+      className={cn(styles.page, isLeaving && styles.leaving)}
+      onTransitionEnd={handleTransitionEnd}
+    >
       <div
         className={cn(
           styles.backgroundLayer,
@@ -86,7 +100,7 @@ export function HomePage() {
         <div className={styles.footer}>
           <StartButton
             description={<ParticipantCountSection isPlaying={isRevealing} />}
-            onClick={() => router.push("/form/consent")}
+            onClick={() => setIsLeaving(true)}
           />
         </div>
       </div>

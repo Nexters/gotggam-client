@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 
-import { CLICK_SFX_SRC } from "@/shared/config";
+import { CLICK_SFX_SRC, GOTGGAM_INSTAGRAM_URL } from "@/shared/config";
 import { cn, playSfx, useBgmEnabled } from "@/shared/lib";
 import { Typography } from "@/shared/ui";
 
@@ -10,12 +10,19 @@ import * as styles from "./ledger-menu.css";
 
 export type LedgerMenuAction = "save" | "visit-room" | "share" | "finish";
 
-const MENU_ITEMS: { action: LedgerMenuAction; label: string }[] = [
-  { action: "save", label: "명부 저장하기" },
-  { action: "visit-room", label: "곧감이의 방 방문하기" },
-  { action: "share", label: "테스트 공유하기" },
-  { action: "finish", label: "끝내기" },
-];
+const MENU_ITEMS: { action: LedgerMenuAction; label: string; href?: string }[] =
+  [
+    { action: "save", label: "명부 저장하기" },
+    {
+      action: "visit-room",
+      label: "곧감이의 방 방문하기",
+      // 곧감이의 방 = 곧감 인스타그램. window.open은 모바일에서 앱이 네비게이션을
+      // 가로채 about:blank 탭이 남으므로 실제 앵커 네비게이션으로 연다.
+      href: GOTGGAM_INSTAGRAM_URL,
+    },
+    { action: "share", label: "테스트 공유하기" },
+    { action: "finish", label: "끝내기" },
+  ];
 
 const HIGHLIGHT_RESET_MS = 600;
 
@@ -51,23 +58,41 @@ export function LedgerMenu({ onSelect }: LedgerMenuProps) {
 
   return (
     <div className={styles.panel}>
-      {MENU_ITEMS.map(({ action, label }) => (
-        <button
-          key={action}
-          type="button"
-          aria-pressed={action === selectedAction}
-          className={cn(
-            styles.item,
-            action === selectedAction && styles.itemSelected,
-          )}
-          onClick={() => handleSelect(action)}
-        >
+      {MENU_ITEMS.map(({ action, label, href }) => {
+        const className = cn(
+          styles.item,
+          action === selectedAction && styles.itemSelected,
+        );
+        const content = (
           <Typography family="galmuri9" size="22" color="gray-12">
             {"> "}
             {label}
           </Typography>
-        </button>
-      ))}
+        );
+
+        return href ? (
+          <a
+            key={action}
+            href={href}
+            target="_blank"
+            rel="noopener noreferrer"
+            className={className}
+            onClick={() => handleSelect(action)}
+          >
+            {content}
+          </a>
+        ) : (
+          <button
+            key={action}
+            type="button"
+            aria-pressed={action === selectedAction}
+            className={className}
+            onClick={() => handleSelect(action)}
+          >
+            {content}
+          </button>
+        );
+      })}
     </div>
   );
 }

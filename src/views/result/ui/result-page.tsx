@@ -16,7 +16,6 @@ import { resultQueries } from "@/entities/result";
 import { termsQueries } from "@/entities/terms";
 import type { FormValues } from "@/features/form";
 import { ApiError } from "@/shared/api";
-import { GOTGGAM_INSTAGRAM_URL } from "@/shared/config";
 import { cn } from "@/shared/lib";
 import { Typography } from "@/shared/ui";
 import {
@@ -205,12 +204,6 @@ function ResultContent() {
     if (action === "finish") {
       // 선택 깜빡임 연출이 끝난 뒤 엔딩으로 넘어간다.
       window.setTimeout(() => setStep("ending"), 400);
-      return;
-    }
-
-    if (action === "visit-room") {
-      // 곧감이의 방 = 곧감 인스타그램. 결과 화면이 유지되도록 새 탭으로 연다.
-      window.open(GOTGGAM_INSTAGRAM_URL, "_blank", "noopener,noreferrer");
       return;
     }
 

@@ -14,6 +14,8 @@ export * from './apiResponseListActQuestionsResponse';
 export * from './categoryPenaltyResponse';
 export * from './characterRequest';
 export * from './characterResponse';
+export * from './consentRequest';
+export * from './consentRequestType';
 export * from './createResult200';
 export * from './getParticipantCount200';
 export * from './getQuestionnaire200';

@@ -1,5 +1,5 @@
 import { getFacePartTypeNumber } from "@/entities/character";
-import { TERMS_DOCUMENTS } from "@/entities/terms";
+import type { TermsDocument, TermsDocumentId } from "@/entities/terms";
 import type { FormValues } from "@/features/form";
 import {
   ConsentRequestType,
@@ -60,18 +60,22 @@ const TODAY_MESSAGE_MIN = 1;
 const TODAY_MESSAGE_MAX = 15;
 
 // 동의 퍼널(/form/consent)을 모두 지나야 설문에 진입하므로 제출 시점엔 전부 동의 상태다.
-const CONSENTS: ConsentRequest[] = [
-  {
-    type: ConsentRequestType.PRIVACY_POLICY,
-    version: TERMS_DOCUMENTS["privacy-policy"].version,
-    agreed: true,
-  },
-  {
-    type: ConsentRequestType.TERMS_OF_SERVICE,
-    version: TERMS_DOCUMENTS["terms-of-service"].version,
-    agreed: true,
-  },
-];
+function buildConsents(
+  termsDocuments: Record<TermsDocumentId, TermsDocument>,
+): ConsentRequest[] {
+  return [
+    {
+      type: ConsentRequestType.PRIVACY_POLICY,
+      version: termsDocuments["privacy-policy"].version,
+      agreed: true,
+    },
+    {
+      type: ConsentRequestType.TERMS_OF_SERVICE,
+      version: termsDocuments["terms-of-service"].version,
+      agreed: true,
+    },
+  ];
+}
 
 /**
  * 폼 값 → 설문 결과 제출 요청. 필수 값(이름·생년월일·성별·답변)이 비어 있으면
@@ -79,6 +83,7 @@ const CONSENTS: ConsentRequest[] = [
  */
 export function buildSurveyResultRequest(
   form: FormValues,
+  termsDocuments: Record<TermsDocumentId, TermsDocument>,
 ): SurveyResultRequest | null {
   const answers = Object.entries(form.answers ?? {}).map(
     ([questionId, optionId]) => ({
@@ -103,7 +108,7 @@ export function buildSurveyResultRequest(
     gender: form.gender,
     ...(isValidTodayMessage ? { todayMessage } : {}),
     answers,
-    consents: CONSENTS,
+    consents: buildConsents(termsDocuments),
     character: {
       faceType: getFacePartTypeNumber(form.face.face),
       hairType: getFacePartTypeNumber(form.face.hair),

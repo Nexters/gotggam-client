@@ -1,6 +1,11 @@
 "use client";
 
-import { useQuery } from "@tanstack/react-query";
+import { ErrorBoundary, Suspense } from "@suspensive/react";
+import {
+  useQuery,
+  useQueryErrorResetBoundary,
+  useSuspenseQuery,
+} from "@tanstack/react-query";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
@@ -8,7 +13,9 @@ import { useFormContext } from "react-hook-form";
 
 import { toFaceSelection } from "@/entities/character";
 import { resultQueries } from "@/entities/result";
+import { termsQueries } from "@/entities/terms";
 import type { FormValues } from "@/features/form";
+import { ApiError } from "@/shared/api";
 import { GOTGGAM_INSTAGRAM_URL } from "@/shared/config";
 import { cn } from "@/shared/lib";
 import { Typography } from "@/shared/ui";
@@ -79,7 +86,41 @@ function getCardScales() {
 
 type ResultStep = "intro" | "card" | "ending";
 
+// 약관 버전 조회가 실패하면 제출 자체가 불가능하므로 페이지 단위로 막고 재시도한다.
+// 정상 흐름에선 동의 화면에서 이미 받아 캐시돼 있어 추가 요청 없이 통과한다.
 export function ResultPage() {
+  const { reset: resetQueryErrors } = useQueryErrorResetBoundary();
+
+  return (
+    <ErrorBoundary
+      shouldCatch={ApiError.isApiError}
+      onReset={resetQueryErrors}
+      fallback={({ reset }) => (
+        <div className={styles.page}>
+          <SpotlightBackdrop />
+          <GotggamDialogue
+            lines={SUBMIT_ERROR_LINES}
+            characterSrc={GOTGGAM_WITH_CHARACTER_SRC}
+            onComplete={reset}
+          />
+        </div>
+      )}
+    >
+      <Suspense
+        clientOnly
+        fallback={
+          <div className={styles.page}>
+            <SpotlightBackdrop />
+          </div>
+        }
+      >
+        <ResultContent />
+      </Suspense>
+    </ErrorBoundary>
+  );
+}
+
+function ResultContent() {
   const router = useRouter();
   const { getValues } = useFormContext<FormValues>();
   const [step, setStep] = useState<ResultStep>("intro");
@@ -99,8 +140,12 @@ export function ResultPage() {
   const [cardScales, setCardScales] = useState(() => getCardScales());
   const hasSheetInteractedRef = useRef(false);
 
+  const { data: termsDocuments } = useSuspenseQuery(termsQueries.documents());
+
   // 폼이 완성돼 있으면 제출 요청을, 아니면(개발 중 직접 진입) 목업을 쓴다.
-  const [request] = useState(() => buildSurveyResultRequest(getValues()));
+  const [request] = useState(() =>
+    buildSurveyResultRequest(getValues(), termsDocuments),
+  );
   const [mockLedger] = useState(() =>
     request ? null : buildMockLedgerResult(getValues()),
   );

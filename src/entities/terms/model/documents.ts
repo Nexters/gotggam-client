@@ -1,24 +1,18 @@
-import { PRIVACY_POLICY_MARKDOWN } from "./privacy-policy";
-import { TERMS_OF_SERVICE_MARKDOWN } from "./terms-of-service";
+export const TERMS_DOCUMENT_IDS = [
+  "privacy-policy",
+  "terms-of-service",
+] as const;
 
-export type TermsDocumentId = "privacy-policy" | "terms-of-service";
+export type TermsDocumentId = (typeof TERMS_DOCUMENT_IDS)[number];
 
+/** 노션에서 관리하는 약관 문서. `GET /api/v1/terms` 로 내려온다. */
 export type TermsDocument = {
-  title: string;
-  /** 결과 제출 시 서버에 보내는 동의 문서 버전. 약관 내용을 고치면 함께 올린다. */
+  /** 결과 제출 시 서버에 보내는 동의 문서 버전. 약관 내용을 고치면 노션에서 함께 올린다. */
   version: string;
   markdown: string;
 };
 
-export const TERMS_DOCUMENTS: Record<TermsDocumentId, TermsDocument> = {
-  "privacy-policy": {
-    title: "개인정보 처리방침",
-    version: "v1.0.0",
-    markdown: PRIVACY_POLICY_MARKDOWN,
-  },
-  "terms-of-service": {
-    title: "서비스 이용약관",
-    version: "v1.0.0",
-    markdown: TERMS_OF_SERVICE_MARKDOWN,
-  },
+export const TERMS_DOCUMENT_TITLES: Record<TermsDocumentId, string> = {
+  "privacy-policy": "개인정보 처리방침",
+  "terms-of-service": "서비스 이용약관",
 };

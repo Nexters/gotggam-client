@@ -1,7 +1,7 @@
 import Image from "next/image";
 
 import { CharacterFace, type FaceSelection } from "@/entities/character";
-import { cn } from "@/shared/lib";
+import { CLARITY_MASK, cn } from "@/shared/lib";
 
 import { FitText } from "./fit-text";
 import {
@@ -62,15 +62,23 @@ function LedgerCardFront({
       </div>
       <span className={styles.logo}>GOTGGAM</span>
       <span className={styles.nameLabel}>NAME</span>
-      <span className={styles.nameValue}>{result.name}</span>
+      <span className={styles.nameValue} {...CLARITY_MASK}>
+        {result.name}
+      </span>
       <span className={styles.birthLabel}>BIRTH</span>
-      <span className={styles.birthValue}>{birthText}</span>
+      <span className={styles.birthValue} {...CLARITY_MASK}>
+        {birthText}
+      </span>
       <span className={styles.ageLabel}>예상수명</span>
       <span className={styles.ageValue}>
         <span className={styles.ageNumber}>{result.expectedAge}</span>세
       </span>
       <span className={styles.commentLabel}>오늘의 한 마디</span>
-      <FitText maxFontSize={13.4} className={styles.commentValue}>
+      <FitText
+        maxFontSize={13.4}
+        className={styles.commentValue}
+        {...CLARITY_MASK}
+      >
         {result.todayMessage}
       </FitText>
       <span className={styles.warningLabel}>WARNING</span>

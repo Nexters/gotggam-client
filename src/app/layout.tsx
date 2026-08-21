@@ -1,10 +1,11 @@
 import type { Metadata, Viewport } from "next";
-import Script from "next/script";
 import type { ReactNode } from "react";
 
 import "@/shared/styles/global.css";
 
+import { ADSENSE_CLIENT_ID, GoogleAdSense } from "./google-adsense";
 import * as styles from "./layout.css";
+import { MicrosoftClarity } from "./microsoft-clarity";
 import { Providers } from "./providers";
 
 const SITE_TITLE = "곧감 - 고양이 사신의 수명 테스트";
@@ -27,7 +28,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
   },
   other: {
-    "google-adsense-account": "ca-pub-5618775983696868",
+    "google-adsense-account": ADSENSE_CLIENT_ID,
   },
 };
 
@@ -51,12 +52,8 @@ export default function RootLayout({
             <Providers>{children}</Providers>
           </div>
         </div>
-        <Script
-          async
-          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5618775983696868"
-          crossOrigin="anonymous"
-          strategy="afterInteractive"
-        />
+        <GoogleAdSense />
+        <MicrosoftClarity />
       </body>
     </html>
   );

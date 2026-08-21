@@ -1,12 +1,29 @@
-"use client";
-
+import { dehydrate, HydrationBoundary } from "@tanstack/react-query";
 import { type ReactNode } from "react";
-import { FormProvider, useForm } from "react-hook-form";
 
-import { FORM_DEFAULT_VALUES, type FormValues } from "@/features/form";
+import { termsQueries } from "@/entities/terms";
+import { fetchTermsDocumentsFromNotion } from "@/entities/terms/api/notion-terms";
+import { getServerQueryClient } from "@/shared/api/server-query-client";
 
-// /form 하위 페이지들이 클라이언트 내비게이션 동안 같은 폼 인스턴스를 공유한다.
-export default function FormLayout({ children }: { children: ReactNode }) {
-  const methods = useForm<FormValues>({ defaultValues: FORM_DEFAULT_VALUES });
-  return <FormProvider {...methods}>{children}</FormProvider>;
+import { FormProvider } from "./form-provider";
+
+export const revalidate = 3600;
+
+export default async function FormLayout({
+  children,
+}: {
+  children: ReactNode;
+}) {
+  const queryClient = getServerQueryClient();
+
+  await queryClient.prefetchQuery({
+    ...termsQueries.documents(),
+    queryFn: () => fetchTermsDocumentsFromNotion(),
+  });
+
+  return (
+    <HydrationBoundary state={dehydrate(queryClient)}>
+      <FormProvider>{children}</FormProvider>
+    </HydrationBoundary>
+  );
 }

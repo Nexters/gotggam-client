@@ -1,4 +1,5 @@
 export { playAnimalese } from "./animalese";
+export { CLARITY_MASK } from "./clarity-mask";
 export { default as cn } from "clsx";
 export { delay } from "./delay";
 export { playSfx, setAudioPlaying, useAudio } from "./use-audio";

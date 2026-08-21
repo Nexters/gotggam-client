@@ -1,25 +1,24 @@
 "use client";
 
-import { useLayoutEffect, useRef, type ReactNode } from "react";
+import { type ComponentProps, useLayoutEffect, useRef } from "react";
 
-type FitTextProps = {
+type FitTextProps = ComponentProps<"div"> & {
   /** 디자인 기준 폰트 크기(px). 넘치면 여기서부터 줄여 나간다. */
   maxFontSize: number;
   minFontSize?: number;
-  /** 박스 크기(width/height)를 지정하는 클래스. overflow는 컴포넌트가 관리한다. */
-  className?: string;
-  children: ReactNode;
 };
 
 /**
  * 고정 크기 박스 안에 텍스트가 들어가도록 폰트 크기를 자동으로 줄인다.
  * AI가 생성하는 가변 길이 문구(오늘의 한 마디, 경고문구, 준수사항)용.
+ * `className` 은 박스 크기(width/height)만 지정한다. overflow는 컴포넌트가 관리한다.
  */
 export function FitText({
   maxFontSize,
   minFontSize = 7,
   className,
   children,
+  ...props
 }: FitTextProps) {
   const boxRef = useRef<HTMLDivElement>(null);
 
@@ -52,7 +51,7 @@ export function FitText({
   });
 
   return (
-    <div ref={boxRef} className={className}>
+    <div ref={boxRef} className={className} {...props}>
       {children}
     </div>
   );

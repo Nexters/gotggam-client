@@ -1,10 +1,11 @@
 import type { Metadata, Viewport } from "next";
-import Script from "next/script";
 import type { ReactNode } from "react";
 
 import "@/shared/styles/global.css";
 
+import { ADSENSE_CLIENT_ID, GoogleAdSense } from "./google-adsense";
 import * as styles from "./layout.css";
+import { MicrosoftClarity } from "./microsoft-clarity";
 import { Providers } from "./providers";
 
 const SITE_TITLE = "곧감 - 고양이 사신의 수명 테스트";
@@ -27,7 +28,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
   },
   other: {
-    "google-adsense-account": "ca-pub-5618775983696868",
+    "google-adsense-account": ADSENSE_CLIENT_ID,
   },
 };
 
@@ -51,26 +52,8 @@ export default function RootLayout({
             <Providers>{children}</Providers>
           </div>
         </div>
-        <Script
-          async
-          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5618775983696868"
-          crossOrigin="anonymous"
-          strategy="afterInteractive"
-        />
-        {/* 로컬 개발 세션이 리플레이·히트맵에 섞이지 않도록 프로덕션 빌드에서만 심는다. */}
-        {process.env.NODE_ENV === "production" && (
-          // 태그 파일이 첫 줄부터 window.clarity 를 호출하므로, 큐 스텁을 만드는
-          // 공식 스니펫을 그대로 둔다. 태그 URL만 로드하면 TypeError 로 죽는다.
-          // id 를 "clarity" 로 주면 그 script 엘리먼트가 window.clarity 를 선점해
-          // 스텁이 설치되지 않으니(DOM clobbering) 다른 이름을 쓴다.
-          <Script id="ms-clarity" strategy="afterInteractive">
-            {`(function(c,l,a,r,i,t,y){
-        c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
-        t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
-        y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
-    })(window, document, "clarity", "script", "y5wk998k18");`}
-          </Script>
-        )}
+        <GoogleAdSense />
+        <MicrosoftClarity />
       </body>
     </html>
   );

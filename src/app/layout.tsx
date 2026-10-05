@@ -27,9 +27,9 @@ export const metadata: Metadata = {
   twitter: {
     card: "summary_large_image",
   },
-  other: {
-    "google-adsense-account": ADSENSE_CLIENT_ID,
-  },
+  other: process.env.NEXT_PUBLIC_BUILD_TARGET === "toss"
+    ? undefined
+    : { "google-adsense-account": ADSENSE_CLIENT_ID },
 };
 
 export const viewport: Viewport = {
@@ -52,7 +52,7 @@ export default function RootLayout({
             <Providers>{children}</Providers>
           </div>
         </div>
-        <GoogleAdSense />
+        {process.env.NEXT_PUBLIC_BUILD_TARGET !== "toss" && <GoogleAdSense />}
         <MicrosoftClarity />
       </body>
     </html>

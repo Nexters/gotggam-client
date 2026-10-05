@@ -13,13 +13,18 @@ export type LedgerMenuAction = "save" | "visit-room" | "share" | "finish";
 const MENU_ITEMS: { action: LedgerMenuAction; label: string; href?: string }[] =
   [
     { action: "save", label: "명부 저장하기" },
-    {
-      action: "visit-room",
-      label: "곧감이의 방 방문하기",
-      // 곧감이의 방 = 곧감 인스타그램. window.open은 모바일에서 앱이 네비게이션을
-      // 가로채 about:blank 탭이 남으므로 실제 앵커 네비게이션으로 연다.
-      href: GOTGGAM_INSTAGRAM_URL,
-    },
+    // 앱인토스는 자사 채널 유도 외부 링크를 금지해 토스 빌드에서는 뺀다.
+    ...(process.env.NEXT_PUBLIC_BUILD_TARGET === "toss"
+      ? []
+      : [
+          {
+            action: "visit-room" as const,
+            label: "곧감이의 방 방문하기",
+            // 곧감이의 방 = 곧감 인스타그램. window.open은 모바일에서 앱이 네비게이션을
+            // 가로채 about:blank 탭이 남으므로 실제 앵커 네비게이션으로 연다.
+            href: GOTGGAM_INSTAGRAM_URL,
+          },
+        ]),
     { action: "share", label: "테스트 공유하기" },
     { action: "finish", label: "끝내기" },
   ];

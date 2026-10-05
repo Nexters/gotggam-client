@@ -4,6 +4,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { useState } from "react";
 
 import { BACKGROUND_IMAGE_URLS } from "@/shared/config";
+import { useTossBackHandler } from "@/shared/lib";
 import { AppBar } from "@/widgets/app-bar";
 import { Character, NarrationBox, SceneBackground } from "@/widgets/scene";
 
@@ -86,6 +87,8 @@ export function ProloguePage() {
     }
     router.back();
   };
+
+  useTossBackHandler(goBack);
 
   return (
     <div className={styles.page}>

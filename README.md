@@ -25,10 +25,19 @@ Next.js 16 기반 프론트엔드 프로젝트입니다.
 ```bash
 pnpm install   # 의존성 설치
 pnpm dev       # 개발 서버 (http://localhost:3000)
-pnpm build     # 프로덕션 빌드
-pnpm start     # 프로덕션 서버
+pnpm build     # 정적 빌드 (out/)
+pnpm build:ait # 앱인토스 번들 (gotggam.ait)
 pnpm lint      # ESLint 검사
 ```
+
+> **빌드 대상 참고**: `pnpm build:ait` 는 `NEXT_PUBLIC_BUILD_TARGET=toss` 로 정적 빌드한 뒤
+> `ait build` 로 `.ait` 를 만듭니다. 토스 빌드에서는 애드센스·인스타그램 링크가 빠지고 공유 링크가
+> `intoss://` 로 바뀝니다. 웹 빌드는 이 값을 비워 두어야 하니 `.env.local` 에 넣지 마세요.
+>
+> **약관 참고**: 약관은 빌드 시점에 노션에서 받아 `out/api/v1/terms` 로 굳습니다. 빌드 환경에
+> `NOTION_*` env 가 필요하고, `.next/cache` 가 남은 채 1시간 안에 다시 빌드하면 이전 약관이 쓰일 수 있습니다.
+>
+> **이미지 참고**: 이미지 최적화가 꺼져 있어(`images.unoptimized`) 넣은 파일이 그대로 나갑니다. 배경 등 큰 사진성 이미지는 webp(q75)로 변환해 넣으세요.
 
 > **번들러 참고**: vanilla-extract 플러그인이 아직 Turbopack을 지원하지 않아,
 > `dev`/`build` 스크립트는 Next.js 16이 제공하는 `--webpack` 플래그로 webpack을
@@ -141,8 +150,6 @@ import { Typography } from "@/shared/ui";
 ## 서버 상태 (TanStack Query)
 
 - `QueryClient` 설정과 Provider: `src/app/providers/index.tsx`
-  (서버에서는 요청마다 새 클라이언트를 생성하는 SSR 안전 구성)
-- 예시 쿼리 훅: `src/views/home/api/use-health-query.ts`
 
 ## 브랜치 전략
 

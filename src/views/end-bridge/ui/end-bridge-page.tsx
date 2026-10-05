@@ -16,7 +16,7 @@ export function EndBridgePage() {
     <div className={styles.page}>
       <div className={styles.backgroundLayer}>
         <Image
-          src="/images/landing/background.png"
+          src="/images/landing/background.webp"
           alt=""
           fill
           priority

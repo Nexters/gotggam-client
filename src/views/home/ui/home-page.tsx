@@ -58,7 +58,7 @@ export function HomePage() {
         )}
       >
         <Image
-          src="/images/landing/background.png"
+          src="/images/landing/background.webp"
           alt=""
           fill
           priority

@@ -295,7 +295,7 @@ function ResultContent() {
       {step === "ending" && (
         <div className={styles.endingBackground}>
           <Image
-            src="/images/result/ending-bg.png"
+            src="/images/result/ending-bg.webp"
             alt=""
             fill
             unoptimized

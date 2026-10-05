@@ -20,7 +20,6 @@ src/shared/api/
 ├── http-client.ts          # 네트워크 레이어: ky 인스턴스
 ├── error.ts                # ApiError 정규화
 ├── query-client.ts         # QueryClient 팩토리 (서버·클라이언트 공용)
-├── server-query-client.ts  # 서버 전용. 요청당 QueryClient
 ├── orval-mutator.ts        # Orval 생성 코드 ↔ ky 어댑터
 └── generated/              # Orval 산출물 (직접 수정 금지)
 
@@ -132,40 +131,7 @@ export const quizQueries = {
 };
 ```
 
-훅이 아니라 **서버 컴포넌트에서도 그대로 쓸 수 있는 것**이 핵심이다. 결과 공유
-페이지처럼 SSR 이 필요한 화면은 서버에서 프리페치하고, 클라이언트는 같은 객체로 이어받는다.
-
-```tsx
-// app/results/[resultId]/page.tsx — 서버 컴포넌트
-import { dehydrate, HydrationBoundary } from "@tanstack/react-query";
-
-import { quizQueries } from "@/entities/quiz/api/quiz-queries";
-import { getServerQueryClient } from "@/shared/api/server-query-client";
-
-export default async function Page({ params }) {
-  const { resultId } = await params;
-  const queryClient = getServerQueryClient();
-
-  await queryClient.prefetchQuery(quizQueries.result(resultId));
-
-  return (
-    <HydrationBoundary state={dehydrate(queryClient)}>
-      <QuizResultView resultId={resultId} />
-    </HydrationBoundary>
-  );
-}
-```
-
-```tsx
-// 클라이언트 컴포넌트 — 같은 객체를 그대로 넘긴다. 추가 요청이 나가지 않는다.
-const { data } = useQuery(quizQueries.result(resultId));
-```
-
-`getServerQueryClient` 는 `server-only` 로 막혀 있어 클라이언트 컴포넌트에서 import 하면
-빌드가 실패한다. 프리페치 대상 쿼리는 `httpClient`(외부 API)를 써야 한다 —
-`internalHttpClient` 는 서버에서 동작하지 않는다.
-
-`useSuspenseQuery`, `useQueries`, `invalidateQueries`, `setQueryData` 에도 동일하게 넘긴다.
+같은 객체를 `useSuspenseQuery`, `useQueries`, `invalidateQueries`, `setQueryData` 에 그대로 넘긴다.
 
 쿼리 키는 `all → 세부` 계층을 유지해 invalidate 범위를 제어한다. 문자열 배열을
 컴포넌트에서 직접 만들지 않는다.
@@ -269,7 +235,7 @@ class ApiError {
 서버 컴포넌트 안에서 직접 못 쓴다 — 섹션 컴포넌트를 하나 두고 그 안에서 합성한다.
 
 ```tsx
-// src/views/home/ui/health-section.tsx
+// src/views/quiz/ui/quiz-section.tsx
 "use client";
 
 import { Delay, ErrorBoundary, Suspense } from "@suspensive/react";
@@ -277,7 +243,7 @@ import { useQueryErrorResetBoundary } from "@tanstack/react-query";
 
 import { ApiError } from "@/shared/api";
 
-export function HealthSection() {
+export function QuizSection({ quizId }: { quizId: number }) {
   const { reset: resetQueryErrors } = useQueryErrorResetBoundary();
 
   return (
@@ -292,7 +258,7 @@ export function HealthSection() {
       )}
     >
       <Suspense clientOnly fallback={<Delay ms={200}>로딩 중...</Delay>}>
-        <HealthStatus />
+        <QuizPlayer quizId={quizId} />
       </Suspense>
     </ErrorBoundary>
   );

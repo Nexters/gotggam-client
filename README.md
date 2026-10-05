@@ -25,8 +25,7 @@ Next.js 16 기반 프론트엔드 프로젝트입니다.
 ```bash
 pnpm install   # 의존성 설치
 pnpm dev       # 개발 서버 (http://localhost:3000)
-pnpm build     # 프로덕션 빌드
-pnpm start     # 프로덕션 서버
+pnpm build     # 정적 빌드 (out/)
 pnpm lint      # ESLint 검사
 ```
 
@@ -141,8 +140,6 @@ import { Typography } from "@/shared/ui";
 ## 서버 상태 (TanStack Query)
 
 - `QueryClient` 설정과 Provider: `src/app/providers/index.tsx`
-  (서버에서는 요청마다 새 클라이언트를 생성하는 SSR 안전 구성)
-- 예시 쿼리 훅: `src/views/home/api/use-health-query.ts`
 
 ## 브랜치 전략
 

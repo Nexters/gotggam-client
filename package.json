@@ -6,6 +6,7 @@
   "scripts": {
     "dev": "next dev --webpack",
     "build": "next build --webpack",
+    "build:ait": "NEXT_PUBLIC_BUILD_TARGET=toss pnpm build && ait build",
     "lint": "eslint",
     "lint:fix": "eslint --fix",
     "generate:api": "orval",
@@ -13,6 +14,7 @@
     "prepare": "husky || true"
   },
   "dependencies": {
+    "@apps-in-toss/web-framework": "^3.6.0",
     "@lottiefiles/dotlottie-react": "^0.19.13",
     "@ncdai/react-wheel-picker": "^1.2.2",
     "@suspensive/react": "^3.21.3",

@@ -1,11 +1,29 @@
-import { keyframes, style } from "@vanilla-extract/css";
+import { createVar, keyframes, style, styleVariants } from "@vanilla-extract/css";
 
 import { vars } from "@/shared/styles/theme.css";
 
+import type { LedgerVariant } from "../model/ledger";
+
 // 명부 카드는 이미지 저장까지 고려한 고정 크기 아트웍이라, Figma 스크린 스펙(252×441)의
 // px 좌표·크기를 그대로 쓴다. (Galmuri 9는 아직 번들에 없어 Galmuri 11로 대체)
-const FRONT_LABEL_COLOR = "#d8c5ef";
-const BACK_LABEL_COLOR = "#d6c0ff";
+
+/** 앞/뒷면 항목 라벨 색. 카드 배경색(베리에이션)에 맞춰 바뀐다. */
+export const LEDGER_LABEL_COLORS: Record<LedgerVariant, string> = {
+  wine: "#d8c5ef",
+  gold: "#f7f0ff",
+  green: "#cacaca",
+  indigo: "#b0ceeb",
+  navy: "#97a6db",
+  purple: "#b9b8e8",
+  maroon: "#d8b1c3",
+  gray: "#b0d0d0",
+};
+
+const labelColorVar = createVar();
+
+export const labelColor = styleVariants(LEDGER_LABEL_COLORS, (color) => ({
+  vars: { [labelColorVar]: color },
+}));
 
 /* ── 3D 뒤집기 골격 ─────────────────────────────── */
 
@@ -146,7 +164,7 @@ export const logo = style({
 
 const label = style({
   position: "absolute",
-  color: FRONT_LABEL_COLOR,
+  color: labelColorVar,
   fontSize: 10.1,
   whiteSpace: "nowrap",
 });
@@ -272,7 +290,7 @@ export const detailsLabel = style({
   left: 52.3,
   top: 60.5,
   transform: "translateX(-50%)",
-  color: BACK_LABEL_COLOR,
+  color: labelColorVar,
   fontSize: 10.1,
   lineHeight: 1.2,
   letterSpacing: "1.2px",
@@ -339,7 +357,7 @@ export const directivesLabel = style({
   left: 62.4,
   top: 212.2,
   transform: "translateX(-50%)",
-  color: BACK_LABEL_COLOR,
+  color: labelColorVar,
   fontSize: 11.8,
   lineHeight: 1.2,
   letterSpacing: "1.4px",

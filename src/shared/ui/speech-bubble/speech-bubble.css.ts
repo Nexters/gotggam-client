@@ -27,12 +27,19 @@ export const box = style({
   padding: `${vars.spacing["24"]} ${vars.spacing["20"]}`,
   clipPath: `polygon(${getPixelCornerClipPath(4)})`,
   backgroundColor: vars.color.accent5["11"],
+  overflowY: "auto",
+  msOverflowStyle: "none",
+  scrollbarWidth: "none",
+  selectors: {
+    "&::-webkit-scrollbar": {
+      display: "none",
+    },
+  },
 });
 
 export const text = style({
   display: "block",
-  maxHeight: 70,
-  overflow: "hidden",
+  paddingRight: vars.spacing["24"],
 });
 
 export const nameChip = style({

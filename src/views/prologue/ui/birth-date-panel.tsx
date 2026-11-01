@@ -16,8 +16,9 @@ import {
   formatBirthDate,
   getDayOptions,
   getDaysInMonth,
+  getMaxBirthDate,
 } from "../lib/birth-date";
-import { MONTH_OPTIONS, YEAR_OPTIONS } from "../model/constants";
+import { MIN_AGE, MONTH_OPTIONS, YEAR_OPTIONS } from "../model/constants";
 import * as styles from "./birth-date-panel.css";
 
 type BirthDatePanelProps = {
@@ -30,19 +31,21 @@ export function BirthDatePanel({ onSubmit }: BirthDatePanelProps) {
   const [month, setMonth] = useState("1");
   const [day, setDay] = useState("1");
 
-  // 서버가 미래 생일을 거부하므로 오늘 이후는 선택지에서 잘라낸다.
-  // 올해를 고르면 이번 달까지, 이번 달이면 오늘까지만 보인다.
-  const today = new Date();
-  const isCurrentYear = Number(year) === today.getFullYear();
-  const monthOptions = isCurrentYear
-    ? MONTH_OPTIONS.slice(0, today.getMonth() + 1)
+  // 만 MIN_AGE 미만이 되는 생일(과 미래 날짜)은 선택지에서 잘라낸다.
+  // 마지막 해를 고르면 그 달까지, 그 달을 고르면 그 날까지만 보인다.
+  const maxBirthDate = getMaxBirthDate(MIN_AGE);
+  const isMaxYear = Number(year) === maxBirthDate.getFullYear();
+  const monthOptions = isMaxYear
+    ? MONTH_OPTIONS.slice(0, maxBirthDate.getMonth() + 1)
     : MONTH_OPTIONS;
   const safeMonth = `${Math.min(Number(month), monthOptions.length)}`;
-  const isCurrentMonth =
-    isCurrentYear && Number(safeMonth) === today.getMonth() + 1;
+  const isMaxMonth =
+    isMaxYear && Number(safeMonth) === maxBirthDate.getMonth() + 1;
 
   const dayCount = getDaysInMonth(year, safeMonth);
-  const maxDay = isCurrentMonth ? Math.min(dayCount, today.getDate()) : dayCount;
+  const maxDay = isMaxMonth
+    ? Math.min(dayCount, maxBirthDate.getDate())
+    : dayCount;
   const dayOptions = getDayOptions(maxDay);
   const safeDay = clampDay(day, maxDay);
 

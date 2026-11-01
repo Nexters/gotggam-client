@@ -20,6 +20,9 @@
 # production
 /build
 
+# apps in toss
+*.ait
+
 # misc
 .DS_Store
 .eslintcache

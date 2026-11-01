@@ -7,6 +7,7 @@
  */
 import type { AnswerRequest } from './answerRequest';
 import type { CharacterRequest } from './characterRequest';
+import type { ConsentRequest } from './consentRequest';
 import type { SurveyResultRequestGender } from './surveyResultRequestGender';
 
 export interface SurveyResultRequest {
@@ -22,7 +23,7 @@ export interface SurveyResultRequest {
   gender: SurveyResultRequestGender;
   /**
      * 오늘의 한마디 (선택, 미입력 시 기본 문장 제공)
-     * @minLength 10
+     * @minLength 0
      * @maxLength 15
      */
   todayMessage?: string;
@@ -33,4 +34,9 @@ export interface SurveyResultRequest {
   answers: AnswerRequest[];
   /** 캐릭터 얼굴 선택 */
   character: CharacterRequest;
+  /**
+     * 동의 항목 목록
+     * @minItems 1
+     */
+  consents: ConsentRequest[];
 }

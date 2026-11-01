@@ -6,6 +6,7 @@ import { useEffect, useState } from "react";
 import { useFormContext } from "react-hook-form";
 
 import type { FormValues } from "@/features/form";
+import { useTossBackHandler } from "@/shared/lib";
 import { ChoicePanel, Typography } from "@/shared/ui";
 import { AppBar } from "@/widgets/app-bar";
 import {
@@ -119,6 +120,12 @@ function QuestionFlow({ questions }: { questions: Question[] }) {
     router.back();
   };
 
+  const handleBack = isClosing ? goBackFromClosing : goBack;
+
+  useTossBackHandler(
+    isRoutingToFace ? () => setIsRoutingToFace(false) : handleBack,
+  );
+
   const openReviewPanel = () => {
     router.push(`?q=${questionNumber}&panel=review`);
   };
@@ -130,7 +137,7 @@ function QuestionFlow({ questions }: { questions: Question[] }) {
   return (
     <div className={styles.page}>
       <SceneBackground src={getActBackground(question.actCode)} dimmed />
-      <AppBar onBack={isClosing ? goBackFromClosing : goBack} />
+      <AppBar onBack={handleBack} />
 
       <div className={styles.content}>
         {!isClosing && (

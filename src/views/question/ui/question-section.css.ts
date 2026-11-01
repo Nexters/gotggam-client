@@ -2,11 +2,10 @@ import { style } from "@vanilla-extract/css";
 
 import { vars } from "@/shared/styles/theme.css";
 import {
+  NARRATION_BOTTOM,
   NARRATION_HEIGHT,
-  narrationBottomVar,
 } from "@/widgets/scene/ui/narration-box.css";
 
-const NARRATION_BOTTOM = 96;
 const CHARACTER_OVERLAP = 48;
 
 export const emptyNotice = style({

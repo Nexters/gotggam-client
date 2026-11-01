@@ -22,7 +22,6 @@ ky + TanStack Query + Suspensive 를 씁니다. **API 함수·쿼리·에러 처
   예외는 본문이 빈 응답에 `.json()` 을 붙인 경우뿐이니, 그럴 땐 붙이지 말 것.
 - 조회 함수는 `signal` 을 받아 ky 로 넘긴다. 안 넘기면 요청 취소가 아예 동작하지 않는다.
 - 재시도 정책과 전역 에러 훅은 `shared/api/query-client.ts` 한 곳에만 둔다.
-- 서버 프리페치는 `shared/api/server-query-client.ts` + `HydrationBoundary` 를 쓴다.
 - 백엔드 OpenAPI 스펙이 나오면 `pnpm generate:api` 로 타입·API 함수를 생성한다.
 
 # 주석 규칙

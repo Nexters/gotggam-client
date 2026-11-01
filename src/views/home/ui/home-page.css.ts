@@ -47,6 +47,20 @@ export const page = style({
   color: vars.color.white,
 });
 
+// 시작하기를 누르면 화면 전체를 덮어 내린다. 약관 화면도 페이드로 열리는데
+// 홈만 뚝 끊기면 두 화면 사이가 튄다. 이동은 이 전환이 끝난 뒤에 한다.
+export const leaving = style({
+  opacity: 0,
+  pointerEvents: "none",
+  transition: "opacity 700ms ease-in",
+  "@media": {
+    // 모션을 껐어도 transitionend는 나와야 이동이 이어진다.
+    "(prefers-reduced-motion: reduce)": {
+      transition: "opacity 1ms linear",
+    },
+  },
+});
+
 export const backgroundLayer = style({
   position: "absolute",
   inset: 0,
@@ -74,7 +88,8 @@ export const revealArea = style({
 export const topBar = style({
   display: "flex",
   justifyContent: "flex-end",
-  padding: vars.spacing["16"],
+  padding: `${vars.spacing["12"]} ${vars.spacing["16"]}`,
+  marginTop: vars.spacing["20"],
 });
 
 export const content = style({
@@ -98,10 +113,10 @@ export const character = style({
 });
 
 export const footer = style({
-  position: 'absolute',
+  position: "absolute",
   bottom: 0,
   width: "100%",
   display: "flex",
   justifyContent: "center",
-  padding: `0 ${vars.spacing["20"]} ${vars.spacing["36"]}`,
+  padding: `0 ${vars.spacing["20"]} ${vars.spacing["32"]}`,
 });

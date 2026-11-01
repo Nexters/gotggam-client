@@ -1,8 +1,11 @@
 import { getFacePartTypeNumber } from "@/entities/character";
+import type { TermsDocument, TermsDocumentId } from "@/entities/terms";
 import type { FormValues } from "@/features/form";
-import type {
-  SurveyResultRequest,
-  SurveyResultResponse,
+import {
+  ConsentRequestType,
+  type ConsentRequest,
+  type SurveyResultRequest,
+  type SurveyResultResponse,
 } from "@/shared/api/generated/models";
 
 /** 명부 카드 색상 베리에이션. Figma [명부_템플릿]의 8종과 1:1 대응한다. */
@@ -56,12 +59,31 @@ export interface LedgerResult {
 const TODAY_MESSAGE_MIN = 1;
 const TODAY_MESSAGE_MAX = 15;
 
+// 동의 퍼널(/form/consent)을 모두 지나야 설문에 진입하므로 제출 시점엔 전부 동의 상태다.
+function buildConsents(
+  termsDocuments: Record<TermsDocumentId, TermsDocument>,
+): ConsentRequest[] {
+  return [
+    {
+      type: ConsentRequestType.PRIVACY_POLICY,
+      version: termsDocuments["privacy-policy"].version,
+      agreed: true,
+    },
+    {
+      type: ConsentRequestType.TERMS_OF_SERVICE,
+      version: termsDocuments["terms-of-service"].version,
+      agreed: true,
+    },
+  ];
+}
+
 /**
  * 폼 값 → 설문 결과 제출 요청. 필수 값(이름·생년월일·성별·답변)이 비어 있으면
  * null을 반환한다 — 개발 중 결과 화면에 직접 진입한 경우로 보고 목업으로 그린다.
  */
 export function buildSurveyResultRequest(
   form: FormValues,
+  termsDocuments: Record<TermsDocumentId, TermsDocument>,
 ): SurveyResultRequest | null {
   const answers = Object.entries(form.answers ?? {}).map(
     ([questionId, optionId]) => ({
@@ -86,6 +108,7 @@ export function buildSurveyResultRequest(
     gender: form.gender,
     ...(isValidTodayMessage ? { todayMessage } : {}),
     answers,
+    consents: buildConsents(termsDocuments),
     character: {
       faceType: getFacePartTypeNumber(form.face.face),
       hairType: getFacePartTypeNumber(form.face.hair),

@@ -1,16 +1,23 @@
 "use client";
 
-import { useQuery } from "@tanstack/react-query";
+import { ErrorBoundary, Suspense } from "@suspensive/react";
+import {
+  useQuery,
+  useQueryErrorResetBoundary,
+  useSuspenseQuery,
+} from "@tanstack/react-query";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { useEffect, useRef, useState } from "react";
+import { type ReactNode, useEffect, useRef, useState } from "react";
 import { useFormContext } from "react-hook-form";
 
 import { toFaceSelection } from "@/entities/character";
 import { resultQueries } from "@/entities/result";
+import { termsQueries } from "@/entities/terms";
 import type { FormValues } from "@/features/form";
-import { GOTGGAM_INSTAGRAM_URL } from "@/shared/config";
-import { cn } from "@/shared/lib";
+import { ApiError } from "@/shared/api";
+import { TOSS_MINI_APP_URL } from "@/shared/config";
+import { cn, useTossBackHandler } from "@/shared/lib";
 import { Typography } from "@/shared/ui";
 import {
   GOTGGAM_WITH_CHARACTER_SRC,
@@ -79,7 +86,50 @@ function getCardScales() {
 
 type ResultStep = "intro" | "card" | "ending";
 
+// 약관 버전 조회가 실패하면 제출 자체가 불가능하므로 페이지 단위로 막고 재시도한다.
+// 정상 흐름에선 동의 화면에서 이미 받아 캐시돼 있어 추가 요청 없이 통과한다.
 export function ResultPage() {
+  const { reset: resetQueryErrors } = useQueryErrorResetBoundary();
+
+  return (
+    <ErrorBoundary
+      shouldCatch={ApiError.isApiError}
+      onReset={resetQueryErrors}
+      fallback={({ reset }) => (
+        <ResultFallback>
+          <GotggamDialogue
+            lines={SUBMIT_ERROR_LINES}
+            characterSrc={GOTGGAM_WITH_CHARACTER_SRC}
+            onComplete={reset}
+          />
+        </ResultFallback>
+      )}
+    >
+      <Suspense clientOnly fallback={<ResultFallback />}>
+        <ResultContent />
+      </Suspense>
+    </ErrorBoundary>
+  );
+}
+
+/**
+ * 약관 로딩·오류 폴백. 이 동안은 `ResultContent` 의 뒤로가기가 없으므로, 퍼널을 거슬러
+ * 얼굴 화면으로 돌아가지 않도록 토스 뒤로가기는 랜딩으로 나간다.
+ */
+function ResultFallback({ children }: { children?: ReactNode }) {
+  const router = useRouter();
+
+  useTossBackHandler(() => router.replace("/"));
+
+  return (
+    <div className={styles.page}>
+      <SpotlightBackdrop />
+      {children}
+    </div>
+  );
+}
+
+function ResultContent() {
   const router = useRouter();
   const { getValues } = useFormContext<FormValues>();
   const [step, setStep] = useState<ResultStep>("intro");
@@ -99,8 +149,12 @@ export function ResultPage() {
   const [cardScales, setCardScales] = useState(() => getCardScales());
   const hasSheetInteractedRef = useRef(false);
 
+  const { data: termsDocuments } = useSuspenseQuery(termsQueries.documents());
+
   // 폼이 완성돼 있으면 제출 요청을, 아니면(개발 중 직접 진입) 목업을 쓴다.
-  const [request] = useState(() => buildSurveyResultRequest(getValues()));
+  const [request] = useState(() =>
+    buildSurveyResultRequest(getValues(), termsDocuments),
+  );
   const [mockLedger] = useState(() =>
     request ? null : buildMockLedgerResult(getValues()),
   );
@@ -163,15 +217,12 @@ export function ResultPage() {
       return;
     }
 
-    if (action === "visit-room") {
-      // 곧감이의 방 = 곧감 인스타그램. 결과 화면이 유지되도록 새 탭으로 연다.
-      window.open(GOTGGAM_INSTAGRAM_URL, "_blank", "noopener,noreferrer");
-      return;
-    }
-
     if (action === "share") {
       // TODO: 공유 조회 API 연동 시 개인 결과 링크로 교체한다. 지금은 서비스 링크.
-      copyTextToClipboard(window.location.origin).then((isCopied) => {
+      const shareUrl = process.env.NEXT_PUBLIC_BUILD_TARGET === "toss"
+        ? TOSS_MINI_APP_URL
+        : window.location.origin;
+      copyTextToClipboard(shareUrl).then((isCopied) => {
         if (isCopied) {
           setIsShareModalOpen(true);
         }
@@ -212,6 +263,26 @@ export function ResultPage() {
     setIsLeaving(true);
   };
 
+  useTossBackHandler(() => {
+    if (previewImages) {
+      closePreview();
+      return;
+    }
+    if (isShareModalOpen) {
+      setIsShareModalOpen(false);
+      return;
+    }
+    if (isCardVisible && isSheetOpen) {
+      handleSheetOpenChange(false);
+      return;
+    }
+    if (step === "ending") {
+      handleEndingComplete();
+      return;
+    }
+    setStep("ending");
+  });
+
   const sheetProgress = sheetDragProgress ?? (isSheetOpen ? 1 : 0);
   const cardScale =
     cardScales.closed + (cardScales.open - cardScales.closed) * sheetProgress;
@@ -224,7 +295,7 @@ export function ResultPage() {
       {step === "ending" && (
         <div className={styles.endingBackground}>
           <Image
-            src="/images/result/ending-bg.png"
+            src="/images/result/ending-bg.webp"
             alt=""
             fill
             unoptimized

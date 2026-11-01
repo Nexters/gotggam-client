@@ -4,6 +4,8 @@ import type { NextConfig } from "next";
 const withVanillaExtract = createVanillaExtractPlugin();
 
 const nextConfig: NextConfig = {
+  output: "export",
+  images: { unoptimized: true },
   webpack(config) {
     config.module.rules.push({
       test: /\.svg$/i,

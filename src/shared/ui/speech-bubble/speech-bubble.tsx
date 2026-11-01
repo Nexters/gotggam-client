@@ -25,6 +25,15 @@ export function SpeechBubble({
   const { words, skip, isDone } = useTypewriter(text);
   const [isSoundOn] = useBgmEnabled();
   const prevLengthRef = useRef(0);
+  const boxRef = useRef<HTMLSpanElement>(null);
+
+  // 대사가 말풍선 높이를 넘으면 지금 타이핑되는 마지막 줄이 보이도록 따라 내려간다.
+  useEffect(() => {
+    const box = boxRef.current;
+    if (box) {
+      box.scrollTo({ top: box.scrollHeight, behavior: "smooth" });
+    }
+  }, [words]);
 
   // 타이핑으로 글자가 하나 늘었을 때만 그 음절의 말소리(Animalese)를 낸다.
   // skip(한 번에 전체 공개)이나 대사 교체 시에는 소리를 내지 않는다.
@@ -50,7 +59,7 @@ export function SpeechBubble({
       className={cn(styles.root, className)}
       onClick={handleClick}
     >
-      <span className={styles.box}>
+      <span ref={boxRef} className={styles.box}>
         <Typography
           as="span"
           family="galmuri9"

@@ -7,6 +7,7 @@ import {
   type FaceSelection,
 } from "@/entities/character";
 
+import { LEDGER_LABEL_COLORS } from "../ui/ledger-card.css";
 import {
   getLedgerCardImageSrc,
   type LedgerResult,
@@ -27,8 +28,6 @@ const EXPORT_HEIGHT = 1050;
 // ledger-card.css.ts 좌표(카드 252px 기준) → 내보내기(600px) 배율
 const SCALE = EXPORT_WIDTH / 252;
 
-const FRONT_LABEL_COLOR = "#d8c5ef";
-const BACK_LABEL_COLOR = "#d6c0ff";
 const WHITE = "#ffffff";
 
 const GENDER_MARKS: Record<string, string> = {
@@ -303,19 +302,20 @@ async function drawFront(
   }
   ctx.restore();
 
+  const labelColor = LEDGER_LABEL_COLORS[variant];
   const genderMark = GENDER_MARKS[result.gender];
   const birthText = genderMark
     ? `${result.birthDate} (${genderMark})`
     : result.birthDate;
 
   drawTextLine(ctx, { text: "GOTGGAM", x: 126, top: 28, fontSize: 13.4, lineHeight: 1.5, color: WHITE, align: "center", letterSpacing: -0.15 });
-  drawTextLine(ctx, { text: "NAME", x: 133.5, top: 72, fontSize: 10.1, lineHeight: 1.5, color: FRONT_LABEL_COLOR, family: "Galmuri11", weight: 700, letterSpacing: -0.11 });
+  drawTextLine(ctx, { text: "NAME", x: 133.5, top: 72, fontSize: 10.1, lineHeight: 1.5, color: labelColor, family: "Galmuri11", weight: 700, letterSpacing: -0.11 });
   drawTextLine(ctx, { text: result.name, x: 133.5, top: 83.5, fontSize: 25.6, lineHeight: 1.6, color: WHITE, letterSpacing: -0.28 });
-  drawTextLine(ctx, { text: "BIRTH", x: 133.5, top: 139, fontSize: 10.1, lineHeight: 1.5, color: FRONT_LABEL_COLOR, family: "Galmuri11", weight: 700, letterSpacing: -0.11 });
+  drawTextLine(ctx, { text: "BIRTH", x: 133.5, top: 139, fontSize: 10.1, lineHeight: 1.5, color: labelColor, family: "Galmuri11", weight: 700, letterSpacing: -0.11 });
   drawTextLine(ctx, { text: birthText, x: 133.5, top: 158.3, fontSize: 13.9, lineHeight: 1.6, color: WHITE, letterSpacing: -0.15 });
-  drawTextLine(ctx, { text: "예상수명", x: 50, top: 205, fontSize: 10.1, lineHeight: 1.2, color: FRONT_LABEL_COLOR, align: "center", letterSpacing: 1.2 });
-  drawTextLine(ctx, { text: "오늘의 한 마디", x: 178, top: 204, fontSize: 10.1, lineHeight: 1.2, color: FRONT_LABEL_COLOR, align: "center", letterSpacing: 1.2 });
-  drawTextLine(ctx, { text: "WARNING", x: 51, top: 314, fontSize: 10.1, lineHeight: 1.2, color: FRONT_LABEL_COLOR, align: "center", letterSpacing: 1.2 });
+  drawTextLine(ctx, { text: "예상수명", x: 50, top: 205, fontSize: 10.1, lineHeight: 1.2, color: labelColor, align: "center", letterSpacing: 1.2 });
+  drawTextLine(ctx, { text: "오늘의 한 마디", x: 178, top: 204, fontSize: 10.1, lineHeight: 1.2, color: labelColor, align: "center", letterSpacing: 1.2 });
+  drawTextLine(ctx, { text: "WARNING", x: 51, top: 314, fontSize: 10.1, lineHeight: 1.2, color: labelColor, align: "center", letterSpacing: 1.2 });
   drawTextLine(ctx, { text: "Too Early to Go.", x: 158.1, top: 403.6, fontSize: 8, lineHeight: 1.6, color: WHITE, align: "right", letterSpacing: -0.09 });
 
   // 예상수명 값 — "88"(Galmuri11 Bold) + "세"(Galmuri9)
@@ -349,9 +349,11 @@ async function drawBack(
   ctx.imageSmoothingEnabled = false;
   ctx.drawImage(frame, 0, 0, EXPORT_WIDTH, EXPORT_HEIGHT);
 
+  const labelColor = LEDGER_LABEL_COLORS[variant];
+
   drawTextLine(ctx, { text: "GOTGGAM", x: 126, top: 28, fontSize: 13.4, lineHeight: 1.5, color: WHITE, align: "center", letterSpacing: -0.15 });
-  drawTextLine(ctx, { text: "상세내역", x: 52.3, top: 60.5, fontSize: 10.1, lineHeight: 1.2, color: BACK_LABEL_COLOR, align: "center", letterSpacing: 1.2 });
-  drawTextLine(ctx, { text: "특별준수사항", x: 62.4, top: 212.2, fontSize: 11.8, lineHeight: 1.2, color: BACK_LABEL_COLOR, align: "center", letterSpacing: 1.4 });
+  drawTextLine(ctx, { text: "상세내역", x: 52.3, top: 60.5, fontSize: 10.1, lineHeight: 1.2, color: labelColor, align: "center", letterSpacing: 1.2 });
+  drawTextLine(ctx, { text: "특별준수사항", x: 62.4, top: 212.2, fontSize: 11.8, lineHeight: 1.2, color: labelColor, align: "center", letterSpacing: 1.4 });
   drawTextLine(ctx, { text: "Too Early to Go.", x: 158.1, top: 403.6, fontSize: 8, lineHeight: 1.6, color: WHITE, align: "right", letterSpacing: -0.09 });
 
   // 상세내역 게이지 — ledger-card.css.ts detailRows(28.6, 84.4, w199, gap 15.1) 스펙.

@@ -1,4 +1,5 @@
 export { playAnimalese } from "./animalese";
+export { CLARITY_MASK } from "./clarity-mask";
 export { default as cn } from "clsx";
 export { delay } from "./delay";
 export { playSfx, setAudioPlaying, useAudio } from "./use-audio";
@@ -7,4 +8,5 @@ export { useDebouncedValue } from "./use-debounced-value";
 export { useKeyboardInset } from "./use-keyboard-inset";
 export { useHasMounted } from "./use-has-mounted";
 export { useLocalStorage } from "./use-local-storage";
+export { getTossBackHandler, useTossBackHandler } from "./use-toss-back-handler";
 export { useTypewriter } from "./use-typewriter";

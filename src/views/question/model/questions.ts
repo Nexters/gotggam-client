@@ -23,12 +23,12 @@ export function toQuestions(groups: ActQuestionsResponse[]): Question[] {
       id: question.id,
       actCode: group.act.code,
       question: question.question,
-      // 답변 순서는 서버 규칙상 항상 [긍정, 부정]이다.
+      // 답변 순서는 서버 규칙상 항상 [부정, 긍정]이다.
       answers: question.answers.map(
         (answer, index): QuestionAnswer => ({
           id: answer.id,
           label: answer.answer,
-          tone: index === 0 ? "positive" : "negative",
+          tone: index === 0 ? "negative" : "positive",
           feedback: answer.feedback,
         }),
       ),

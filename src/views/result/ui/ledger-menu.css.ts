@@ -30,6 +30,7 @@ export const item = style({
   border: "none",
   backgroundColor: "transparent",
   textAlign: "left",
+  textDecoration: "none",
   cursor: "pointer",
 });
 

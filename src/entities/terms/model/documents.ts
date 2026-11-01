@@ -5,9 +5,9 @@ export const TERMS_DOCUMENT_IDS = [
 
 export type TermsDocumentId = (typeof TERMS_DOCUMENT_IDS)[number];
 
-/** 노션에서 관리하는 약관 문서. `GET /api/v1/terms` 로 내려온다. */
+/** 백엔드 약관을 화면에서 사용하는 형식으로 변환한 문서. */
 export type TermsDocument = {
-  /** 결과 제출 시 서버에 보내는 동의 문서 버전. 약관 내용을 고치면 노션에서 함께 올린다. */
+  /** 결과 제출 시 서버에 보내는 동의 문서 버전. 백엔드에서 받은 값을 그대로 사용한다. */
   version: string;
   markdown: string;
 };

@@ -4,7 +4,12 @@ import { useRouter } from "next/navigation";
 import { type TransitionEvent, useState } from "react";
 
 import { BACKGROUND_IMAGE_URLS, CLICK_SFX_SRC } from "@/shared/config";
-import { cn, playSfx, useBgmEnabled } from "@/shared/lib";
+import {
+  cn,
+  playSfx,
+  useBgmEnabled,
+  useTossBackHandler,
+} from "@/shared/lib";
 import { PixelCornerButton, Typography } from "@/shared/ui";
 import { Character, SceneBackground } from "@/widgets/scene";
 
@@ -53,6 +58,17 @@ export function ConsentPage() {
     }
     setPendingStepIndex(stepIndex - 1);
   };
+
+  useTossBackHandler(() => {
+    if (pendingStepIndex !== null) {
+      return;
+    }
+    if (isSheetOpen) {
+      setIsSheetOpen(false);
+      return;
+    }
+    goBack();
+  });
 
   const openTermsSheet = () => {
     playClick();

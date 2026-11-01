@@ -11,3 +11,8 @@ export const appBar = style({
   padding: `${vars.spacing["12"]} ${vars.spacing["16"]}`,
   opacity: 0.8,
 });
+
+export const spacer = style({
+  width: vars.spacing["24"],
+  height: vars.spacing["24"],
+});

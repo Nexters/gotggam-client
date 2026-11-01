@@ -1,4 +1,3 @@
-export { AppBar } from "./app-bar";
 export { BottomPanel } from "./bottom-panel";
 export { BottomSheet } from "./bottom-sheet";
 export { Button } from "./button";

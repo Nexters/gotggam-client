@@ -6,6 +6,7 @@ import { useFormContext } from "react-hook-form";
 
 import type { FaceSelection } from "@/entities/character";
 import type { FormValues } from "@/features/form";
+import { useTossBackHandler } from "@/shared/lib";
 import {
   GOTGGAM_WITH_CHARACTER_SRC,
   GotggamDialogue,
@@ -26,6 +27,8 @@ export function FacePage() {
   const router = useRouter();
   const { getValues, setValue } = useFormContext<FormValues>();
   const [step, setStep] = useState<"intro" | "builder">("intro");
+
+  useTossBackHandler(() => router.replace("/"));
 
   const submitFace = (selection: FaceSelection) => {
     setValue("face", selection);

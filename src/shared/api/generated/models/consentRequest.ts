@@ -11,7 +11,7 @@ export interface ConsentRequest {
   /** 동의 문서 유형 */
   type: ConsentRequestType;
   /**
-     * 동의 문서 버전
+     * 동의 문서 버전. 약관 조회 API가 내려준 version 값을 그대로 전달한다.
      * @minLength 0
      * @maxLength 20
      */

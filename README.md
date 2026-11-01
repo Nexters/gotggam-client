@@ -34,8 +34,12 @@ pnpm lint      # ESLint 검사
 > `ait build` 로 `.ait` 를 만듭니다. 토스 빌드에서는 애드센스·인스타그램 링크가 빠지고 공유 링크가
 > `intoss://` 로 바뀝니다. 웹 빌드는 이 값을 비워 두어야 하니 `.env.local` 에 넣지 마세요.
 >
-> **약관 참고**: 약관은 빌드 시점에 노션에서 받아 `out/api/v1/terms` 로 굳습니다. 빌드 환경에
-> `NOTION_*` env 가 필요하고, `.next/cache` 가 남은 채 1시간 안에 다시 빌드하면 이전 약관이 쓰일 수 있습니다.
+> **약관 참고**: 약관은 실행 중 백엔드의 `GET /api/v1/consent-documents`에서 조회합니다.
+> 문서의 본문과 버전을 함께 받고, 동의한 버전을 결과 제출에 그대로 전달합니다. Notion 환경변수는 필요하지 않습니다.
+>
+> **API 설정**: `.env.example`을 `.env.local`로 복사하세요. 앱인토스 QA와 운영 번들은
+> `NEXT_PUBLIC_API_BASE_URL=https://api.gotggam.com`을 사용합니다. 개발 API는 토스 Origin을 허용하지 않습니다.
+> 운영 서버는 OpenAPI를 공개하지 않으므로 코드 생성용 `API_SPEC_URL`은 개발 서버를 사용합니다.
 >
 > **이미지 참고**: 이미지 최적화가 꺼져 있어(`images.unoptimized`) 넣은 파일이 그대로 나갑니다. 배경 등 큰 사진성 이미지는 webp(q75)로 변환해 넣으세요.
 

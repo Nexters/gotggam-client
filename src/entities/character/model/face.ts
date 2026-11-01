@@ -28,10 +28,10 @@ export const FACE_PART_IDS: Record<FacePartCategory, string[]> = {
 // 파츠별 표시 이름 — Figma [커스터마이징] 시트 표기 그대로 (nose03·04는 원안부터 중복).
 // 화면 표시용일 뿐, 서버에는 타입 번호(getFacePartTypeNumber)만 보낸다.
 export const FACE_PART_NAMES: Record<string, string> = {
-  face01: "둥근형",
+  face01: "역삼각형",
   face02: "각진형",
   face03: "하트형",
-  face04: "역삼각형",
+  face04: "둥근형",
   hair01: "내추럴 헤어",
   hair02: "사이드 헤어",
   hair03: "반삭",

@@ -138,15 +138,17 @@ export function ConsentPage() {
       </div>
 
       <div className={styles.ctaRow}>
-        <PixelCornerButton
-          cornerSize={4}
-          className={styles.backButton}
-          onClick={goBack}
-        >
-          <Typography family="galmuri11" size="18" color="white">
-            이전
-          </Typography>
-        </PixelCornerButton>
+        {process.env.NEXT_PUBLIC_BUILD_TARGET !== "toss" && (
+          <PixelCornerButton
+            cornerSize={4}
+            className={styles.backButton}
+            onClick={goBack}
+          >
+            <Typography family="galmuri11" size="18" color="white">
+              이전
+            </Typography>
+          </PixelCornerButton>
+        )}
         <PixelCornerButton
           cornerSize={4}
           className={styles.confirmButton}
